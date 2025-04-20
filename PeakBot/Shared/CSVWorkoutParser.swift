@@ -1,4 +1,3 @@
-
 import Foundation
 
 enum CSVWorkoutParser {
@@ -9,17 +8,24 @@ enum CSVWorkoutParser {
         guard rows.count > 1 else { return [] }
         let header = rows.first!.split(separator: ",").map(String.init)
         guard let idIdx = header.firstIndex(of: "id"),
-              let dateIdx = header.firstIndex(of: "date"),
+              let dateIdx = header.firstIndex(of: "start_time_local"),
               let sportIdx = header.firstIndex(of: "sport"),
               let tssIdx = header.firstIndex(of: "tss")
-        else { return [] }
+        else {
+            print("[CSVWorkoutParser] Could not find required columns in header: \(header)")
+            return []
+        }
 
         var workouts: [Workout] = []
         let fmt = ISO8601DateFormatter()
+        fmt.formatOptions = [.withInternetDateTime, .withFractionalSeconds, .withColonSeparatorInTime]
         for line in rows.dropFirst() {
             let cols = line.split(separator: ",").map(String.init)
             guard cols.count >= header.count else { continue }
-            guard let date = fmt.date(from: cols[dateIdx]) else { continue }
+            guard let date = fmt.date(from: cols[dateIdx]) else {
+                print("[CSVWorkoutParser] Could not parse date: \(cols[dateIdx])")
+                continue
+            }
             let w = Workout(id: cols[idIdx],
                             date: date,
                             sport: cols[sportIdx],

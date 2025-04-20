@@ -38,27 +38,19 @@ enum ServiceError: Error, LocalizedError {
 @MainActor
 final class IntervalsAPIService: ObservableObject {
 
-    // MARK: – Credentials (pulled from Keychain)
-    private let apiKey:    String
-    private let athleteID: String
+    // MARK: – Credentials (hardcoded for testing)
+    private let apiKey:    String = "3ntigdu81v3u5chn07ivi7z74"
+    private let athleteID: String = "0"
     private let baseURL    = "https://intervals.icu/api/v1"
 
     // MARK: – Shared factory method
     @MainActor static func makeShared() -> IntervalsAPIService? {
-        guard
-            let key = KeychainHelper.intervalsApiKey,
-            let id  = KeychainHelper.athleteID
-        else {
-            return nil
-        }
-        return IntervalsAPIService(apiKey: key, athleteID: id)
+        // Ignore any Keychain or Settings values for now
+        return IntervalsAPIService()
     }
 
     // MARK: – Initialisation
-    private init(apiKey: String, athleteID: String) {
-        self.apiKey    = apiKey
-        self.athleteID = athleteID
-    }
+    private init() {}
 
     // MARK: – Public API (called by view‑models)
     func fetchFitnessTrend(daysBack: Int = 90) async throws -> [FitnessPoint] {
@@ -90,13 +82,24 @@ final class IntervalsAPIService: ObservableObject {
                 comps.path = comps.path.replacingOccurrences(of: "/athlete/" + athleteId, with: "/athlete/me")
             }
         }
-        guard let url = comps.url else { throw ServiceError.invalidURL }
 
+        print("[IntervalsAPIService] Requesting: \(comps.url?.absoluteString ?? "nil")")
+        print("[IntervalsAPIService] Using API Key: \(apiKey)")
+        print("[IntervalsAPIService] Using Athlete ID: \(athleteID)")
+
+        guard let url = comps.url else { throw ServiceError.invalidURL }
         var req = URLRequest(url: url)
-        req.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        let credentials = "API_KEY:\(apiKey)"
+        let authHeader = "Basic " + Data(credentials.utf8).base64EncodedString()
+        req.setValue(authHeader, forHTTPHeaderField: "Authorization")
 
         let (data, resp) = try await URLSession.shared.data(for: req)
         guard let http = resp as? HTTPURLResponse else { throw ServiceError.invalidURL }
+
+        print("[IntervalsAPIService] HTTP Status: \(http.statusCode)")
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("[IntervalsAPIService] Response: \(responseString.prefix(500))")
+        }
 
         switch http.statusCode {
         case 200:  return data

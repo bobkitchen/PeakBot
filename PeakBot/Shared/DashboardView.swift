@@ -58,6 +58,7 @@ struct DashboardView: View {
             .padding()
         }
         .onAppear {
+            print("[DashboardView] onAppear. dashboardVM: \(dashboardVM)")
             Task {
                 await dashboardVM.refresh()
                 if dashboardVM.fitness.isEmpty {

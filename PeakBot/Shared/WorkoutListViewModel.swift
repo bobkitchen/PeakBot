@@ -30,8 +30,13 @@ final class WorkoutListViewModel: ObservableObject {
 
     /// Pull the latest *daysBack* days worth of activities.
     func refresh(daysBack: Int = 14) async {
+        print("[WorkoutListViewModel] refresh() called")
         do {
-            let csv     = try await fetchActivitiesCSV(daysBack: daysBack)
+            let csv = try await service.fetchActivitiesCSV(daysBack: daysBack)
+            print("[WorkoutListViewModel] Got CSV (first 500 chars): \(csv.prefix(500))")
+            if let firstLine = csv.split(separator: "\n").first {
+                print("[WorkoutListViewModel] CSV Header: \(firstLine)")
+            }
             let parsed  = try CSVWorkoutParser.parse(csv)
             workouts    = parsed
             errorMessage = nil

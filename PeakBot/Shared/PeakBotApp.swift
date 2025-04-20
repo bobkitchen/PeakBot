@@ -15,12 +15,12 @@ struct PeakBotApp: App {
     @StateObject private var openAISvc   = OpenAIService.shared   // ← now ObservableObject
 
     // MARK: – View‑models
-    @State private var dashboardVM: DashboardViewModel? = nil
-    @State private var workoutListVM: WorkoutListViewModel? = nil
+    @State private var dashboardVM: DashboardViewModel? = IntervalsAPIService.makeShared().map { DashboardViewModel(service: $0) }
+    @State private var workoutListVM: WorkoutListViewModel? = IntervalsAPIService.makeShared().map { WorkoutListViewModel(service: $0) }
     @StateObject private var chatVM        = ChatViewModel(service: OpenAIService.shared)
 
-    // Show Settings sheet immediately when API credentials are missing
-    @State private var showSettings = !KeychainHelper.hasAllKeys
+    // Temporarily disable Settings sheet popup until data flow is confirmed
+    @State private var showSettings = false
 
     // For showing settings from menu
     @State private var showSettingsSheet = false
@@ -37,18 +37,13 @@ struct PeakBotApp: App {
                     .environmentObject(dashboardVM)
                     .environmentObject(workoutListVM)
                     .environmentObject(chatVM)
-                    .sheet(isPresented: $showSettingsSheet) {
-                        SettingsView()
-                    }
+                    // Temporarily disable SettingsView sheet
+                    //.sheet(isPresented: $showSettingsSheet) {
+                    //    SettingsView()
+                    //}
             } else {
-                SettingsView()
-                    .onDisappear {
-                        if let svc = IntervalsAPIService.makeShared() {
-                            intervalSvc = svc
-                            dashboardVM = DashboardViewModel(service: svc)
-                            workoutListVM = WorkoutListViewModel(service: svc)
-                        }
-                    }
+                // Temporarily do nothing when not initialized
+                // This disables SettingsView fallback completely for debugging
             }
         }
         .commands {
