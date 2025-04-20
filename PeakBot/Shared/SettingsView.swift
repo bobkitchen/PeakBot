@@ -2,33 +2,36 @@
 //  SettingsView.swift
 //  PeakBot
 //
-//  Created by Bob Kitchen on 4/19/25.
-//
-
 
 import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var apiKey = KeychainHelper.intervalsApiKey ?? ""
-    @State private var athleteID = KeychainHelper.athleteID ?? ""
+
+    @State private var apiKey    = KeychainHelper.shared.intervalsApiKey ?? ""
+    @State private var athleteID = KeychainHelper.shared.athleteID       ?? ""
 
     var body: some View {
-        Form {
-            SecureField("Intervals API Key", text: $apiKey)
-            TextField("Athlete ID", text: $athleteID)
-            HStack {
-                Spacer()
+        NavigationStack {
+            Form {
+                Section("Intervals.icu credentials") {
+                    TextField("API key",    text: $apiKey)
+                    TextField("Athlete ID", text: $athleteID)
+                        .keyboardType(.numberPad)
+                }
+
                 Button("Save") {
-                    KeychainHelper.intervalsApiKey = apiKey.trimmingCharacters(in: .whitespaces)
-                    KeychainHelper.athleteID      = athleteID.trimmingCharacters(in: .whitespaces)
+                    KeychainHelper.shared.intervalsApiKey = apiKey.trimmingCharacters(in: .whitespaces)
+                    KeychainHelper.shared.athleteID       = athleteID.trimmingCharacters(in: .whitespaces)
                     dismiss()
                 }
-                .keyboardShortcut(.defaultAction)
-                Spacer()
+                .disabled(apiKey.isEmpty || athleteID.isEmpty)
             }
+            .navigationTitle("Settings")
+            .toolbar { ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
+            }}
         }
-        .padding()
-        .frame(maxWidth: 460)
+        .frame(minWidth: 320, minHeight: 180)
     }
 }
