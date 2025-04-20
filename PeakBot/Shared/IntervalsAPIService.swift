@@ -80,6 +80,16 @@ final class IntervalsAPIService: ObservableObject {
 
     // MARK: – HTTP plumbing
     private func request(_ comps: URLComponents) async throws -> Data {
+        // Patch athlete ID logic: use "me" if empty or "me", else use numeric
+        var comps = comps
+        if let idx = comps.path.range(of: "/athlete/") {
+            let rest = comps.path[idx.upperBound...]
+            let idEnd = rest.prefix { $0.isNumber }
+            let athleteId = String(idEnd)
+            if athleteId.isEmpty || athleteId.lowercased() == "me" {
+                comps.path = comps.path.replacingOccurrences(of: "/athlete/" + athleteId, with: "/athlete/me")
+            }
+        }
         guard let url = comps.url else { throw ServiceError.invalidURL }
 
         var req = URLRequest(url: url)

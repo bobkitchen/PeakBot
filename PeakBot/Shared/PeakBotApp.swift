@@ -22,6 +22,9 @@ struct PeakBotApp: App {
     // Show Settings sheet immediately when API credentials are missing
     @State private var showSettings = !KeychainHelper.hasAllKeys
 
+    // For showing settings from menu
+    @State private var showSettingsSheet = false
+
     // MARK: – Body
     var body: some Scene {
         WindowGroup {
@@ -34,6 +37,9 @@ struct PeakBotApp: App {
                     .environmentObject(dashboardVM)
                     .environmentObject(workoutListVM)
                     .environmentObject(chatVM)
+                    .sheet(isPresented: $showSettingsSheet) {
+                        SettingsView()
+                    }
             } else {
                 SettingsView()
                     .onDisappear {
@@ -43,6 +49,12 @@ struct PeakBotApp: App {
                             workoutListVM = WorkoutListViewModel(service: svc)
                         }
                     }
+            }
+        }
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings…", action: { showSettingsSheet = true })
+                    .keyboardShortcut(",", modifiers: .command)
             }
         }
     }
