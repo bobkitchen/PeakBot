@@ -19,6 +19,11 @@ final class DashboardViewModel: ObservableObject {
 
     // MARK: – Published state
     @Published var fitness: [FitnessPoint] = []
+    @Published var workouts: [Workout] = [] {
+        didSet {
+            recalculateFitness()
+        }
+    }
 
     // MARK: – Dependency
     private let service: IntervalsAPIService
@@ -32,5 +37,14 @@ final class DashboardViewModel: ObservableObject {
         } catch {
             print("⚠️ Dashboard refresh failed:", error)
         }
+    }
+
+    func updateWorkouts(_ newWorkouts: [Workout]) {
+        self.workouts = newWorkouts
+    }
+
+    private func recalculateFitness() {
+        // Use the last 90 days of workouts for trend calculation
+        fitness = FitnessPointCalculator.trend(from: workouts, days: 90)
     }
 }

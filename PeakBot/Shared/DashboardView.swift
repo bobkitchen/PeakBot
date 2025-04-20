@@ -125,9 +125,15 @@ struct WorkoutRow: View {
             }
             Spacer()
             VStack(alignment: .trailing) {
-                Text("TSS: \(workout.tss, specifier: "%.0f")")
-                if workout.ctl != 0 { Text("CTL: \(workout.ctl, specifier: "%.1f")") }
-                if workout.atl != 0 { Text("ATL: \(workout.atl, specifier: "%.1f")") }
+                if let tss = workout.tss {
+                    Text("TSS: \(tss, specifier: "%.0f")")
+                }
+                if let ctl = workout.ctl {
+                    Text("CTL: \(ctl, specifier: "%.1f")")
+                }
+                if let atl = workout.atl {
+                    Text("ATL: \(atl, specifier: "%.1f")")
+                }
             }
         }
         .padding(.vertical, 4)

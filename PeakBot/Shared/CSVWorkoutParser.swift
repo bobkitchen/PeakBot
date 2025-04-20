@@ -4,69 +4,59 @@ import SwiftCSV
 enum CSVWorkoutParser {
     /// Parse the Intervals.icu CSV into our `[Workout]`
     static func parse(_ csvText: String) throws -> [Workout] {
-        // 1) explicitly pick the “Named” row view
         let csvFile = try CSV<Named>(string: csvText)
-
-        // 2) dump the header once so you can see what really came back
-        if let header = csvFile.header as? [String] {
-            print("[CSVWorkoutParser] header columns →", header)
-        }
-
+        let header = csvFile.header
+        print("[CSVWorkoutParser] columns →", header)
         var workouts: [Workout] = []
-
-        // 3) try your known‑good date formats
-        let dateFormats = [
-            "yyyy-MM-dd'T'HH:mm:ssXXXXX",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd HH:mm",
-            "yyyy-MM-dd"
-        ]
-
+        let isoFormatter = ISO8601DateFormatter()
+        let tFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.locale = Locale(identifier: "en_US_POSIX")
+            df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            return df
+        }()
+        let fallbackFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.locale = Locale(identifier: "en_US_POSIX")
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            return df
+        }()
         for (i, row) in csvFile.rows.enumerated() {
-            // Debug: Print the first 5 rows to verify field content
-            if i < 5 { print("[CSVWorkoutParser] Row \(i):", row) }
-            let idRaw = row["id"] ?? ""
-            let typeRaw = row["type"] ?? ""
-            let tssRaw = row["tss"] ?? ""
-            let id = idRaw.trimmingCharacters(in: .whitespacesAndNewlines)
-            let sport = typeRaw.trimmingCharacters(in: .whitespacesAndNewlines)
-            let tssStr = tssRaw.trimmingCharacters(in: .whitespacesAndNewlines)
-            if i < 5 {
-                print("[CSVWorkoutParser] Row \(i) fields: id=\(id), type=\(sport), tss=\(tssStr)")
-            }
-            guard !id.isEmpty, !sport.isEmpty, let tss = Double(tssStr) else {
-                print("[CSVWorkoutParser] Skipping row \(i): missing or invalid required fields")
+            guard
+                let idStr = row["id"], !idStr.isEmpty,
+                let sport = row["type"], !sport.isEmpty,
+                let dateStr = row["start_date_local"], !dateStr.isEmpty
+            else {
+                print("[CSVWorkoutParser] skipping row: missing id/type/date")
                 continue
             }
-
-            // pick “start_date_local” if present
-            let dateString = (row["start_date_local"] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            // try to parse into Date
-            let date = dateFormats.compactMap { fmt -> Date? in
-                let df = DateFormatter()
-                df.locale = Locale(identifier: "en_US_POSIX")
-                df.dateFormat = fmt
-                return df.date(from: dateString)
-            }.first
-
+            // Print the raw date string for debugging
+            print("[CSVWorkoutParser] Raw date string: \(dateStr)")
+            var date: Date? = isoFormatter.date(from: dateStr)
             if date == nil {
-                print("[CSVWorkoutParser] ⚠️ could not parse date for row \(i): \(dateString)")
+                date = tFormatter.date(from: dateStr)
             }
-            guard let workoutDate = date else { continue }
-
-            // build and collect
-            let w = Workout(
-                id:   id,
-                date: workoutDate,
+            if date == nil {
+                date = fallbackFormatter.date(from: dateStr)
+            }
+            if date == nil {
+                print("[CSVWorkoutParser] invalid date:", dateStr)
+                continue
+            }
+            // Optionally parse TSS, CTL, ATL if present
+            let tss = Double(row["tss"] ?? "")
+            let ctl = Double(row["ctl"] ?? "")
+            let atl = Double(row["atl"] ?? "")
+            let workout = Workout(
+                id: idStr,
+                date: date!,
                 sport: sport,
-                tss:   tss,
-                ctl:   0,
-                atl:   0
+                tss: tss,
+                ctl: ctl,
+                atl: atl
             )
-            workouts.append(w)
+            workouts.append(workout)
         }
-
         print("[CSVWorkoutParser] Parsed \(workouts.count) workouts.")
         return workouts
     }
