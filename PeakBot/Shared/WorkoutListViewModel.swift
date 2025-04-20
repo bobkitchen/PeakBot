@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 @MainActor
 final class WorkoutListViewModel: ObservableObject {
@@ -23,10 +24,7 @@ final class WorkoutListViewModel: ObservableObject {
         self.service = service
     }
 
-    // Convenience init – the app calls this one
-    convenience init() {
-        self.init(service: .shared)
-    }
+    // Convenience init removed: always inject the service dependency from above.
 
     // MARK: – Public API ------------------------------------------------------
 

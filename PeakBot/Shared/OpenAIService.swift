@@ -2,18 +2,29 @@
 //  OpenAIService.swift
 //  PeakBot
 //
+//  Created by Bob Kitchen on 4/20/25.
+//
+
+
+//
+//  OpenAIService.swift
+//  PeakBot
+//
 
 import Foundation
-import SwiftUI
+import Observation                         // Swift 6
 
 @MainActor
 final class OpenAIService: ObservableObject {
 
-    static let shared = OpenAIService()
+    // MARK: – Singleton
+    @MainActor static let shared = OpenAIService()    // public & actor‑isolated
+
     private init() { }
 
-    // stub – implement when you add Chat tab back
-    func send(prompt: String) async throws -> String {
-        return "🤖  Not wired yet."
+    // MARK: – Simple echo mock (replace with real networking later)
+    func send(_ prompt: String) async throws -> String {
+        try await Task.sleep(for: .seconds(0.4))
+        return "Echo: \(prompt)"
     }
 }

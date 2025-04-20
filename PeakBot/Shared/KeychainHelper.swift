@@ -2,35 +2,41 @@
 //  KeychainHelper.swift
 //  PeakBot
 //
-//  Created by Bob Kitchen on 20 Apr 2025.
+//  Created by Bob Kitchen on 4/20/25.
+//
+
+
+//
+//  KeychainHelper.swift
+//  PeakBot
+//
+//  Provides a tiny wrapper around Kishikawa Katsumi’s KeychainAccess
 //
 
 import Foundation
-import KeychainAccess          // ← Swift‑PM package we added
+import KeychainAccess                    // ← SPM package
 
-/// All key‑value secrets live here.
-/// Because Swift 6 enforces actor isolation for `@MainActor` singletons
-/// we expose a *value* (`shared`) rather than static vars.
-@MainActor
-final class KeychainHelper: ObservableObject {
+/// All app‑wide secrets live under this service name.
+private let kc = Keychain(service: "PeakBot.Keys")
 
-    // MARK: – Singleton
-    static let shared = KeychainHelper()      // <— use this everywhere
-    private init() { }
-
-    // MARK: – Keys
-    private let kc = Keychain(service: "PeakBot.Keys")
-
-    @Published var intervalsApiKey: String? {
-        get { try? kc["api_key"]               }
-        set {     kc["api_key"] = newValue     }
+enum KeychainHelper {
+    // MARK: – Stored keys
+    private enum K {
+        static let apiKey   = "tp_api"
+        static let athlete  = "tp_id"
     }
 
-    @Published var athleteID:        String? {
-        get { try? kc["athlete_id"]           }
-        set {     kc["athlete_id"] = newValue }
+    // MARK: – Typed accessors
+    static var intervalsApiKey: String? {
+        get { try? kc.get(K.apiKey) }
+        set { kc[K.apiKey] = newValue }
     }
 
-    /// Helper for onboarding
-    var hasAllKeys: Bool { intervalsApiKey != nil && athleteID != nil }
+    static var athleteID: String? {
+        get { try? kc.get(K.athlete) }
+        set { kc[K.athlete] = newValue }
+    }
+
+    /// `true` only when both credentials are present.
+    static var hasAllKeys: Bool { intervalsApiKey != nil && athleteID != nil }
 }

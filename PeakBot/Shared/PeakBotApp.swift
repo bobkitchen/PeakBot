@@ -11,12 +11,12 @@ import SwiftUI
 struct PeakBotApp: App {
 
     // MARK: – Singleton services  (one instance for the whole app)
-    @StateObject private var intervalSvc = IntervalsAPIService.shared
+    @State private var intervalSvc: IntervalsAPIService? = IntervalsAPIService.makeShared()
     @StateObject private var openAISvc   = OpenAIService.shared   // ← now ObservableObject
 
     // MARK: – View‑models
-    @StateObject private var dashboardVM   = DashboardViewModel(service: .shared)
-    @StateObject private var workoutListVM = WorkoutListViewModel()
+    @State private var dashboardVM: DashboardViewModel? = nil
+    @State private var workoutListVM: WorkoutListViewModel? = nil
     @StateObject private var chatVM        = ChatViewModel(service: OpenAIService.shared)
 
     // Show Settings sheet immediately when API credentials are missing
@@ -25,15 +25,25 @@ struct PeakBotApp: App {
     // MARK: – Body
     var body: some Scene {
         WindowGroup {
-            RootTabView()                      // Dashboard | Workouts | Chat
-                // Inject services & VMs into the environment so sub‑views can access them
-                .environmentObject(intervalSvc)
-                .environmentObject(openAISvc)
-                .environmentObject(dashboardVM)
-                .environmentObject(workoutListVM)
-                .environmentObject(chatVM)
-                // On‑boarding sheet
-                .sheet(isPresented: $showSettings) { SettingsView() }
+            if let intervalSvc = intervalSvc,
+               let dashboardVM = dashboardVM,
+               let workoutListVM = workoutListVM {
+                RootTabView()
+                    .environmentObject(intervalSvc)
+                    .environmentObject(openAISvc)
+                    .environmentObject(dashboardVM)
+                    .environmentObject(workoutListVM)
+                    .environmentObject(chatVM)
+            } else {
+                SettingsView()
+                    .onDisappear {
+                        if let svc = IntervalsAPIService.makeShared() {
+                            intervalSvc = svc
+                            dashboardVM = DashboardViewModel(service: svc)
+                            workoutListVM = WorkoutListViewModel(service: svc)
+                        }
+                    }
+            }
         }
     }
 }
