@@ -1,38 +1,73 @@
-import Foundation
+ import Foundation
+import SwiftCSV
 
 enum CSVWorkoutParser {
+    /// Parse the Intervals.icu CSV into our `[Workout]`
+    static func parse(_ csvText: String) throws -> [Workout] {
+        // 1) explicitly pick the “Named” row view
+        let csvFile = try CSV<Named>(string: csvText)
 
-    /// VERY naive CSV parser good enough for the demo – returns 0 workouts if the CSV header isn’t what we expect.
-    static func parse(_ csv: String) throws -> [Workout] {
-        let rows = csv.split(separator: "\n")
-        guard rows.count > 1 else { return [] }
-        let header = rows.first!.split(separator: ",").map(String.init)
-        guard let idIdx = header.firstIndex(of: "id"),
-              let dateIdx = header.firstIndex(of: "start_time_local"),
-              let sportIdx = header.firstIndex(of: "sport"),
-              let tssIdx = header.firstIndex(of: "tss")
-        else {
-            print("[CSVWorkoutParser] Could not find required columns in header: \(header)")
-            return []
+        // 2) dump the header once so you can see what really came back
+        if let header = csvFile.header as? [String] {
+            print("[CSVWorkoutParser] header columns →", header)
         }
 
         var workouts: [Workout] = []
-        let fmt = ISO8601DateFormatter()
-        fmt.formatOptions = [.withInternetDateTime, .withFractionalSeconds, .withColonSeparatorInTime]
-        for line in rows.dropFirst() {
-            let cols = line.split(separator: ",").map(String.init)
-            guard cols.count >= header.count else { continue }
-            guard let date = fmt.date(from: cols[dateIdx]) else {
-                print("[CSVWorkoutParser] Could not parse date: \(cols[dateIdx])")
+
+        // 3) try your known‑good date formats
+        let dateFormats = [
+            "yyyy-MM-dd'T'HH:mm:ssXXXXX",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd HH:mm",
+            "yyyy-MM-dd"
+        ]
+
+        for (i, row) in csvFile.rows.enumerated() {
+            // Debug: Print the first 5 rows to verify field content
+            if i < 5 { print("[CSVWorkoutParser] Row \(i):", row) }
+            let idRaw = row["id"] ?? ""
+            let typeRaw = row["type"] ?? ""
+            let tssRaw = row["tss"] ?? ""
+            let id = idRaw.trimmingCharacters(in: .whitespacesAndNewlines)
+            let sport = typeRaw.trimmingCharacters(in: .whitespacesAndNewlines)
+            let tssStr = tssRaw.trimmingCharacters(in: .whitespacesAndNewlines)
+            if i < 5 {
+                print("[CSVWorkoutParser] Row \(i) fields: id=\(id), type=\(sport), tss=\(tssStr)")
+            }
+            guard !id.isEmpty, !sport.isEmpty, let tss = Double(tssStr) else {
+                print("[CSVWorkoutParser] Skipping row \(i): missing or invalid required fields")
                 continue
             }
-            let w = Workout(id: cols[idIdx],
-                            date: date,
-                            sport: cols[sportIdx],
-                            tss: Double(cols[tssIdx]) ?? 0,
-                            ctl: 0, atl: 0)
+
+            // pick “start_date_local” if present
+            let dateString = (row["start_date_local"] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            // try to parse into Date
+            let date = dateFormats.compactMap { fmt -> Date? in
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "en_US_POSIX")
+                df.dateFormat = fmt
+                return df.date(from: dateString)
+            }.first
+
+            if date == nil {
+                print("[CSVWorkoutParser] ⚠️ could not parse date for row \(i): \(dateString)")
+            }
+            guard let workoutDate = date else { continue }
+
+            // build and collect
+            let w = Workout(
+                id:   id,
+                date: workoutDate,
+                sport: sport,
+                tss:   tss,
+                ctl:   0,
+                atl:   0
+            )
             workouts.append(w)
         }
+
+        print("[CSVWorkoutParser] Parsed \(workouts.count) workouts.")
         return workouts
     }
 }
