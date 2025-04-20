@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7A41FD3C2DB43C68001D48F4 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 7A41FD3B2DB43C68001D48F4 /* KeychainAccess */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7A41FC992DB42FC9001D48F4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +25,29 @@
 			remoteGlobalIDString = 7A41FC832DB42FC8001D48F4;
 			remoteInfo = PeakBot;
 		};
+		7A41FCEA2DB43337001D48F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A41FC7C2DB42FC8001D48F4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A41FCD62DB43337001D48F4;
+			remoteInfo = PeakBotMac;
+		};
+		7A41FCF42DB43337001D48F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A41FC7C2DB42FC8001D48F4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A41FCD62DB43337001D48F4;
+			remoteInfo = PeakBotMac;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		7A41FC842DB42FC8001D48F4 /* PeakBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeakBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A41FC982DB42FC9001D48F4 /* PeakBotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeakBotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A41FCA22DB42FC9001D48F4 /* PeakBotUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeakBotUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A41FCD72DB43337001D48F4 /* PeakBotMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeakBotMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A41FCE92DB43337001D48F4 /* PeakBotMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeakBotMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A41FCF32DB43337001D48F4 /* PeakBotMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeakBotMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -65,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A41FD3C2DB43C68001D48F4 /* KeychainAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +98,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7A41FC9F2DB42FC9001D48F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCD42DB43337001D48F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCE62DB43337001D48F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCF02DB43337001D48F4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -101,6 +144,9 @@
 				7A41FC842DB42FC8001D48F4 /* PeakBot.app */,
 				7A41FC982DB42FC9001D48F4 /* PeakBotTests.xctest */,
 				7A41FCA22DB42FC9001D48F4 /* PeakBotUITests.xctest */,
+				7A41FCD72DB43337001D48F4 /* PeakBotMac.app */,
+				7A41FCE92DB43337001D48F4 /* PeakBotMacTests.xctest */,
+				7A41FCF32DB43337001D48F4 /* PeakBotMacUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,6 +171,7 @@
 			);
 			name = PeakBot;
 			packageProductDependencies = (
+				7A41FD3B2DB43C68001D48F4 /* KeychainAccess */,
 			);
 			productName = PeakBot;
 			productReference = 7A41FC842DB42FC8001D48F4 /* PeakBot.app */;
@@ -176,6 +223,65 @@
 			productReference = 7A41FCA22DB42FC9001D48F4 /* PeakBotUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		7A41FCD62DB43337001D48F4 /* PeakBotMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A41FCFB2DB43338001D48F4 /* Build configuration list for PBXNativeTarget "PeakBotMac" */;
+			buildPhases = (
+				7A41FCD32DB43337001D48F4 /* Sources */,
+				7A41FCD42DB43337001D48F4 /* Frameworks */,
+				7A41FCD52DB43337001D48F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PeakBotMac;
+			packageProductDependencies = (
+			);
+			productName = PeakBotMac;
+			productReference = 7A41FCD72DB43337001D48F4 /* PeakBotMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7A41FCE82DB43337001D48F4 /* PeakBotMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A41FCFE2DB43338001D48F4 /* Build configuration list for PBXNativeTarget "PeakBotMacTests" */;
+			buildPhases = (
+				7A41FCE52DB43337001D48F4 /* Sources */,
+				7A41FCE62DB43337001D48F4 /* Frameworks */,
+				7A41FCE72DB43337001D48F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A41FCEB2DB43337001D48F4 /* PBXTargetDependency */,
+			);
+			name = PeakBotMacTests;
+			packageProductDependencies = (
+			);
+			productName = PeakBotMacTests;
+			productReference = 7A41FCE92DB43337001D48F4 /* PeakBotMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7A41FCF22DB43337001D48F4 /* PeakBotMacUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A41FD012DB43338001D48F4 /* Build configuration list for PBXNativeTarget "PeakBotMacUITests" */;
+			buildPhases = (
+				7A41FCEF2DB43337001D48F4 /* Sources */,
+				7A41FCF02DB43337001D48F4 /* Frameworks */,
+				7A41FCF12DB43337001D48F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A41FCF52DB43337001D48F4 /* PBXTargetDependency */,
+			);
+			name = PeakBotMacUITests;
+			packageProductDependencies = (
+			);
+			productName = PeakBotMacUITests;
+			productReference = 7A41FCF32DB43337001D48F4 /* PeakBotMacUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -197,6 +303,17 @@
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 7A41FC832DB42FC8001D48F4;
 					};
+					7A41FCD62DB43337001D48F4 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					7A41FCE82DB43337001D48F4 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 7A41FCD62DB43337001D48F4;
+					};
+					7A41FCF22DB43337001D48F4 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 7A41FCD62DB43337001D48F4;
+					};
 				};
 			};
 			buildConfigurationList = 7A41FC7F2DB42FC8001D48F4 /* Build configuration list for PBXProject "PeakBot" */;
@@ -208,6 +325,9 @@
 			);
 			mainGroup = 7A41FC7B2DB42FC8001D48F4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7A41FD3A2DB43C68001D48F4 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7A41FC852DB42FC8001D48F4 /* Products */;
 			projectDirPath = "";
@@ -216,6 +336,9 @@
 				7A41FC832DB42FC8001D48F4 /* PeakBot */,
 				7A41FC972DB42FC9001D48F4 /* PeakBotTests */,
 				7A41FCA12DB42FC9001D48F4 /* PeakBotUITests */,
+				7A41FCD62DB43337001D48F4 /* PeakBotMac */,
+				7A41FCE82DB43337001D48F4 /* PeakBotMacTests */,
+				7A41FCF22DB43337001D48F4 /* PeakBotMacUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +359,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7A41FCA02DB42FC9001D48F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCD52DB43337001D48F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCE72DB43337001D48F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCF12DB43337001D48F4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +410,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A41FCD32DB43337001D48F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCE52DB43337001D48F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A41FCEF2DB43337001D48F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +443,16 @@
 			isa = PBXTargetDependency;
 			target = 7A41FC832DB42FC8001D48F4 /* PeakBot */;
 			targetProxy = 7A41FCA32DB42FC9001D48F4 /* PBXContainerItemProxy */;
+		};
+		7A41FCEB2DB43337001D48F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A41FCD62DB43337001D48F4 /* PeakBotMac */;
+			targetProxy = 7A41FCEA2DB43337001D48F4 /* PBXContainerItemProxy */;
+		};
+		7A41FCF52DB43337001D48F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A41FCD62DB43337001D48F4 /* PeakBotMac */;
+			targetProxy = 7A41FCF42DB43337001D48F4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -568,6 +743,138 @@
 			};
 			name = Release;
 		};
+		7A41FCFC2DB43338001D48F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PeakBotMac/PeakBotMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZW6EQ2JWKC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobk.PeakBotMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7A41FCFD2DB43338001D48F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PeakBotMac/PeakBotMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZW6EQ2JWKC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobk.PeakBotMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		7A41FCFF2DB43338001D48F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZW6EQ2JWKC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobk.PeakBotMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PeakBotMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PeakBotMac";
+			};
+			name = Debug;
+		};
+		7A41FD002DB43338001D48F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZW6EQ2JWKC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobk.PeakBotMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PeakBotMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PeakBotMac";
+			};
+			name = Release;
+		};
+		7A41FD022DB43338001D48F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZW6EQ2JWKC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobk.PeakBotMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = PeakBotMac;
+			};
+			name = Debug;
+		};
+		7A41FD032DB43338001D48F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZW6EQ2JWKC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobk.PeakBotMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = PeakBotMac;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -607,7 +914,53 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		7A41FCFB2DB43338001D48F4 /* Build configuration list for PBXNativeTarget "PeakBotMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A41FCFC2DB43338001D48F4 /* Debug */,
+				7A41FCFD2DB43338001D48F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A41FCFE2DB43338001D48F4 /* Build configuration list for PBXNativeTarget "PeakBotMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A41FCFF2DB43338001D48F4 /* Debug */,
+				7A41FD002DB43338001D48F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A41FD012DB43338001D48F4 /* Build configuration list for PBXNativeTarget "PeakBotMacUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A41FD022DB43338001D48F4 /* Debug */,
+				7A41FD032DB43338001D48F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7A41FD3A2DB43C68001D48F4 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7A41FD3B2DB43C68001D48F4 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A41FD3A2DB43C68001D48F4 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7A41FC7C2DB42FC8001D48F4 /* Project object */;
 }
