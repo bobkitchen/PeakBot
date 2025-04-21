@@ -60,14 +60,6 @@ struct DashboardView: View {
         .onAppear {
             print("[DashboardView] onAppear. dashboardVM: \(dashboardVM)")
             Task {
-                await dashboardVM.refresh()
-                if dashboardVM.fitness.isEmpty {
-                    dashboardError = "No fitness data loaded. Check credentials or network."
-                } else {
-                    dashboardError = nil
-                }
-            }
-            Task {
                 await workoutListVM.refresh()
                 if workoutListVM.workouts.isEmpty {
                     workoutsError = workoutListVM.errorMessage ?? "No workouts loaded."

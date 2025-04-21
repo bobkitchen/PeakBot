@@ -9,21 +9,29 @@ import SwiftUI
 
 @main
 struct PeakBotApp: App {
-
     // MARK: – Singleton services  (one instance for the whole app)
     @State private var intervalSvc: IntervalsAPIService? = IntervalsAPIService.makeShared()
     @StateObject private var openAISvc   = OpenAIService.shared   // ← now ObservableObject
 
     // MARK: – View‑models
-    @State private var dashboardVM: DashboardViewModel? = IntervalsAPIService.makeShared().map { DashboardViewModel(service: $0) }
-    @State private var workoutListVM: WorkoutListViewModel? = IntervalsAPIService.makeShared().map { WorkoutListViewModel(service: $0) }
+    @State private var dashboardVM: DashboardViewModel? = nil
+    @State private var workoutListVM: WorkoutListViewModel? = nil
     @StateObject private var chatVM        = ChatViewModel(service: OpenAIService.shared)
 
     // Temporarily disable Settings sheet popup until data flow is confirmed
     @State private var showSettings = false
-
     // For showing settings from menu
     @State private var showSettingsSheet = false
+
+    // MARK: – Custom initializer to wire view models
+    init() {
+        let svc = IntervalsAPIService.makeShared()
+        if let svc = svc {
+            let dashVM = DashboardViewModel(service: svc)
+            self._dashboardVM = State(initialValue: dashVM)
+            self._workoutListVM = State(initialValue: WorkoutListViewModel(service: svc, dashboardVM: dashVM))
+        }
+    }
 
     // MARK: – Body
     var body: some Scene {
@@ -37,13 +45,8 @@ struct PeakBotApp: App {
                     .environmentObject(dashboardVM)
                     .environmentObject(workoutListVM)
                     .environmentObject(chatVM)
-                    // Temporarily disable SettingsView sheet
-                    //.sheet(isPresented: $showSettingsSheet) {
-                    //    SettingsView()
-                    //}
             } else {
                 // Temporarily do nothing when not initialized
-                // This disables SettingsView fallback completely for debugging
             }
         }
         .commands {

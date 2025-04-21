@@ -13,15 +13,21 @@ import Combine
 final class WorkoutListViewModel: ObservableObject {
 
     // MARK: – Published state
-    @Published var workouts: [Workout] = []
+    @Published var workouts: [Workout] = [] {
+        didSet {
+            dashboardVM?.updateWorkouts(workouts)
+        }
+    }
     @Published var errorMessage: String?
 
     // MARK: – Dependency
     private let service: IntervalsAPIService
+    var dashboardVM: DashboardViewModel?
 
     // Designated initialiser (used by preview / tests too)
-    init(service: IntervalsAPIService) {
+    init(service: IntervalsAPIService, dashboardVM: DashboardViewModel? = nil) {
         self.service = service
+        self.dashboardVM = dashboardVM
     }
 
     // Convenience init removed: always inject the service dependency from above.
@@ -30,16 +36,11 @@ final class WorkoutListViewModel: ObservableObject {
 
     /// Pull the latest *daysBack* days worth of activities.
     func refresh(daysBack: Int = 14) async {
-        print("[WorkoutListViewModel] refresh() called")
+        print("[WorkoutListViewModel] refresh() called (JSON)")
         do {
-            let csv = try await fetchActivitiesCSV(daysBack: daysBack)
-            print("[WorkoutListViewModel] Got CSV (first 500 chars): \(csv.prefix(500))")
-            if let firstLine = csv.split(separator: "\n").first {
-                print("[WorkoutListViewModel] CSV Header: \(firstLine)")
-            }
-            let parsed  = try CSVWorkoutParser.parse(csv)
-            print("[WorkoutListViewModel] Parsed \(parsed.count) workouts.") // DEBUG
-            workouts    = parsed
+            let parsed = try await service.fetchWorkoutsJSON(daysBack: daysBack)
+            print("[WorkoutListViewModel] Parsed \(parsed.count) workouts from JSON.") // DEBUG
+            workouts = parsed
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription

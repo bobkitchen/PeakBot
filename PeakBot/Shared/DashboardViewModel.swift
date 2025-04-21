@@ -21,7 +21,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var fitness: [FitnessPoint] = []
     @Published var workouts: [Workout] = [] {
         didSet {
-            recalculateFitness()
+            // Optionally update fitness if you want to recalc from workouts, but we now fetch from API
         }
     }
 
@@ -32,7 +32,7 @@ final class DashboardViewModel: ObservableObject {
     // MARK: – Public API
     func refresh(days: Int = 90) async {
         do {
-            let pts = try await service.fetchFitnessTrend(daysBack: days)
+            let pts = try await service.fetchWellnessJSON(daysBack: days)
             fitness = pts.reversed()          // oldest‑first for charts
         } catch {
             print("⚠️ Dashboard refresh failed:", error)
@@ -41,10 +41,5 @@ final class DashboardViewModel: ObservableObject {
 
     func updateWorkouts(_ newWorkouts: [Workout]) {
         self.workouts = newWorkouts
-    }
-
-    private func recalculateFitness() {
-        // Use the last 90 days of workouts for trend calculation
-        fitness = FitnessPointCalculator.trend(from: workouts, days: 90)
     }
 }

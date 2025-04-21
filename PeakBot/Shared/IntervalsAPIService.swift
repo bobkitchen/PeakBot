@@ -40,7 +40,7 @@ final class IntervalsAPIService: ObservableObject {
 
     // MARK: – Credentials (hardcoded for testing)
     private let apiKey:    String = "3ntigdu81v3u5chn07ivi7z74"
-    private let athleteID: String = "0"
+    private let athleteID: String = "327607" // <-- Set to your actual athlete ID
     private let baseURL    = "https://intervals.icu/api/v1"
 
     // MARK: – Shared factory method
@@ -59,6 +59,49 @@ final class IntervalsAPIService: ObservableObject {
         return FitnessPointCalculator.trend(from: wouts, days: daysBack)
     }
 
+    // MARK: – Fetch fitness trend as JSON (direct from Intervals.icu)
+    // DISABLED: This endpoint does not exist or is not available for API users.
+    func fetchFitnessTrendJSON(daysBack: Int = 90) async throws -> [FitnessPoint] {
+        fatalError("The /fitness endpoint is not available via the Intervals.icu public API. Use fetchWellnessJSON instead.")
+    }
+
+    // MARK: – Fetch wellness (CTL/ATL/TSB) as JSON from Intervals.icu
+    func fetchWellnessJSON(daysBack: Int = 90) async throws -> [FitnessPoint] {
+        let url = "\(baseURL)/athlete/\(athleteID)/wellness"
+        guard var comps = URLComponents(string: url) else { throw ServiceError.invalidURL }
+        let calendar = Calendar.current
+        let today = Date()
+        let oldestDate = calendar.date(byAdding: .day, value: -daysBack+1, to: today) ?? today
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let oldestString = formatter.string(from: oldestDate)
+        comps.queryItems = [
+            .init(name: "oldest", value: oldestString)
+        ]
+        print("[DEBUG] Will request WELLNESS endpoint:")
+        print("[DEBUG] URL: \(comps.url?.absoluteString ?? "nil")")
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        // Decode as array of wellness points, then map to FitnessPoint
+        struct WellnessPoint: Decodable {
+            let date: Date
+            let icu_ctl: Double?
+            let icu_atl: Double?
+        }
+        let data = try await request(comps)
+        print("[DEBUG] Raw data: \(String(data: data, encoding: .utf8)?.prefix(500) ?? "nil")")
+        let rawPoints = try decoder.decode([WellnessPoint].self, from: data)
+        var lastCtl = 0.0, lastAtl = 0.0
+        let fitnessPoints = rawPoints.compactMap { w -> FitnessPoint? in
+            let ctl = w.icu_ctl ?? lastCtl
+            let atl = w.icu_atl ?? lastAtl
+            lastCtl = ctl
+            lastAtl = atl
+            return FitnessPoint(id: UUID(), date: w.date, ctl: ctl, atl: atl, tsb: ctl - atl)
+        }
+        return fitnessPoints
+    }
+
     // MARK: – Download workouts CSV
     func fetchActivitiesCSV(daysBack: Int = 14) async throws -> String {
         let url = "\(baseURL)/athlete/\(athleteID)/activities.csv"
@@ -68,6 +111,17 @@ final class IntervalsAPIService: ObservableObject {
         let data = try await request(comps)
         guard let csv = String(data: data, encoding: .utf8) else { throw ServiceError.csvParsing }
         return csv
+    }
+
+    // MARK: – Fetch workouts as JSON (with TSS, etc.)
+    func fetchWorkoutsJSON(daysBack: Int = 14) async throws -> [Workout] {
+        let url = "\(baseURL)/athlete/\(athleteID)/activities"
+        guard var comps = URLComponents(string: url) else { throw ServiceError.invalidURL }
+        comps.queryItems = [ .init(name: "days", value: String(daysBack)) ]
+        let data = try await request(comps)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode([Workout].self, from: data)
     }
 
     // MARK: – HTTP plumbing

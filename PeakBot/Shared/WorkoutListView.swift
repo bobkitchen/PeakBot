@@ -21,19 +21,36 @@ struct WorkoutDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(workout.sport).font(.title2).bold()
             Text("Date: \(workout.date, formatter: dateFormatter)")
-            if let tss = workout.tss {
-                Text("TSS: \(tss, specifier: "%.1f")")
+            Group {
+                if let tss = workout.tss { Text("TSS: \(tss, specifier: "%.1f")") }
+                if let ctl = workout.ctl { Text("CTL: \(ctl, specifier: "%.1f")") }
+                if let atl = workout.atl { Text("ATL: \(atl, specifier: "%.1f")") }
             }
-            if let ctl = workout.ctl {
-                Text("CTL: \(ctl, specifier: "%.1f")")
-            }
-            if let atl = workout.atl {
-                Text("ATL: \(atl, specifier: "%.1f")")
+            Divider()
+            // Dynamically show all other available fields
+            ForEach(workout.allFields, id: \.0) { field, value in
+                if value != nil && !(field == "tss" || field == "ctl" || field == "atl" || field == "sport" || field == "date" || field == "id") {
+                    Text("\(field.capitalized): \(value!)")
+                }
             }
             Spacer()
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+extension Workout {
+    // Returns all fields as [name: value] for dynamic detail rendering
+    var allFields: [(String, Any?)] {
+        return [
+            ("id", id),
+            ("date", dateFormatter.string(from: date)),
+            ("sport", sport),
+            ("tss", tss),
+            ("ctl", ctl),
+            ("atl", atl)
+        ]
     }
 }
 
