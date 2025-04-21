@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A1DFE102DB67E200087330B /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 7A1DFE0F2DB67E200087330B /* Swifter */; };
+		7A1DFE122DB67E200087330B /* Example in Frameworks */ = {isa = PBXBuildFile; productRef = 7A1DFE112DB67E200087330B /* Example */; };
 		7A41FD3C2DB43C68001D48F4 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 7A41FD3B2DB43C68001D48F4 /* KeychainAccess */; };
 		7A54CB692DB5675A00BCA894 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 7A54CB682DB5675A00BCA894 /* SwiftCSV */; };
 /* End PBXBuildFile section */
@@ -87,8 +89,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A1DFE102DB67E200087330B /* Swifter in Frameworks */,
 				7A41FD3C2DB43C68001D48F4 /* KeychainAccess in Frameworks */,
 				7A54CB692DB5675A00BCA894 /* SwiftCSV in Frameworks */,
+				7A1DFE122DB67E200087330B /* Example in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +179,8 @@
 			packageProductDependencies = (
 				7A41FD3B2DB43C68001D48F4 /* KeychainAccess */,
 				7A54CB682DB5675A00BCA894 /* SwiftCSV */,
+				7A1DFE0F2DB67E200087330B /* Swifter */,
+				7A1DFE112DB67E200087330B /* Example */,
 			);
 			productName = PeakBot;
 			productReference = 7A41FC842DB42FC8001D48F4 /* PeakBot.app */;
@@ -331,6 +337,7 @@
 			packageReferences = (
 				7A41FD3A2DB43C68001D48F4 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				7A54CB672DB5675A00BCA894 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+				7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7A41FC852DB42FC8001D48F4 /* Products */;
@@ -948,6 +955,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
 		7A41FD3A2DB43C68001D48F4 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
@@ -967,6 +982,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7A1DFE0F2DB67E200087330B /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+		7A1DFE112DB67E200087330B /* Example */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Example;
+		};
 		7A41FD3B2DB43C68001D48F4 /* KeychainAccess */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7A41FD3A2DB43C68001D48F4 /* XCRemoteSwiftPackageReference "KeychainAccess" */;

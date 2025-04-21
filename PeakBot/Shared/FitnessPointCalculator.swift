@@ -21,7 +21,7 @@ enum FitnessPointCalculator {
         for w in sorted {
             guard let date = w.date else { continue }
             let day = Calendar.current.startOfDay(for: date)
-            dailyTSS[day, default: 0] += w.tss ?? 0
+            dailyTSS[day, default: 0] += w.tss ?? 0 // Use tss as proxy for TSS
         }
         // CTL/ATL impulse-response params
         let ctlTimeConstant = 42.0

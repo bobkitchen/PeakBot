@@ -103,16 +103,35 @@ final class IntervalsAPIService: ObservableObject {
     }
 
     // MARK: – Fetch workouts as JSON (with TSS, etc.)
-    func fetchWorkoutsJSON(oldest: String = "2024-01-01") async throws -> [Workout] {
-        let url = "https://intervals.icu/api/v1/athlete/0/activities"
+    func fetchWorkoutsJSON(daysBack: Int = 14) async throws -> [Workout] {
+        let url = "https://intervals.icu/api/v1/athlete/0/activities" // Use '0' for self
         guard var comps = URLComponents(string: url) else { throw ServiceError.invalidURL }
-        comps.queryItems = [ .init(name: "oldest", value: oldest) ]
+        let calendar = Calendar.current
+        let today = Date()
+        let oldestDate = calendar.date(byAdding: .day, value: -daysBack+1, to: today) ?? today
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let oldestString = formatter.string(from: oldestDate)
+        comps.queryItems = [ .init(name: "oldest", value: oldestString) ]
         let data = try await request(comps)
         if let raw = String(data: data, encoding: .utf8) {
             print("[IntervalsAPIService] Raw JSON response: \(raw)")
         }
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let str = try container.decode(String.self)
+            let fixed = str.contains("Z") ? str : str + "Z"
+            guard let d = iso.date(from: fixed) else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Invalid date: \(str)"
+                )
+            }
+            return d
+        }
         return try decoder.decode([Workout].self, from: data)
     }
 
@@ -123,7 +142,6 @@ final class IntervalsAPIService: ObservableObject {
 
     // MARK: – HTTP plumbing
     private func request(_ comps: URLComponents) async throws -> Data {
-        // Patch athlete ID logic: use "me" if empty or "me", else use numeric
         var comps = comps
         if let idx = comps.path.range(of: "/athlete/") {
             let rest = comps.path[idx.upperBound...]
@@ -140,9 +158,7 @@ final class IntervalsAPIService: ObservableObject {
 
         guard let url = comps.url else { throw ServiceError.invalidURL }
         var req = URLRequest(url: url)
-        let credentials = "API_KEY:\(apiKey)"
-        let authHeader = "Basic " + Data(credentials.utf8).base64EncodedString()
-        req.setValue(authHeader, forHTTPHeaderField: "Authorization")
+        req.setValue(apiKey, forHTTPHeaderField: "Api-Key")
 
         let (data, resp) = try await URLSession.shared.data(for: req)
         guard let http = resp as? HTTPURLResponse else { throw ServiceError.invalidURL }

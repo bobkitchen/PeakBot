@@ -18,34 +18,99 @@ final class WorkoutListViewModel: ObservableObject {
             dashboardVM?.updateWorkouts(workouts)
         }
     }
+    @Published var detailedWorkouts: [StravaService.StravaActivityDetail] = []
     @Published var errorMessage: String?
+    @Published var stravaRateLimitHit: Bool = false
 
     // MARK: – Dependency
-    private let service: IntervalsAPIService
     var dashboardVM: DashboardViewModel?
+    var stravaService: StravaService?
+
+    // TODO: Replace with StravaService once implemented
+    // private let service: IntervalsAPIService
+    // init(service: IntervalsAPIService, dashboardVM: DashboardViewModel? = nil) { ... }
+
+    // Placeholder for Strava integration
+    // Add StravaService reference in next phase
 
     // Designated initialiser (used by preview / tests too)
-    init(service: IntervalsAPIService, dashboardVM: DashboardViewModel? = nil) {
-        self.service = service
+    init(dashboardVM: DashboardViewModel? = nil) {
         self.dashboardVM = dashboardVM
     }
 
     // MARK: – Public API ------------------------------------------------------
 
     /// Pull the latest workouts from the specified date.
-    func refresh(oldest: String = "2024-01-01") async {
-        print("[WorkoutListViewModel] refresh() called (JSON)")
+    func refresh(daysBack: Int = 30) async {
+        print("[WorkoutListViewModel] refresh() called (Strava)")
+        guard let stravaService = stravaService else {
+            errorMessage = "Strava service unavailable"
+            return
+        }
         do {
-            let parsed = try await service.fetchWorkoutsJSON(oldest: oldest)
-            print("[WorkoutListViewModel] Parsed \(parsed.count) workouts from JSON.") // DEBUG
-            workouts = parsed
+            let activities = try await stravaService.fetchActivities(perPage: 50)
+            // Convert StravaActivitySummary to Workout
+            let workouts = activities.map { activity in
+                Workout(
+                    id: String(activity.id),
+                    startDateLocal: activity.startDateLocal,
+                    type: activity.type,
+                    tss: nil, ctl: nil, atl: nil, // Strava doesn't provide these directly
+                    averageHR: activity.averageHeartrate,
+                    maxHR: activity.maxHeartrate,
+                    averagePower: activity.averageWatts
+                )
+            }
+            self.workouts = workouts
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
+    /// Pull the latest detailed workouts from Strava for the last 90 days.
+    func refreshDetailed() async {
+        stravaRateLimitHit = false
+        print("[WorkoutListViewModel] refreshDetailed() called (Strava)")
+        guard let stravaService = stravaService else {
+            errorMessage = "Strava service unavailable"
+            return
+        }
+        do {
+            let details = try await stravaService.fetchDetailedActivities(lastNDays: 90)
+            self.detailedWorkouts = details
+            errorMessage = nil
+        } catch {
+            if let nsError = error as NSError?,
+               nsError.localizedDescription.contains("Rate Limit Exceeded") {
+                self.stravaRateLimitHit = true
+            } else {
+                self.errorMessage = error.localizedDescription
+            }
+        }
+    }
+
     // MARK: – Private plumbing -----------------------------------------------
     // Legacy CSV workflow removed. No longer needed.
 
+}
+
+extension Workout {
+    // Returns all fields as [name: value] for dynamic detail rendering
+    var allFields: [(String, Any?)] {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return [
+            ("id", id),
+            ("date", date != nil ? formatter.string(from: date!) : nil),
+            ("type", type),
+            ("tss", tss),
+            ("ctl", ctl),
+            ("atl", atl),
+            ("maxHR", maxHR),
+            ("averageHR", averageHR),
+            ("averagePower", averagePower)
+        ]
+    }
 }

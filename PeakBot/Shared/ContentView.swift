@@ -1,17 +1,29 @@
-
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var stravaService: StravaService
+    @Binding var showSettingsSheet: Bool
+    @EnvironmentObject var dashboardVM: DashboardViewModel
+    @EnvironmentObject var workoutListVM: WorkoutListViewModel
+
     var body: some View {
-        VStack(spacing: 32) {
-            Text("PeakBot baseline")
-                .font(.title)
-            Text("Start wiring the UI…")
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        RootTabView()
+            .sheet(isPresented: $showSettingsSheet) {
+                SettingsView(stravaService: stravaService)
+            }
+            .onAppear {
+                // Wire up StravaService to WorkoutListViewModel
+                workoutListVM.stravaService = stravaService
+                // Trigger batch download on startup
+                Task {
+                    await workoutListVM.refreshDetailed()
+                }
+            }
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(stravaService: StravaService(), showSettingsSheet: .constant(false))
+        .environmentObject(DashboardViewModel())
+        .environmentObject(WorkoutListViewModel())
 }

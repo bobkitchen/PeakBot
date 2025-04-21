@@ -121,14 +121,17 @@ struct WorkoutRow: View {
             }
             Spacer()
             VStack(alignment: .trailing) {
-                if let tss = workout.tss {
-                    Text("TSS: \(tss, specifier: "%.0f")")
-                }
                 if let ctl = workout.ctl {
                     Text("CTL: \(ctl, specifier: "%.1f")")
                 }
                 if let atl = workout.atl {
                     Text("ATL: \(atl, specifier: "%.1f")")
+                }
+                if let maxHR = workout.maxHR {
+                    Text("Max HR: \(maxHR, specifier: "%.0f")")
+                }
+                if let avgHR = workout.averageHR {
+                    Text("Avg HR: \(avgHR, specifier: "%.0f")")
                 }
             }
         }

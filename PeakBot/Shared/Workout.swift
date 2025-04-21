@@ -2,18 +2,29 @@ import Foundation
 
 /// Activity model matching Intervals.icu /activities JSON response.
 struct Workout: Identifiable, Hashable, Codable {
-    let id:              Int
-    let start_date_local: String
-    let type:            String
-    let tss:             Double?
-    let ctl:             Double?
-    let atl:             Double?
-    let avg_hr:          Double?
-    let max_hr:          Double?
-    let avg_power:       Double?
-    // Add more fields as needed from the JSON response
+    let id: String
+    let startDateLocal: Date
+    let type: String
+    let tss: Double?        // aka "training load"
+    let ctl: Double?
+    let atl: Double?
+    let averageHR: Double?
+    let maxHR: Double?
+    let averagePower: Double?
 
     var date: Date? {
-        ISO8601DateFormatter().date(from: start_date_local)
+        startDateLocal
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case startDateLocal    = "start_date_local"
+        case type
+        case tss                = "icu_training_load"
+        case ctl                = "icu_ctl"
+        case atl                = "icu_atl"
+        case averageHR          = "average_heartrate"
+        case maxHR              = "max_heartrate"
+        case averagePower       = "average_watts"
     }
 }
