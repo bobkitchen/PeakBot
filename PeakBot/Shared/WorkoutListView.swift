@@ -19,8 +19,12 @@ struct WorkoutDetailView: View {
     let workout: Workout
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(workout.sport).font(.title2).bold()
-            Text("Date: \(workout.date, formatter: dateFormatter)")
+            Text(workout.type).font(.title2).bold()
+            if let date = workout.date {
+                Text("Date: \(date, formatter: dateFormatter)")
+            } else {
+                Text("Date: Invalid").foregroundColor(.red)
+            }
             Group {
                 if let tss = workout.tss { Text("TSS: \(tss, specifier: "%.1f")") }
                 if let ctl = workout.ctl { Text("CTL: \(ctl, specifier: "%.1f")") }
@@ -29,7 +33,7 @@ struct WorkoutDetailView: View {
             Divider()
             // Dynamically show all other available fields
             ForEach(workout.allFields, id: \.0) { field, value in
-                if value != nil && !(field == "tss" || field == "ctl" || field == "atl" || field == "sport" || field == "date" || field == "id") {
+                if value != nil && !(field == "tss" || field == "ctl" || field == "atl" || field == "type" || field == "date" || field == "id") {
                     Text("\(field.capitalized): \(value!)")
                 }
             }
@@ -45,8 +49,8 @@ extension Workout {
     var allFields: [(String, Any?)] {
         return [
             ("id", id),
-            ("date", dateFormatter.string(from: date)),
-            ("sport", sport),
+            ("date", date != nil ? dateFormatter.string(from: date!) : nil),
+            ("type", type),
             ("tss", tss),
             ("ctl", ctl),
             ("atl", atl)
@@ -77,8 +81,12 @@ struct WorkoutListView: View {
                     List(workoutListVM.workouts) { workout in
                         NavigationLink(destination: WorkoutDetailView(workout: workout)) {
                             VStack(alignment: .leading) {
-                                Text(workout.sport).bold()
-                                Text("Date: \(workout.date, formatter: dateFormatter)")
+                                Text(workout.type).bold()
+                                if let date = workout.date {
+                                    Text("Date: \(date, formatter: dateFormatter)")
+                                } else {
+                                    Text("Date: Invalid").foregroundColor(.red)
+                                }
                                 if let tss = workout.tss {
                                     Text("TSS: \(tss, specifier: "%.0f")")
                                 }
@@ -100,7 +108,7 @@ struct WorkoutListView: View {
         .onAppear {
             print("[WorkoutListView] onAppear. Calling refresh()...")
             Task {
-                await workoutListVM.refresh()
+                await workoutListVM.refresh(oldest: "2024-01-01")
                 dashboardVM.updateWorkouts(workoutListVM.workouts)
                 if workoutListVM.workouts.isEmpty {
                     errorMessage = workoutListVM.errorMessage ?? "No workouts loaded."

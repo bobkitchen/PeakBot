@@ -112,8 +112,12 @@ struct WorkoutRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(workout.sport).font(.subheadline).bold()
-                Text(workout.date, formatter: dateFormatter).font(.caption)
+                Text(workout.type.prefix(8)).font(.subheadline).bold()
+                if let date = workout.date {
+                    Text(date, formatter: dateFormatter).font(.caption)
+                } else {
+                    Text("Invalid date").font(.caption).foregroundColor(.red)
+                }
             }
             Spacer()
             VStack(alignment: .trailing) {

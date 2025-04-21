@@ -54,9 +54,9 @@ final class IntervalsAPIService: ObservableObject {
 
     // MARK: – Public API (called by view‑models)
     func fetchFitnessTrend(daysBack: Int = 90) async throws -> [FitnessPoint] {
-        let csv   = try await fetchActivitiesCSV(daysBack: daysBack)
-        let wouts = try CSVWorkoutParser.parse(csv)
-        return FitnessPointCalculator.trend(from: wouts, days: daysBack)
+        // JSON is now the only supported workflow
+        let fitnessPoints = try await fetchWellnessJSON(daysBack: daysBack)
+        return fitnessPoints
     }
 
     // MARK: – Fetch fitness trend as JSON (direct from Intervals.icu)
@@ -102,27 +102,24 @@ final class IntervalsAPIService: ObservableObject {
         return fitnessPoints
     }
 
-    // MARK: – Download workouts CSV
-    func fetchActivitiesCSV(daysBack: Int = 14) async throws -> String {
-        let url = "\(baseURL)/athlete/\(athleteID)/activities.csv"
-        guard var comps = URLComponents(string: url) else { throw ServiceError.invalidURL }
-        comps.queryItems = [ .init(name: "days", value: String(daysBack)) ]
-
-        let data = try await request(comps)
-        guard let csv = String(data: data, encoding: .utf8) else { throw ServiceError.csvParsing }
-        return csv
-    }
-
     // MARK: – Fetch workouts as JSON (with TSS, etc.)
-    func fetchWorkoutsJSON(daysBack: Int = 14) async throws -> [Workout] {
-        let url = "\(baseURL)/athlete/\(athleteID)/activities"
+    func fetchWorkoutsJSON(oldest: String = "2024-01-01") async throws -> [Workout] {
+        let url = "https://intervals.icu/api/v1/athlete/0/activities"
         guard var comps = URLComponents(string: url) else { throw ServiceError.invalidURL }
-        comps.queryItems = [ .init(name: "days", value: String(daysBack)) ]
+        comps.queryItems = [ .init(name: "oldest", value: oldest) ]
         let data = try await request(comps)
+        if let raw = String(data: data, encoding: .utf8) {
+            print("[IntervalsAPIService] Raw JSON response: \(raw)")
+        }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return try decoder.decode([Workout].self, from: data)
     }
+
+    // MARK: – Legacy CSV API (removed)
+    // func fetchWorkoutsCSV(daysBack: Int = 14) async throws -> [Workout] {
+    //     fatalError("CSV API is deprecated. Use fetchWorkoutsJSON instead.")
+    // }
 
     // MARK: – HTTP plumbing
     private func request(_ comps: URLComponents) async throws -> Data {

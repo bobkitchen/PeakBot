@@ -30,15 +30,13 @@ final class WorkoutListViewModel: ObservableObject {
         self.dashboardVM = dashboardVM
     }
 
-    // Convenience init removed: always inject the service dependency from above.
-
     // MARK: – Public API ------------------------------------------------------
 
-    /// Pull the latest *daysBack* days worth of activities.
-    func refresh(daysBack: Int = 14) async {
+    /// Pull the latest workouts from the specified date.
+    func refresh(oldest: String = "2024-01-01") async {
         print("[WorkoutListViewModel] refresh() called (JSON)")
         do {
-            let parsed = try await service.fetchWorkoutsJSON(daysBack: daysBack)
+            let parsed = try await service.fetchWorkoutsJSON(oldest: oldest)
             print("[WorkoutListViewModel] Parsed \(parsed.count) workouts from JSON.") // DEBUG
             workouts = parsed
             errorMessage = nil
@@ -48,10 +46,6 @@ final class WorkoutListViewModel: ObservableObject {
     }
 
     // MARK: – Private plumbing -----------------------------------------------
+    // Legacy CSV workflow removed. No longer needed.
 
-    /// Wrapper that simply forwards to the service.
-    /// *Not* private so Dashboard VM can reuse it if desired.
-    func fetchActivitiesCSV(daysBack: Int = 14) async throws -> String {
-        try await service.fetchActivitiesCSV(daysBack: daysBack)
-    }
 }
