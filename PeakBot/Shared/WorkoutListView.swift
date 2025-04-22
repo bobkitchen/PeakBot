@@ -19,28 +19,8 @@ struct WorkoutDetailView: View {
     let workout: Workout
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(workout.type).font(.title2).bold()
-            if let date = workout.date {
-                Text("Date: \(date, formatter: dateFormatter)")
-            } else {
-                Text("Date: Invalid").foregroundColor(.red)
-            }
-            Group {
-                if let ctl = workout.ctl { Text("CTL: \(ctl, specifier: "%.1f")") }
-                if let atl = workout.atl { Text("ATL: \(atl, specifier: "%.1f")") }
-                if let tss = workout.tss { Text("TSS: \(tss, specifier: "%.1f")") }
-                if let maxHR = workout.maxHR { Text("Max HR: \(maxHR, specifier: "%.0f")") }
-                if let avgHR = workout.averageHR { Text("Avg HR: \(avgHR, specifier: "%.0f")") }
-                if let avgPower = workout.averagePower { Text("Avg Power: \(avgPower, specifier: "%.0f")") }
-            }
-            Divider()
-            // Dynamically show all other available fields
-            ForEach(workout.allFields, id: \.0) { field, value in
-                if value != nil && !(field == "ctl" || field == "atl" || field == "tss" || field == "maxHR" || field == "averageHR" || field == "averagePower" || field == "type" || field == "date" || field == "id") {
-                    Text("\(field.capitalized): \(value!)")
-                }
-            }
-            Spacer()
+            Text(workout.name).font(.title2).bold()
+            Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,7 +32,7 @@ struct WorkoutListView: View {
     @EnvironmentObject var workoutListVM: WorkoutListViewModel
     @EnvironmentObject var dashboardVM: DashboardViewModel
     @State private var errorMessage: String? = nil
-    @State private var selectedWorkoutDetail: StravaService.StravaActivityDetail?
+    @State private var selectedWorkoutDetail: Workout? = nil
 
     @AppStorage("userFTP") var userFTP: Double = 250
     @AppStorage("tssEdits") var tssEditsData: Data = Data()
@@ -88,6 +68,17 @@ struct WorkoutListView: View {
         }
     }
 
+    func formatSeconds(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let secs = seconds % 60
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, secs)
+        } else {
+            return String(format: "%d:%02d", minutes, secs)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "list.bullet.rectangle")
@@ -102,55 +93,36 @@ struct WorkoutListView: View {
                 Text("⚠️ Strava API rate limit reached. Please try again in 15 minutes.")
                     .foregroundColor(.orange)
             }
-            if workoutListVM.detailedWorkouts.isEmpty {
-                Text("No detailed workouts found.")
+            if workoutListVM.workouts.isEmpty {
+                Text("No workouts found.")
             } else {
                 HStack {
-                    List(selection: $selectedWorkoutDetail) {
-                        ForEach(workoutListVM.detailedWorkouts) { workout in
-                            VStack(alignment: .leading) {
-                                Text(workout.name).bold()
-                                Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
-                                if let maxHR = workout.maxHeartrate {
-                                    Text("Max HR: \(maxHR, specifier: "%.0f")")
-                                }
-                                if let avgHR = workout.averageHeartrate {
-                                    Text("Avg HR: \(avgHR, specifier: "%.1f")")
-                                }
-                                if let avgPower = workout.averageWatts {
-                                    Text("Avg Power: \(avgPower, specifier: "%.1f")")
-                                }
-                                // TSS display and edit
-                                HStack {
-                                    Text("TSS: ")
-                                    TextField("TSS", value: Binding(
-                                        get: {
-                                            // Defensive: always return Double?
-                                            if let manual = tssEdits[workout.id] {
-                                                return manual as Double?
-                                            } else if let existing = workout.tss {
-                                                return existing as Double?
-                                            } else {
-                                                return nil
-                                            }
-                                        },
-                                        set: { newValue in
-                                            if let val = newValue {
-                                                tssEdits[workout.id] = val
-                                            } else {
-                                                tssEdits.removeValue(forKey: workout.id)
-                                            }
-                                            saveTSSEdits()
-                                        }
-                                    ), formatter: NumberFormatter())
-                                    .frame(width: 60)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    // Show auto value as hint if both manual and existing are nil
-                                    if tssEdits[workout.id] == nil && workout.tss == nil {
-                                        Text("(auto: \(autoTSS(for: workout), specifier: "%.0f"))")
-                                    }
-                                }
+                    List(workoutListVM.workouts, id: \.id, selection: $selectedWorkoutDetail) { workout in
+                        VStack(alignment: .leading) {
+                            Text(workout.name).bold()
+                            Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
+                            if let distance = workout.distance {
+                                Text("Distance: \(distance/1000, specifier: "%.2f") km")
                             }
+                            if let movingTime = workout.movingTime {
+                                Text("Moving Time: \(formatSeconds(movingTime))")
+                            }
+                            if let watts = workout.averageWatts {
+                                Text("Avg Power: \(watts, specifier: "%.0f") W")
+                            }
+                            if let hr = workout.averageHeartrate {
+                                Text("Avg HR: \(hr, specifier: "%.0f") bpm")
+                            }
+                            if let maxHr = workout.maxHeartrate {
+                                Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
+                            }
+                            if let tss = workout.tss {
+                                Text("TSS: \(Int(tss))")
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedWorkoutDetail = workout
                         }
                     }
                     .frame(maxHeight: 300)
@@ -159,32 +131,25 @@ struct WorkoutListView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             Text(selected.name).font(.title2).bold()
                             Text("Date: \(selected.startDateLocal, formatter: dateFormatter)")
-                            if let movingTime = selected.movingTime {
-                                Text("Duration: \(movingTime/60, specifier: "%.0f") min")
-                            }
                             if let distance = selected.distance {
                                 Text("Distance: \(distance/1000, specifier: "%.2f") km")
                             }
-                            if let effort = selected.sufferScore {
-                                Text("Relative Effort: \(effort, specifier: "%.0f")")
+                            if let movingTime = selected.movingTime {
+                                Text("Moving Time: \(formatSeconds(movingTime))")
                             }
-                            if let intensity = selected.intensityScore {
-                                Text("Intensity: \(intensity, specifier: "%.0f")")
+                            if let watts = selected.averageWatts {
+                                Text("Avg Power: \(watts, specifier: "%.0f") W")
                             }
-                            if let avgHR = selected.averageHeartrate {
-                                Text("Avg HR: \(avgHR, specifier: "%.0f")")
+                            if let hr = selected.averageHeartrate {
+                                Text("Avg HR: \(hr, specifier: "%.0f") bpm")
                             }
-                            if let avgPower = selected.averageWatts {
-                                Text("Avg Power: \(avgPower, specifier: "%.0f")")
+                            if let maxHr = selected.maxHeartrate {
+                                Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
                             }
-                            WorkoutDetailChart(hrStream: selected.hrStream, powerStream: selected.powerStream)
+                            if let tss = selected.tss {
+                                Text("TSS: \(Int(tss))")
+                            }
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        Text("Select a workout to see details.")
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
             }

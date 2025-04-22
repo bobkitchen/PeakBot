@@ -112,28 +112,12 @@ struct WorkoutRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(workout.type.prefix(8)).font(.subheadline).bold()
-                if let date = workout.date {
-                    Text(date, formatter: dateFormatter).font(.caption)
-                } else {
-                    Text("Invalid date").font(.caption).foregroundColor(.red)
+                Text(workout.name).font(.title2).bold()
+                if let date = workout.startDateLocal as Date? {
+                    Text("Date: \(date, formatter: dateFormatter)").font(.caption)
                 }
             }
             Spacer()
-            VStack(alignment: .trailing) {
-                if let ctl = workout.ctl {
-                    Text("CTL: \(ctl, specifier: "%.1f")")
-                }
-                if let atl = workout.atl {
-                    Text("ATL: \(atl, specifier: "%.1f")")
-                }
-                if let maxHR = workout.maxHR {
-                    Text("Max HR: \(maxHR, specifier: "%.0f")")
-                }
-                if let avgHR = workout.averageHR {
-                    Text("Avg HR: \(avgHR, specifier: "%.0f")")
-                }
-            }
         }
         .padding(.vertical, 4)
     }

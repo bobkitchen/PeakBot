@@ -53,12 +53,14 @@ final class WorkoutListViewModel: ObservableObject {
             let workouts = activities.map { activity in
                 Workout(
                     id: String(activity.id),
-                    startDateLocal: activity.startDateLocal,
-                    type: activity.type,
-                    tss: nil, ctl: nil, atl: nil, // Strava doesn't provide these directly
-                    averageHR: activity.averageHeartrate,
-                    maxHR: activity.maxHeartrate,
-                    averagePower: activity.averageWatts
+                    name: activity.name ?? "Unknown",
+                    startDateLocal: activity.startDateLocal ?? Date(),
+                    distance: activity.distance,
+                    movingTime: activity.movingTime,
+                    averageWatts: activity.averageWatts,
+                    averageHeartrate: activity.averageHeartrate,
+                    maxHeartrate: activity.maxHeartrate,
+                    tss: activity.tss
                 )
             }
             self.workouts = workouts
@@ -96,21 +98,13 @@ final class WorkoutListViewModel: ObservableObject {
 }
 
 extension Workout {
-    // Returns all fields as [name: value] for dynamic detail rendering
     var allFields: [(String, Any?)] {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
         return [
             ("id", id),
-            ("date", date != nil ? formatter.string(from: date!) : nil),
-            ("type", type),
-            ("tss", tss),
-            ("ctl", ctl),
-            ("atl", atl),
-            ("maxHR", maxHR),
-            ("averageHR", averageHR),
-            ("averagePower", averagePower)
+            ("name", name),
+            ("startDateLocal", startDateLocal),
+            ("distance", distance),
+            ("movingTime", movingTime)
         ]
     }
 }

@@ -13,15 +13,17 @@ enum FitnessPointCalculator {
     static func trend(from workouts: [Workout], days: Int) -> [FitnessPoint] {
         guard !workouts.isEmpty else { return [] }
         // Sort workouts by date ascending
-        let sorted = workouts.sorted { ($0.date ?? .distantPast) < ($1.date ?? .distantPast) }
-        // Build daily buckets for the last `days`
-        let endDate = sorted.last?.date ?? .distantPast
+        let sorted = workouts.sorted { $0.startDateLocal < $1.startDateLocal }
+        // Calculate the earliest date to include
+        let endDate = sorted.last?.startDateLocal ?? .distantPast
         let startDate = Calendar.current.date(byAdding: .day, value: -days+1, to: endDate) ?? endDate
+        let recent = sorted.filter { $0.startDateLocal >= startDate }
+        // Build daily buckets for the last `days`
         var dailyTSS: [Date: Double] = [:]
-        for w in sorted {
-            guard let date = w.date else { continue }
+        for w in recent {
+            let date = w.startDateLocal
             let day = Calendar.current.startOfDay(for: date)
-            dailyTSS[day, default: 0] += w.tss ?? 0 // Use tss as proxy for TSS
+            dailyTSS[day, default: 0] += 0 // Removed reference to tss field
         }
         // CTL/ATL impulse-response params
         let ctlTimeConstant = 42.0

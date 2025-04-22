@@ -14,25 +14,58 @@ struct StravaOAuthTokens: Codable {
 // MARK: - Activity Models
 struct StravaActivitySummary: Codable, Identifiable {
     let id: Int
-    let name: String
-    let type: String
-    let startDateLocal: Date
+    let name: String?
+    let startDateLocal: Date?
     let distance: Double?
     let movingTime: Int?
-    let elapsedTime: Int?
     let averageWatts: Double?
     let averageHeartrate: Double?
     let maxHeartrate: Double?
-    // Add more fields as needed
-    
+    let tss: Double?
+
     enum CodingKeys: String, CodingKey {
-        case id, name, type, distance
+        case id
+        case name
         case startDateLocal = "start_date_local"
+        case distance
         case movingTime = "moving_time"
-        case elapsedTime = "elapsed_time"
         case averageWatts = "average_watts"
         case averageHeartrate = "average_heartrate"
         case maxHeartrate = "max_heartrate"
+        case tss
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        name = try? container.decode(String.self, forKey: .name)
+        if let dateString = try? container.decode(String.self, forKey: .startDateLocal) {
+            // Try ISO8601 first
+            let isoFormatter = ISO8601DateFormatter()
+            if let date = isoFormatter.date(from: dateString) {
+                startDateLocal = date
+            } else {
+                // Fallback: Strava sometimes uses fractional seconds
+                let fallback = DateFormatter()
+                fallback.locale = Locale(identifier: "en_US_POSIX")
+                fallback.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                if let date = fallback.date(from: dateString) {
+                    startDateLocal = date
+                } else {
+                    // Fallback: Try without fractional seconds
+                    fallback.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                    startDateLocal = fallback.date(from: dateString)
+                }
+            }
+        } else {
+            startDateLocal = nil
+        }
+        distance = try? container.decodeIfPresent(Double.self, forKey: .distance)
+        movingTime = try? container.decodeIfPresent(Int.self, forKey: .movingTime)
+        averageWatts = try? container.decodeIfPresent(Double.self, forKey: .averageWatts)
+        averageHeartrate = try? container.decodeIfPresent(Double.self, forKey: .averageHeartrate)
+        maxHeartrate = try? container.decodeIfPresent(Double.self, forKey: .maxHeartrate)
+        tss = try? container.decodeIfPresent(Double.self, forKey: .tss)
     }
 }
 
@@ -214,13 +247,12 @@ final class StravaService: ObservableObject {
 
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            id = try container.decode(Int.self, forKey: .id)
-            name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
-            type = try container.decodeIfPresent(String.self, forKey: .type) ?? ""
+            id = (try? container.decode(Int.self, forKey: .id)) ?? -1
+            name = (try? container.decodeIfPresent(String.self, forKey: .name)) ?? ""
+            type = (try? container.decodeIfPresent(String.self, forKey: .type)) ?? ""
             // Robust date decoding
-            let dateString = try container.decode(String.self, forKey: .startDateLocal)
-            let formatter = ISO8601DateFormatter()
-            startDateLocal = formatter.date(from: dateString) ?? Date()
+            let dateString = (try? container.decodeIfPresent(String.self, forKey: .startDateLocal)) ?? ""
+            startDateLocal = ISO8601DateFormatter().date(from: dateString) ?? Date()
             movingTime = StravaActivityDetail.decodeIntOrString(forKey: .movingTime, in: container)
             distance = StravaActivityDetail.decodeDoubleOrString(forKey: .distance, in: container)
             sufferScore = StravaActivityDetail.decodeDoubleOrString(forKey: .sufferScore, in: container)
@@ -230,11 +262,11 @@ final class StravaService: ObservableObject {
             maxHeartrate = StravaActivityDetail.decodeDoubleOrString(forKey: .maxHeartrate, in: container)
             averageCadence = StravaActivityDetail.decodeDoubleOrString(forKey: .averageCadence, in: container)
             calories = StravaActivityDetail.decodeDoubleOrString(forKey: .calories, in: container)
-            trainer = try? container.decodeIfPresent(Bool.self, forKey: .trainer)
-            commute = try? container.decodeIfPresent(Bool.self, forKey: .commute)
+            trainer = (try? container.decodeIfPresent(Bool.self, forKey: .trainer)) ?? false
+            commute = (try? container.decodeIfPresent(Bool.self, forKey: .commute)) ?? false
             intensityScore = StravaActivityDetail.decodeDoubleOrString(forKey: .intensityScore, in: container)
             tss = StravaActivityDetail.decodeDoubleOrString(forKey: .tss, in: container)
-            tssIsManual = try? container.decodeIfPresent(Bool.self, forKey: .tssIsManual)
+            tssIsManual = (try? container.decodeIfPresent(Bool.self, forKey: .tssIsManual)) ?? false
             hrStream = nil
             powerStream = nil
         }
@@ -243,8 +275,8 @@ final class StravaService: ObservableObject {
             if let doubleVal = try? container.decodeIfPresent(Double.self, forKey: key) {
                 return doubleVal
             }
-            if let stringVal = try? container.decodeIfPresent(String.self, forKey: key), let doubleVal = Double(stringVal ?? "") {
-                return doubleVal
+            if let stringVal = try? container.decodeIfPresent(String.self, forKey: key) {
+                return Double(stringVal)
             }
             return nil
         }
@@ -253,8 +285,8 @@ final class StravaService: ObservableObject {
             if let intVal = try? container.decodeIfPresent(Int.self, forKey: key) {
                 return intVal
             }
-            if let stringVal = try? container.decodeIfPresent(String.self, forKey: key), let intVal = Int(stringVal ?? "") {
-                return intVal
+            if let stringVal = try? container.decodeIfPresent(String.self, forKey: key) {
+                return Int(stringVal)
             }
             return nil
         }
