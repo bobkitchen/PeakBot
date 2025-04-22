@@ -24,6 +24,9 @@ enum KeychainHelper {
     private enum K {
         static let apiKey   = "tp_api"
         static let athlete  = "tp_id"
+        static let stravaAccessToken = "strava_access_token"
+        static let stravaRefreshToken = "strava_refresh_token"
+        static let stravaExpiresAt = "strava_expires_at"
     }
 
     // MARK: – Typed accessors
@@ -35,6 +38,36 @@ enum KeychainHelper {
     static var athleteID: String? {
         get { try? kc.get(K.athlete) }
         set { kc[K.athlete] = newValue }
+    }
+
+    static var stravaAccessToken: String? {
+        get { try? kc.get(K.stravaAccessToken) }
+        set { kc[K.stravaAccessToken] = newValue }
+    }
+
+    static var stravaRefreshToken: String? {
+        get { try? kc.get(K.stravaRefreshToken) }
+        set { kc[K.stravaRefreshToken] = newValue }
+    }
+
+    static var stravaExpiresAt: TimeInterval? {
+        get {
+            guard let value = try? kc.get(K.stravaExpiresAt), let doubleVal = Double(value ?? "") else { return nil }
+            return doubleVal
+        }
+        set {
+            if let val = newValue {
+                kc[K.stravaExpiresAt] = String(val)
+            } else {
+                kc[K.stravaExpiresAt] = nil
+            }
+        }
+    }
+
+    static func clearStravaTokens() {
+        kc[K.stravaAccessToken] = nil
+        kc[K.stravaRefreshToken] = nil
+        kc[K.stravaExpiresAt] = nil
     }
 
     /// `true` only when both credentials are present.

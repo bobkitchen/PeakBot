@@ -97,28 +97,10 @@ struct WorkoutListView: View {
                 Text("No workouts found.")
             } else {
                 HStack {
-                    List(workoutListVM.workouts, id: \.id, selection: $selectedWorkoutDetail) { workout in
+                    List(workoutListVM.workouts, id: \.id) { workout in
                         VStack(alignment: .leading) {
                             Text(workout.name).bold()
                             Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
-                            if let distance = workout.distance {
-                                Text("Distance: \(distance/1000, specifier: "%.2f") km")
-                            }
-                            if let movingTime = workout.movingTime {
-                                Text("Moving Time: \(formatSeconds(movingTime))")
-                            }
-                            if let watts = workout.averageWatts {
-                                Text("Avg Power: \(watts, specifier: "%.0f") W")
-                            }
-                            if let hr = workout.averageHeartrate {
-                                Text("Avg HR: \(hr, specifier: "%.0f") bpm")
-                            }
-                            if let maxHr = workout.maxHeartrate {
-                                Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
-                            }
-                            if let tss = workout.tss {
-                                Text("TSS: \(Int(tss))")
-                            }
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -145,9 +127,6 @@ struct WorkoutListView: View {
                             }
                             if let maxHr = selected.maxHeartrate {
                                 Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
-                            }
-                            if let tss = selected.tss {
-                                Text("TSS: \(Int(tss))")
                             }
                         }
                     }

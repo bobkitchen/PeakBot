@@ -75,8 +75,27 @@ final class StravaService: ObservableObject {
     let clientSecret: String = "44a03f92d978c830b493f5f4218eb48b8e7b2dbe"
     let redirectURI: String = "http://localhost:8080/callback"
     
-    @Published var tokens: StravaOAuthTokens?
+    @Published var tokens: StravaOAuthTokens? {
+        didSet {
+            if let tokens = tokens {
+                KeychainHelper.stravaAccessToken = tokens.accessToken
+                KeychainHelper.stravaRefreshToken = tokens.refreshToken
+                KeychainHelper.stravaExpiresAt = tokens.expiresAt
+            } else {
+                KeychainHelper.clearStravaTokens()
+            }
+        }
+    }
     private var oauthServer: HttpServer?
+
+    init() {
+        // Attempt to load tokens from Keychain on startup
+        if let access = KeychainHelper.stravaAccessToken,
+           let refresh = KeychainHelper.stravaRefreshToken,
+           let expires = KeychainHelper.stravaExpiresAt {
+            self.tokens = StravaOAuthTokens(accessToken: access, refreshToken: refresh, expiresAt: expires)
+        }
+    }
 
     // Start OAuth flow: launches browser and starts local server
     func startOAuth(completion: @escaping (Bool) -> Void) {
