@@ -11,6 +11,7 @@ struct Workout: Identifiable, Hashable, Codable {
     let averageHeartrate: Double?
     let maxHeartrate: Double?
     let tss: Double?
+    let sufferScore: Double?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -22,5 +23,6 @@ struct Workout: Identifiable, Hashable, Codable {
         case averageHeartrate
         case maxHeartrate
         case tss
+        case sufferScore = "suffer_score"
     }
 }

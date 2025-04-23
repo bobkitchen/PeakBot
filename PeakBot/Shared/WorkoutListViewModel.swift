@@ -60,7 +60,8 @@ final class WorkoutListViewModel: ObservableObject {
                     averageWatts: activity.averageWatts,
                     averageHeartrate: activity.averageHeartrate,
                     maxHeartrate: activity.maxHeartrate,
-                    tss: activity.tss
+                    tss: activity.tss,
+                    sufferScore: nil // Not available in StravaActivitySummary
                 )
             }
             self.workouts = workouts

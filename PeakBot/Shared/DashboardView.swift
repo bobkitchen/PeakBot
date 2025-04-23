@@ -60,11 +60,23 @@ struct DashboardView: View {
         .onAppear {
             print("[DashboardView] onAppear. dashboardVM: \(dashboardVM)")
             Task {
+                await dashboardVM.refresh()
                 await workoutListVM.refresh()
                 if workoutListVM.workouts.isEmpty {
                     workoutsError = workoutListVM.errorMessage ?? "No workouts loaded."
                 } else {
                     workoutsError = nil
+                }
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: {
+                    Task {
+                        await dashboardVM.refresh()
+                    }
+                }) {
+                    Label("Refresh Fitness", systemImage: "arrow.clockwise")
                 }
             }
         }

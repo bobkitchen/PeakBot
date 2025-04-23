@@ -25,18 +25,19 @@ final class DashboardViewModel: ObservableObject {
         }
     }
 
-    // TODO: Replace with StravaService once implemented
-    // private let service: IntervalsAPIService
-    // init(service: IntervalsAPIService) { self.service = service }
+    // MARK: – Dependencies
+    private let intervalsService: IntervalsAPIService
 
-    // Placeholder for Strava integration
-    // Add StravaService reference in next phase
+    // MARK: – Initializer
+    init(intervalsService: IntervalsAPIService = IntervalsAPIService.makeShared() ?? IntervalsAPIService()) {
+        self.intervalsService = intervalsService
+    }
 
     // MARK: – Public API
     func refresh(days: Int = 90) async {
         do {
-            // let pts = try await service.fetchWellnessJSON(daysBack: days)
-            // fitness = pts.reversed()          // oldest‑first for charts
+            let pts = try await intervalsService.fetchWellnessJSON(daysBack: days)
+            fitness = pts.reversed()          // oldest‑first for charts
         } catch {
             print("⚠️ Dashboard refresh failed:", error)
         }

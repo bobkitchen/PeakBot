@@ -23,7 +23,9 @@ enum FitnessPointCalculator {
         for w in recent {
             let date = w.startDateLocal
             let day = Calendar.current.startOfDay(for: date)
-            dailyTSS[day, default: 0] += 0 // Removed reference to tss field
+            // Use tss if available, else sufferScore, else estimate from power/duration
+            let tss = w.tss ?? w.sufferScore ?? FitnessPointCalculator.estimateTSS(for: w)
+            dailyTSS[day, default: 0] += tss
         }
         // CTL/ATL impulse-response params
         let ctlTimeConstant = 42.0
@@ -40,5 +42,16 @@ enum FitnessPointCalculator {
             date = Calendar.current.date(byAdding: .day, value: 1, to: date) ?? date
         }
         return points
+    }
+    
+    /// Estimate TSS from power/duration/HR if both tss and sufferScore are missing
+    static func estimateTSS(for workout: Workout) -> Double {
+        // Example: Use power-based estimate if available
+        guard let avgPower = workout.averageWatts,
+              let movingTime = workout.movingTime else { return 0 }
+        let ftp = 250.0 // TODO: Make user-configurable
+        let hours = Double(movingTime) / 3600.0
+        let intensity = avgPower / ftp
+        return hours * intensity * intensity * 100
     }
 }

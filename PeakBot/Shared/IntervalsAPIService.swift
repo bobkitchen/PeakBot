@@ -35,22 +35,21 @@ enum ServiceError: Error, LocalizedError {
 
 // MARK: – Service ----------------------------------------------------------------
 
-@MainActor
 final class IntervalsAPIService: ObservableObject {
 
     // MARK: – Credentials (hardcoded for testing)
-    private let apiKey:    String = "3ntigdu81v3u5chn07ivi7z74"
-    private let athleteID: String = "327607" // <-- Set to your actual athlete ID
+    private let apiKey:    String = "76bcc7wpudfp0rv15vafi4ici"
+    private let athleteID: String = "0" // <-- Set to your actual athlete ID
     private let baseURL    = "https://intervals.icu/api/v1"
 
     // MARK: – Shared factory method
-    @MainActor static func makeShared() -> IntervalsAPIService? {
+    static func makeShared() -> IntervalsAPIService? {
         // Ignore any Keychain or Settings values for now
         return IntervalsAPIService()
     }
 
     // MARK: – Initialisation
-    private init() {}
+    init() {}
 
     // MARK: – Public API (called by view‑models)
     func fetchFitnessTrend(daysBack: Int = 90) async throws -> [FitnessPoint] {
@@ -67,7 +66,7 @@ final class IntervalsAPIService: ObservableObject {
 
     // MARK: – Fetch wellness (CTL/ATL/TSB) as JSON from Intervals.icu
     func fetchWellnessJSON(daysBack: Int = 90) async throws -> [FitnessPoint] {
-        let url = "\(baseURL)/athlete/\(athleteID)/wellness"
+        let url = "\(baseURL)/athlete/0/wellness"
         guard var comps = URLComponents(string: url) else { throw ServiceError.invalidURL }
         let calendar = Calendar.current
         let today = Date()
