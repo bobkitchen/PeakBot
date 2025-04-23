@@ -14,13 +14,40 @@ private let dateFormatter: DateFormatter = {
     return df
 }()
 
+// Move formatSeconds to the top so it is in scope for all views
+func formatSeconds(_ seconds: Int) -> String {
+    let hours = seconds / 3600
+    let minutes = (seconds % 3600) / 60
+    let secs = seconds % 60
+    if hours > 0 {
+        return String(format: "%d:%02d:%02d", hours, minutes, secs)
+    } else {
+        return String(format: "%d:%02d", minutes, secs)
+    }
+}
+
 /// Detail view of a workout
 struct WorkoutDetailView: View {
-    let workout: Workout
+    let workout: StravaService.StravaActivityDetail
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(workout.name).font(.title2).bold()
             Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
+            if let distance = workout.distance {
+                Text("Distance: \(distance/1000, specifier: "%.2f") km")
+            }
+            if let movingTime = workout.movingTime {
+                Text("Moving Time: \(formatSeconds(movingTime))")
+            }
+            if let watts = workout.averageWatts {
+                Text("Avg Power: \(watts, specifier: "%.0f") W")
+            }
+            if let hr = workout.averageHeartrate {
+                Text("Avg HR: \(hr, specifier: "%.0f") bpm")
+            }
+            if let maxHr = workout.maxHeartrate {
+                Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
+            }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -30,10 +57,10 @@ struct WorkoutDetailView: View {
 /// List of recent workouts (placeholder)
 struct WorkoutListView: View {
     @EnvironmentObject var workoutListVM: WorkoutListViewModel
-    @EnvironmentObject var dashboardVM: DashboardViewModel
+    @State private var selectedWorkoutID: String? = nil
+    @State private var selectedDetail: StravaService.StravaActivityDetail?
+    @State private var isLoadingDetail = false
     @State private var errorMessage: String? = nil
-    @State private var selectedWorkoutDetail: Workout? = nil
-
     @AppStorage("userFTP") var userFTP: Double = 250
     @AppStorage("tssEdits") var tssEditsData: Data = Data()
     @State private var tssEdits: [Int: Double] = [:]
@@ -68,90 +95,62 @@ struct WorkoutListView: View {
         }
     }
 
-    func formatSeconds(_ seconds: Int) -> String {
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        let secs = seconds % 60
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, secs)
-        } else {
-            return String(format: "%d:%02d", minutes, secs)
-        }
+    func npValue(for workout: StravaService.StravaActivityDetail) -> Double? {
+        return workout.normalizedPower
+    }
+
+    func ifValue(for workout: StravaService.StravaActivityDetail) -> Double? {
+        return workout.intensityFactor
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "list.bullet.rectangle")
-                .font(.system(size: 64))
-            Text("Workouts")
-                .font(.title)
-            if let error = errorMessage {
-                Text("⚠️ Workouts error: \(error)")
-                    .foregroundColor(.red)
-            }
-            if workoutListVM.stravaRateLimitHit {
-                Text("⚠️ Strava API rate limit reached. Please try again in 15 minutes.")
-                    .foregroundColor(.orange)
-            }
-            if workoutListVM.workouts.isEmpty {
-                Text("No workouts found.")
-            } else {
-                HStack {
-                    List(workoutListVM.workouts, id: \.id) { workout in
-                        VStack(alignment: .leading) {
-                            Text(workout.name).bold()
-                            Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedWorkoutDetail = workout
-                        }
-                    }
-                    .frame(maxHeight: 300)
-                    .frame(width: 250)
-                    if let selected = selectedWorkoutDetail {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text(selected.name).font(.title2).bold()
-                            Text("Date: \(selected.startDateLocal, formatter: dateFormatter)")
-                            if let distance = selected.distance {
-                                Text("Distance: \(distance/1000, specifier: "%.2f") km")
-                            }
-                            if let movingTime = selected.movingTime {
-                                Text("Moving Time: \(formatSeconds(movingTime))")
-                            }
-                            if let watts = selected.averageWatts {
-                                Text("Avg Power: \(watts, specifier: "%.0f") W")
-                            }
-                            if let hr = selected.averageHeartrate {
-                                Text("Avg HR: \(hr, specifier: "%.0f") bpm")
-                            }
-                            if let maxHr = selected.maxHeartrate {
-                                Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
-                            }
-                        }
-                    }
+        NavigationSplitView {
+            List(selection: $selectedWorkoutID) {
+                ForEach(workoutListVM.workouts, id: \.id) { workout in
+                    Text(workout.name)
+                        .tag(workout.id as String?)
                 }
             }
+            .navigationTitle("")
+        } detail: {
+            Group {
+                if let error = errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                } else if isLoadingDetail {
+                    ProgressView("Loading workout details…")
+                } else if let detail = selectedDetail {
+                    WorkoutDetailView(workout: detail)
+                } else if let selectedID = selectedWorkoutID,
+                          let workout = workoutListVM.workouts.first(where: { $0.id == selectedID }) {
+                    Text("Select a workout to see details")
+                        .foregroundColor(.secondary)
+                } else {
+                    Text("No workout selected")
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.windowBackground)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    Task {
-                        await workoutListVM.refreshDetailed()
-                    }
-                }) {
-                    Label("Refresh", systemImage: "arrow.clockwise")
+        .onChange(of: selectedWorkoutID) { newID in
+            guard let id = newID,
+                  let workout = workoutListVM.workouts.first(where: { $0.id == id }) else { selectedDetail = nil; errorMessage = nil; return }
+            Task {
+                isLoadingDetail = true
+                errorMessage = nil
+                let detail = await workoutListVM.fetchDetail(for: workout)
+                if let detail = detail {
+                    selectedDetail = detail
+                } else {
+                    errorMessage = "Failed to load workout details."
+                    selectedDetail = nil
                 }
+                isLoadingDetail = false
             }
         }
         .onAppear {
-            print("[WorkoutListView] onAppear. Calling refreshDetailed()...")
+            Task { await workoutListVM.refresh() }
             loadTSSEdits()
-            Task {
-                await workoutListVM.refreshDetailed()
-            }
         }
     }
 }

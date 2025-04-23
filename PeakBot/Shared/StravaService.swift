@@ -38,7 +38,7 @@ struct StravaActivitySummary: Codable, Identifiable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
-        name = try? container.decode(String.self, forKey: .name)
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         if let dateString = try? container.decode(String.self, forKey: .startDateLocal) {
             // Try ISO8601 first
             let isoFormatter = ISO8601DateFormatter()
@@ -230,7 +230,7 @@ final class StravaService: ObservableObject {
         let startDateLocal: Date
         let movingTime: Int?
         let distance: Double?
-        let sufferScore: Double? // Relative Effort
+        let sufferScore: Double?
         let weightedAverageWatts: Double?
         let averageWatts: Double?
         let averageHeartrate: Double?
@@ -239,7 +239,7 @@ final class StravaService: ObservableObject {
         let calories: Double?
         let trainer: Bool?
         let commute: Bool?
-        let intensityScore: Double? // Not always present
+        let intensityScore: Double?
         // Streams will be attached after fetching
         var hrStream: [Double]?
         var powerStream: [Double]?
@@ -247,6 +247,8 @@ final class StravaService: ObservableObject {
         var tss: Double?
         // NEW: Flag for manual override
         var tssIsManual: Bool?
+        var normalizedPower: Double?
+        var intensityFactor: Double?
 
         enum CodingKeys: String, CodingKey {
             case id, name, type, distance, trainer, commute
@@ -267,8 +269,8 @@ final class StravaService: ObservableObject {
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             id = (try? container.decode(Int.self, forKey: .id)) ?? -1
-            name = (try? container.decodeIfPresent(String.self, forKey: .name)) ?? ""
-            type = (try? container.decodeIfPresent(String.self, forKey: .type)) ?? ""
+            name = (try? container.decode(String.self, forKey: .name)) ?? ""
+            type = (try? container.decode(String.self, forKey: .type)) ?? ""
             // Robust date decoding
             let dateString = (try? container.decodeIfPresent(String.self, forKey: .startDateLocal)) ?? ""
             startDateLocal = ISO8601DateFormatter().date(from: dateString) ?? Date()
@@ -288,6 +290,8 @@ final class StravaService: ObservableObject {
             tssIsManual = (try? container.decodeIfPresent(Bool.self, forKey: .tssIsManual)) ?? false
             hrStream = nil
             powerStream = nil
+            normalizedPower = nil
+            intensityFactor = nil
         }
 
         static func decodeDoubleOrString(forKey key: CodingKeys, in container: KeyedDecodingContainer<CodingKeys>) -> Double? {
@@ -334,7 +338,7 @@ final class StravaService: ObservableObject {
         return details
     }
 
-    private func fetchActivityDetailAndStreams(id: Int) async throws -> StravaActivityDetail {
+    func fetchActivityDetailAndStreams(id: Int) async throws -> StravaActivityDetail {
         guard let tokens = tokens else { throw NSError(domain: "StravaService", code: 401, userInfo: [NSLocalizedDescriptionKey: "No Strava tokens available"]) }
         // Fetch detail
         let detailURL = URL(string: "https://www.strava.com/api/v3/activities/\(id)")!
@@ -360,6 +364,18 @@ final class StravaService: ObservableObject {
         let streamsDict = try JSONDecoder().decode([String: StravaStreamSet].self, from: streamsData)
         detail.hrStream = streamsDict["heartrate"]?.data
         detail.powerStream = streamsDict["power"]?.data
+        // Calculate NP, IF, and update TSS if possible
+        if let powerStream = detail.powerStream, let ftp = UserDefaults.standard.value(forKey: "userFTP") as? Double {
+            let np = NPIFCalculator.normalizedPower(from: powerStream)
+            let ifac = NPIFCalculator.intensityFactor(np: np, ftp: ftp)
+            detail.normalizedPower = np
+            detail.intensityFactor = ifac
+            if let np = np, let ifac = ifac, let movingTime = detail.movingTime {
+                let hours = Double(movingTime) / 3600.0
+                detail.tss = hours * ifac * ifac * 100
+                detail.tssIsManual = false
+            }
+        }
         return detail
     }
 }

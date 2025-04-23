@@ -24,23 +24,19 @@ final class DashboardViewModel: ObservableObject {
             // Optionally update fitness if you want to recalc from workouts, but we now fetch from API
         }
     }
+    @Published var errorMessage: String? = nil
 
     // MARK: – Dependencies
-    private let intervalsService: IntervalsAPIService
+    // IntervalsAPIService is now fully disabled and removed
 
     // MARK: – Initializer
-    init(intervalsService: IntervalsAPIService = IntervalsAPIService.makeShared() ?? IntervalsAPIService()) {
-        self.intervalsService = intervalsService
-    }
+    init() {}
 
     // MARK: – Public API
+    // Intervals API refresh is now disabled. Implement Strava-based fitness refresh here if needed.
     func refresh(days: Int = 90) async {
-        do {
-            let pts = try await intervalsService.fetchWellnessJSON(daysBack: days)
-            fitness = pts.reversed()          // oldest‑first for charts
-        } catch {
-            print("⚠️ Dashboard refresh failed:", error)
-        }
+        // No-op: Intervals API integration removed
+        fitness = []
     }
 
     func updateWorkouts(_ newWorkouts: [Workout]) {

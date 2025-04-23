@@ -22,8 +22,7 @@ struct PeakBotApp: App {
     // For showing settings from menu
     @State private var showSettingsSheet = false
 
-    // TODO: Remove IntervalsAPIService and switch to StravaService
-    // Placeholder for Strava integration
+    // IntervalsAPIService is now fully removed. All metrics should be Strava-based.
     var body: some Scene {
         WindowGroup {
             ContentView(stravaService: stravaService, showSettingsSheet: $showSettingsSheet)

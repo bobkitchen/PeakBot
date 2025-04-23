@@ -16,9 +16,6 @@ struct RootTabView: View {
 
             WorkoutListView()
                 .tabItem { Label("Workouts", systemImage: "list.bullet.rectangle") }
-
-            ChatView()
-                .tabItem { Label("Chat", systemImage: "message") }
         }
     }
 }

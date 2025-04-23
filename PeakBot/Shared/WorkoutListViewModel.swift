@@ -19,6 +19,7 @@ final class WorkoutListViewModel: ObservableObject {
         }
     }
     @Published var detailedWorkouts: [StravaService.StravaActivityDetail] = []
+    @Published var workoutDetails: [String: StravaService.StravaActivityDetail] = [:] // id -> detail
     @Published var errorMessage: String?
     @Published var stravaRateLimitHit: Bool = false
 
@@ -82,6 +83,21 @@ final class WorkoutListViewModel: ObservableObject {
         do {
             let details = try await stravaService.fetchDetailedActivities(lastNDays: 90)
             self.detailedWorkouts = details
+            // Also update workouts array with summary info for compatibility
+            self.workouts = details.map { detail in
+                Workout(
+                    id: String(detail.id),
+                    name: detail.name,
+                    startDateLocal: detail.startDateLocal,
+                    distance: detail.distance,
+                    movingTime: detail.movingTime,
+                    averageWatts: detail.weightedAverageWatts ?? detail.averageWatts,
+                    averageHeartrate: detail.averageHeartrate,
+                    maxHeartrate: detail.maxHeartrate,
+                    tss: detail.tss,
+                    sufferScore: detail.sufferScore
+                )
+            }
             errorMessage = nil
         } catch {
             if let nsError = error as NSError?,
@@ -90,6 +106,22 @@ final class WorkoutListViewModel: ObservableObject {
             } else {
                 self.errorMessage = error.localizedDescription
             }
+        }
+    }
+
+    /// Fetch details for a single workout by id (caches result)
+    func fetchDetail(for workout: Workout) async -> StravaService.StravaActivityDetail? {
+        if let cached = workoutDetails[workout.id] {
+            return cached
+        }
+        guard let stravaService = stravaService else { return nil }
+        do {
+            let detail = try await stravaService.fetchActivityDetailAndStreams(id: Int(workout.id) ?? 0)
+            workoutDetails[workout.id] = detail
+            return detail
+        } catch {
+            print("[WorkoutListViewModel] Failed to fetch detail for id \(workout.id):", error)
+            return nil
         }
     }
 

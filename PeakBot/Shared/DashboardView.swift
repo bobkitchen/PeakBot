@@ -11,9 +11,7 @@ import AppKit // for NSColor on macOS
 
 struct DashboardView: View {
     @EnvironmentObject var dashboardVM: DashboardViewModel
-    @EnvironmentObject var workoutListVM: WorkoutListViewModel
     @State private var dashboardError: String? = nil
-    @State private var workoutsError: String? = nil
 
     var body: some View {
         ScrollView {
@@ -36,23 +34,14 @@ struct DashboardView: View {
                     Text("Chart requires macOS 13+")
                 }
 
-                // Workouts list
-                Text("Recent Workouts")
+                // Chatbot section
+                Divider()
+                Text("Chatbot")
                     .font(.headline)
+                ChatView() // Embeds the chatbot window directly on the dashboard
                 if let dashboardError = dashboardError {
                     Text("⚠️ Dashboard error: \(dashboardError)")
                         .foregroundColor(.red)
-                }
-                if let workoutsError = workoutsError {
-                    Text("⚠️ Workouts error: \(workoutsError)")
-                        .foregroundColor(.red)
-                }
-                if workoutListVM.workouts.isEmpty {
-                    Text("No workouts found.")
-                } else {
-                    ForEach(workoutListVM.workouts.prefix(5)) { workout in
-                        WorkoutRow(workout: workout)
-                    }
                 }
             }
             .padding()
@@ -61,12 +50,7 @@ struct DashboardView: View {
             print("[DashboardView] onAppear. dashboardVM: \(dashboardVM)")
             Task {
                 await dashboardVM.refresh()
-                await workoutListVM.refresh()
-                if workoutListVM.workouts.isEmpty {
-                    workoutsError = workoutListVM.errorMessage ?? "No workouts loaded."
-                } else {
-                    workoutsError = nil
-                }
+                dashboardError = dashboardVM.errorMessage
             }
         }
         .toolbar {
@@ -116,22 +100,6 @@ struct FitnessTrendChart: View {
                 y: .value("TSB", $0.tsb)
             ).foregroundStyle(.orange)
         }
-    }
-}
-
-struct WorkoutRow: View {
-    let workout: Workout
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(workout.name).font(.title2).bold()
-                if let date = workout.startDateLocal as Date? {
-                    Text("Date: \(date, formatter: dateFormatter)").font(.caption)
-                }
-            }
-            Spacer()
-        }
-        .padding(.vertical, 4)
     }
 }
 

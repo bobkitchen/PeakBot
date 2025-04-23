@@ -52,7 +52,7 @@ enum KeychainHelper {
 
     static var stravaExpiresAt: TimeInterval? {
         get {
-            guard let value = try? kc.get(K.stravaExpiresAt), let doubleVal = Double(value ?? "") else { return nil }
+            guard let value = try? kc.get(K.stravaExpiresAt), let doubleVal = Double(value) else { return nil }
             return doubleVal
         }
         set {
