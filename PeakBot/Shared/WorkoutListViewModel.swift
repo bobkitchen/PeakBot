@@ -53,16 +53,12 @@ final class WorkoutListViewModel: ObservableObject {
             // Convert StravaActivitySummary to Workout
             let workouts = activities.map { activity in
                 Workout(
-                    id: String(activity.id),
-                    name: activity.name ?? "Unknown",
+                    id: String(activity.id ?? 0),
+                    name: activity.name ?? "",
                     startDateLocal: activity.startDateLocal ?? Date(),
-                    distance: activity.distance,
-                    movingTime: activity.movingTime,
-                    averageWatts: activity.averageWatts,
-                    averageHeartrate: activity.averageHeartrate,
-                    maxHeartrate: activity.maxHeartrate,
-                    tss: activity.tss,
-                    sufferScore: nil // Not available in StravaActivitySummary
+                    distance: activity.distance ?? 0.0,
+                    movingTime: activity.movingTime ?? 0
+                    // Only include fields that exist in StravaActivityDetail for now
                 )
             }
             self.workouts = workouts
@@ -86,16 +82,11 @@ final class WorkoutListViewModel: ObservableObject {
             // Also update workouts array with summary info for compatibility
             self.workouts = details.map { detail in
                 Workout(
-                    id: String(detail.id),
-                    name: detail.name,
-                    startDateLocal: detail.startDateLocal,
-                    distance: detail.distance,
-                    movingTime: detail.movingTime,
-                    averageWatts: detail.weightedAverageWatts ?? detail.averageWatts,
-                    averageHeartrate: detail.averageHeartrate,
-                    maxHeartrate: detail.maxHeartrate,
-                    tss: detail.tss,
-                    sufferScore: detail.sufferScore
+                    id: String(detail.id ?? 0),
+                    name: detail.name ?? "",
+                    startDateLocal: detail.startDateLocal ?? Date(),
+                    distance: detail.distance ?? 0.0,
+                    movingTime: detail.movingTime ?? 0
                 )
             }
             errorMessage = nil
@@ -111,10 +102,14 @@ final class WorkoutListViewModel: ObservableObject {
 
     /// Fetch details for a single workout by id (caches result)
     func fetchDetail(for workout: Workout) async -> StravaService.StravaActivityDetail? {
+        print("[DEBUG] fetchDetail called. stravaService is set?", stravaService != nil)
         if let cached = workoutDetails[workout.id] {
             return cached
         }
-        guard let stravaService = stravaService else { return nil }
+        guard let stravaService = stravaService else {
+            print("[DEBUG] fetchDetail: stravaService is nil!")
+            return nil
+        }
         do {
             let detail = try await stravaService.fetchActivityDetailAndStreams(id: Int(workout.id) ?? 0)
             workoutDetails[workout.id] = detail
@@ -128,6 +123,25 @@ final class WorkoutListViewModel: ObservableObject {
     // MARK: – Private plumbing -----------------------------------------------
     // Legacy CSV workflow removed. No longer needed.
 
+    func autoTSS(for workout: StravaService.StravaActivityDetail) -> Double {
+        // All power-based fields removed for now
+        guard let movingTime = workout.movingTime else { return 0 }
+        return 0 // Placeholder
+    }
+
+    func tssValue(for workout: StravaService.StravaActivityDetail) -> Double {
+        return 0
+    }
+
+    func npValue(for workout: StravaService.StravaActivityDetail) -> Double? {
+        // No normalizedPower available yet
+        return nil
+    }
+
+    func ifValue(for workout: StravaService.StravaActivityDetail) -> Double? {
+        // No intensityFactor available yet
+        return nil
+    }
 }
 
 extension Workout {

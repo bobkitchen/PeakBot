@@ -224,74 +224,78 @@ final class StravaService: ObservableObject {
 
     // MARK: - Fetch Activities with Details & Streams
     struct StravaActivityDetail: Codable, Identifiable, Hashable {
-        let id: Int
-        let name: String
-        let type: String
-        let startDateLocal: Date
-        let movingTime: Int?
+        let id: Int?
+        let name: String?
+        let type: String?
+        let startDateLocal: Date?
         let distance: Double?
-        let sufferScore: Double?
-        let weightedAverageWatts: Double?
-        let averageWatts: Double?
-        let averageHeartrate: Double?
-        let maxHeartrate: Double?
-        let averageCadence: Double?
-        let calories: Double?
-        let trainer: Bool?
-        let commute: Bool?
-        let intensityScore: Double?
-        // Streams will be attached after fetching
-        var hrStream: [Double]?
-        var powerStream: [Double]?
-        // NEW: TSS field (auto or manual)
-        var tss: Double?
-        // NEW: Flag for manual override
-        var tssIsManual: Bool?
-        var normalizedPower: Double?
-        var intensityFactor: Double?
+        let movingTime: Int?
+        // let sufferScore: Double?
+        // let weightedAverageWatts: Double?
+        // let averageWatts: Double?
+        // let averageHeartrate: Double?
+        // let maxHeartrate: Double?
+        // let averageCadence: Double?
+        // let calories: Double?
+        // let trainer: Bool?
+        // let commute: Bool?
+        // let intensityScore: Double?
+        // var hrStream: [Double]?
+        // var powerStream: [Double]?
+        // var tss: Double?
+        // var tssIsManual: Bool?
+        // var normalizedPower: Double?
+        // var intensityFactor: Double?
 
         enum CodingKeys: String, CodingKey {
-            case id, name, type, distance, trainer, commute
+            case id
+            case name
+            case type
             case startDateLocal = "start_date_local"
+            case distance
             case movingTime = "moving_time"
-            case sufferScore = "suffer_score"
-            case weightedAverageWatts = "weighted_average_watts"
-            case averageWatts = "average_watts"
-            case averageHeartrate = "average_heartrate"
-            case maxHeartrate = "max_heartrate"
-            case averageCadence = "average_cadence"
-            case calories
-            case intensityScore = "intensity_score"
-            case tss
-            case tssIsManual = "tss_is_manual"
+            // case sufferScore = "suffer_score"
+            // case weightedAverageWatts = "weighted_average_watts"
+            // case averageWatts = "average_watts"
+            // case averageHeartrate = "average_heartrate"
+            // case maxHeartrate = "max_heartrate"
+            // case averageCadence = "average_cadence"
+            // case calories
+            // case trainer
+            // case commute
+            // case intensityScore = "intensity_score"
+            // case tss
+            // case tssIsManual = "tss_is_manual"
         }
 
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            id = (try? container.decode(Int.self, forKey: .id)) ?? -1
-            name = (try? container.decode(String.self, forKey: .name)) ?? ""
-            type = (try? container.decode(String.self, forKey: .type)) ?? ""
+            id = try? container.decodeIfPresent(Int.self, forKey: .id)
+            name = try? container.decodeIfPresent(String.self, forKey: .name)
+            type = try? container.decodeIfPresent(String.self, forKey: .type)
             // Robust date decoding
-            let dateString = (try? container.decodeIfPresent(String.self, forKey: .startDateLocal)) ?? ""
-            startDateLocal = ISO8601DateFormatter().date(from: dateString) ?? Date()
-            movingTime = StravaActivityDetail.decodeIntOrString(forKey: .movingTime, in: container)
-            distance = StravaActivityDetail.decodeDoubleOrString(forKey: .distance, in: container)
-            sufferScore = StravaActivityDetail.decodeDoubleOrString(forKey: .sufferScore, in: container)
-            weightedAverageWatts = StravaActivityDetail.decodeDoubleOrString(forKey: .weightedAverageWatts, in: container)
-            averageWatts = StravaActivityDetail.decodeDoubleOrString(forKey: .averageWatts, in: container)
-            averageHeartrate = StravaActivityDetail.decodeDoubleOrString(forKey: .averageHeartrate, in: container)
-            maxHeartrate = StravaActivityDetail.decodeDoubleOrString(forKey: .maxHeartrate, in: container)
-            averageCadence = StravaActivityDetail.decodeDoubleOrString(forKey: .averageCadence, in: container)
-            calories = StravaActivityDetail.decodeDoubleOrString(forKey: .calories, in: container)
-            trainer = (try? container.decodeIfPresent(Bool.self, forKey: .trainer)) ?? false
-            commute = (try? container.decodeIfPresent(Bool.self, forKey: .commute)) ?? false
-            intensityScore = StravaActivityDetail.decodeDoubleOrString(forKey: .intensityScore, in: container)
-            tss = StravaActivityDetail.decodeDoubleOrString(forKey: .tss, in: container)
-            tssIsManual = (try? container.decodeIfPresent(Bool.self, forKey: .tssIsManual)) ?? false
-            hrStream = nil
-            powerStream = nil
-            normalizedPower = nil
-            intensityFactor = nil
+            let dateString = try? container.decodeIfPresent(String.self, forKey: .startDateLocal)
+            startDateLocal = ISO8601DateFormatter().date(from: dateString ?? "")
+            distance = try? container.decodeIfPresent(Double.self, forKey: .distance)
+            movingTime = try? container.decodeIfPresent(Int.self, forKey: .movingTime)
+            // movingTime = StravaActivityDetail.decodeIntOrString(forKey: .movingTime, in: container)
+            // distance = StravaActivityDetail.decodeDoubleOrString(forKey: .distance, in: container)
+            // sufferScore = StravaActivityDetail.decodeDoubleOrString(forKey: .sufferScore, in: container)
+            // weightedAverageWatts = StravaActivityDetail.decodeDoubleOrString(forKey: .weightedAverageWatts, in: container)
+            // averageWatts = StravaActivityDetail.decodeDoubleOrString(forKey: .averageWatts, in: container)
+            // averageHeartrate = StravaActivityDetail.decodeDoubleOrString(forKey: .averageHeartrate, in: container)
+            // maxHeartrate = StravaActivityDetail.decodeDoubleOrString(forKey: .maxHeartrate, in: container)
+            // averageCadence = StravaActivityDetail.decodeDoubleOrString(forKey: .averageCadence, in: container)
+            // calories = StravaActivityDetail.decodeDoubleOrString(forKey: .calories, in: container)
+            // trainer = (try? container.decodeIfPresent(Bool.self, forKey: .trainer)) ?? false
+            // commute = (try? container.decodeIfPresent(Bool.self, forKey: .commute)) ?? false
+            // intensityScore = StravaActivityDetail.decodeDoubleOrString(forKey: .intensityScore, in: container)
+            // tss = StravaActivityDetail.decodeDoubleOrString(forKey: .tss, in: container)
+            // tssIsManual = (try? container.decodeIfPresent(Bool.self, forKey: .tssIsManual)) ?? false
+            // hrStream = nil
+            // powerStream = nil
+            // normalizedPower = nil
+            // intensityFactor = nil
         }
 
         static func decodeDoubleOrString(forKey key: CodingKeys, in container: KeyedDecodingContainer<CodingKeys>) -> Double? {
@@ -339,15 +343,26 @@ final class StravaService: ObservableObject {
     }
 
     func fetchActivityDetailAndStreams(id: Int) async throws -> StravaActivityDetail {
-        guard let tokens = tokens else { throw NSError(domain: "StravaService", code: 401, userInfo: [NSLocalizedDescriptionKey: "No Strava tokens available"]) }
+        guard let tokens = tokens else {
+            print("[DEBUG] No Strava tokens available at detail fetch!")
+            throw NSError(domain: "StravaService", code: 401, userInfo: [NSLocalizedDescriptionKey: "No Strava tokens available"])
+        }
+        print("[DEBUG] Using Strava tokens at detail fetch: \(tokens)")
         // Fetch detail
         let detailURL = URL(string: "https://www.strava.com/api/v3/activities/\(id)")!
         var detailReq = URLRequest(url: detailURL)
         detailReq.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
         let (detailData, detailResp) = try await URLSession.shared.data(for: detailReq)
+        let rawDetailString = String(data: detailData, encoding: .utf8) ?? "<non-utf8 data>"
+        print("[DEBUG] Raw activity detail response for id \(id):\n", rawDetailString)
         guard let detailHTTP = detailResp as? HTTPURLResponse, detailHTTP.statusCode == 200 else {
             let errStr = String(data: detailData, encoding: .utf8) ?? "Unknown error"
             throw NSError(domain: "StravaService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Fetch activity detail failed: \(errStr)"])
+        }
+        // Check for Strava API error message before decoding
+        if let json = try? JSONSerialization.jsonObject(with: detailData) as? [String: Any],
+           let message = json["message"] as? String {
+            throw NSError(domain: "StravaService", code: 4, userInfo: [NSLocalizedDescriptionKey: "Strava API error: \(message)"])
         }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -362,20 +377,20 @@ final class StravaService: ObservableObject {
             throw NSError(domain: "StravaService", code: 4, userInfo: [NSLocalizedDescriptionKey: "Fetch streams failed: \(errStr)"])
         }
         let streamsDict = try JSONDecoder().decode([String: StravaStreamSet].self, from: streamsData)
-        detail.hrStream = streamsDict["heartrate"]?.data
-        detail.powerStream = streamsDict["power"]?.data
+        // detail.hrStream = streamsDict["heartrate"]?.data
+        // detail.powerStream = streamsDict["power"]?.data
         // Calculate NP, IF, and update TSS if possible
-        if let powerStream = detail.powerStream, let ftp = UserDefaults.standard.value(forKey: "userFTP") as? Double {
-            let np = NPIFCalculator.normalizedPower(from: powerStream)
-            let ifac = NPIFCalculator.intensityFactor(np: np, ftp: ftp)
-            detail.normalizedPower = np
-            detail.intensityFactor = ifac
-            if let np = np, let ifac = ifac, let movingTime = detail.movingTime {
-                let hours = Double(movingTime) / 3600.0
-                detail.tss = hours * ifac * ifac * 100
-                detail.tssIsManual = false
-            }
-        }
+        // if let powerStream = detail.powerStream, let ftp = UserDefaults.standard.value(forKey: "userFTP") as? Double {
+        //     let np = NPIFCalculator.normalizedPower(from: powerStream)
+        //     let ifac = NPIFCalculator.intensityFactor(np: np, ftp: ftp)
+        //     detail.normalizedPower = np
+        //     detail.intensityFactor = ifac
+        //     if let np = np, let ifac = ifac, let movingTime = detail.movingTime {
+        //         let hours = Double(movingTime) / 3600.0
+        //         detail.tss = hours * ifac * ifac * 100
+        //         detail.tssIsManual = false
+        //     }
+        // }
         return detail
     }
 }

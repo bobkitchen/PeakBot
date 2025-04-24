@@ -31,23 +31,24 @@ struct WorkoutDetailView: View {
     let workout: StravaService.StravaActivityDetail
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(workout.name).font(.title2).bold()
-            Text("Date: \(workout.startDateLocal, formatter: dateFormatter)")
+            Text(workout.name ?? "").font(.title2).bold()
+            Text("Date: \(workout.startDateLocal != nil ? dateFormatter.string(from: workout.startDateLocal!) : "-")")
             if let distance = workout.distance {
                 Text("Distance: \(distance/1000, specifier: "%.2f") km")
             }
             if let movingTime = workout.movingTime {
                 Text("Moving Time: \(formatSeconds(movingTime))")
             }
-            if let watts = workout.averageWatts {
-                Text("Avg Power: \(watts, specifier: "%.0f") W")
-            }
-            if let hr = workout.averageHeartrate {
-                Text("Avg HR: \(hr, specifier: "%.0f") bpm")
-            }
-            if let maxHr = workout.maxHeartrate {
-                Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
-            }
+            // Comment out fields not present in StravaActivityDetail for now
+            // if let watts = workout.averageWatts {
+            //     Text("Avg Power: \(watts, specifier: "%.0f") W")
+            // }
+            // if let hr = workout.averageHeartrate {
+            //     Text("Avg HR: \(hr, specifier: "%.0f") bpm")
+            // }
+            // if let maxHr = workout.maxHeartrate {
+            //     Text("Max HR: \(maxHr, specifier: "%.0f") bpm")
+            // }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -61,53 +62,12 @@ struct WorkoutListView: View {
     @State private var selectedDetail: StravaService.StravaActivityDetail?
     @State private var isLoadingDetail = false
     @State private var errorMessage: String? = nil
-    @AppStorage("userFTP") var userFTP: Double = 250
-    @AppStorage("tssEdits") var tssEditsData: Data = Data()
-    @State private var tssEdits: [Int: Double] = [:]
-
-    func saveTSSEdits() {
-        if let data = try? JSONEncoder().encode(tssEdits) {
-            tssEditsData = data
-        }
-    }
-    func loadTSSEdits() {
-        if let dict = try? JSONDecoder().decode([Int: Double].self, from: tssEditsData) {
-            tssEdits = dict
-        }
-    }
-
-    func autoTSS(for workout: StravaService.StravaActivityDetail) -> Double {
-        guard let avgPower = workout.weightedAverageWatts ?? workout.averageWatts,
-              let movingTime = workout.movingTime else { return 0 }
-        let ftp = userFTP
-        let hours = Double(movingTime) / 3600.0
-        let intensity = avgPower / ftp
-        return hours * intensity * intensity * 100
-    }
-
-    func tssValue(for workout: StravaService.StravaActivityDetail) -> Double {
-        if let manual = tssEdits[workout.id] {
-            return manual
-        } else if let existing = workout.tss {
-            return existing
-        } else {
-            return autoTSS(for: workout)
-        }
-    }
-
-    func npValue(for workout: StravaService.StravaActivityDetail) -> Double? {
-        return workout.normalizedPower
-    }
-
-    func ifValue(for workout: StravaService.StravaActivityDetail) -> Double? {
-        return workout.intensityFactor
-    }
 
     var body: some View {
         NavigationSplitView {
             List(selection: $selectedWorkoutID) {
                 ForEach(workoutListVM.workouts, id: \.id) { workout in
-                    Text(workout.name)
+                    Text(workout.name ?? "")
                         .tag(workout.id as String?)
                 }
             }
@@ -150,7 +110,6 @@ struct WorkoutListView: View {
         }
         .onAppear {
             Task { await workoutListVM.refresh() }
-            loadTSSEdits()
         }
     }
 }
