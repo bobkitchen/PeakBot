@@ -18,129 +18,32 @@ final class WorkoutListViewModel: ObservableObject {
             dashboardVM?.updateWorkouts(workouts)
         }
     }
-    @Published var detailedWorkouts: [StravaService.StravaActivityDetail] = []
-    @Published var workoutDetails: [String: StravaService.StravaActivityDetail] = [:] // id -> detail
     @Published var errorMessage: String?
     @Published var stravaRateLimitHit: Bool = false
+    @Published var refreshEnabled: Bool = false
 
     // MARK: – Dependency
     var dashboardVM: DashboardViewModel?
-    var stravaService: StravaService?
-
-    // TODO: Replace with StravaService once implemented
-    // private let service: IntervalsAPIService
-    // init(service: IntervalsAPIService, dashboardVM: DashboardViewModel? = nil) { ... }
-
-    // Placeholder for Strava integration
-    // Add StravaService reference in next phase
+    private var trainingPeaksService: TrainingPeaksService?
+    private var workoutsCancellable: AnyCancellable?
 
     // Designated initialiser (used by preview / tests too)
-    init(dashboardVM: DashboardViewModel? = nil) {
+    init(dashboardVM: DashboardViewModel? = nil, trainingPeaksService: TrainingPeaksService? = nil) {
         self.dashboardVM = dashboardVM
+        self.trainingPeaksService = trainingPeaksService
+        if let service = trainingPeaksService {
+            workoutsCancellable = service.$workouts.sink { [weak self] newWorkouts in
+                self?.workouts = newWorkouts
+            }
+        }
     }
 
     // MARK: – Public API ------------------------------------------------------
 
     /// Pull the latest workouts from the specified date.
     func refresh(daysBack: Int = 30) async {
-        print("[WorkoutListViewModel] refresh() called (Strava)")
-        guard let stravaService = stravaService else {
-            errorMessage = "Strava service unavailable"
-            return
-        }
-        do {
-            let activities = try await stravaService.fetchActivities(perPage: 50)
-            // Convert StravaActivitySummary to Workout
-            let workouts = activities.map { activity in
-                Workout(
-                    id: String(activity.id ?? 0),
-                    name: activity.name ?? "",
-                    startDateLocal: activity.startDateLocal ?? Date(),
-                    distance: activity.distance ?? 0.0,
-                    movingTime: activity.movingTime ?? 0
-                    // Only include fields that exist in StravaActivityDetail for now
-                )
-            }
-            self.workouts = workouts
-            errorMessage = nil
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    /// Pull the latest detailed workouts from Strava for the last 90 days.
-    func refreshDetailed() async {
-        stravaRateLimitHit = false
-        print("[WorkoutListViewModel] refreshDetailed() called (Strava)")
-        guard let stravaService = stravaService else {
-            errorMessage = "Strava service unavailable"
-            return
-        }
-        do {
-            let details = try await stravaService.fetchDetailedActivities(lastNDays: 90)
-            self.detailedWorkouts = details
-            // Also update workouts array with summary info for compatibility
-            self.workouts = details.map { detail in
-                Workout(
-                    id: String(detail.id ?? 0),
-                    name: detail.name ?? "",
-                    startDateLocal: detail.startDateLocal ?? Date(),
-                    distance: detail.distance ?? 0.0,
-                    movingTime: detail.movingTime ?? 0
-                )
-            }
-            errorMessage = nil
-        } catch {
-            if let nsError = error as NSError?,
-               nsError.localizedDescription.contains("Rate Limit Exceeded") {
-                self.stravaRateLimitHit = true
-            } else {
-                self.errorMessage = error.localizedDescription
-            }
-        }
-    }
-
-    /// Fetch details for a single workout by id (caches result)
-    func fetchDetail(for workout: Workout) async -> StravaService.StravaActivityDetail? {
-        print("[DEBUG] fetchDetail called. stravaService is set?", stravaService != nil)
-        if let cached = workoutDetails[workout.id] {
-            return cached
-        }
-        guard let stravaService = stravaService else {
-            print("[DEBUG] fetchDetail: stravaService is nil!")
-            return nil
-        }
-        do {
-            let detail = try await stravaService.fetchActivityDetailAndStreams(id: Int(workout.id) ?? 0)
-            workoutDetails[workout.id] = detail
-            return detail
-        } catch {
-            print("[WorkoutListViewModel] Failed to fetch detail for id \(workout.id):", error)
-            return nil
-        }
-    }
-
-    // MARK: – Private plumbing -----------------------------------------------
-    // Legacy CSV workflow removed. No longer needed.
-
-    func autoTSS(for workout: StravaService.StravaActivityDetail) -> Double {
-        // All power-based fields removed for now
-        guard let movingTime = workout.movingTime else { return 0 }
-        return 0 // Placeholder
-    }
-
-    func tssValue(for workout: StravaService.StravaActivityDetail) -> Double {
-        return 0
-    }
-
-    func npValue(for workout: StravaService.StravaActivityDetail) -> Double? {
-        // No normalizedPower available yet
-        return nil
-    }
-
-    func ifValue(for workout: StravaService.StravaActivityDetail) -> Double? {
-        // No intensityFactor available yet
-        return nil
+        print("[WorkoutListViewModel] refresh() called (TrainingPeaks)")
+        // No-op: TrainingPeaksService automatically updates workouts
     }
 }
 

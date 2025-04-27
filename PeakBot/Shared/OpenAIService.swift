@@ -12,7 +12,6 @@
 //
 
 import Foundation
-import Observation                         // Swift 6
 
 @MainActor
 final class OpenAIService: ObservableObject {

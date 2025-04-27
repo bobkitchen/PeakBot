@@ -16,10 +16,6 @@ final class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var input = ""
 
-    // MARK: – Dependency
-    private let service: OpenAIService
-    init(service: OpenAIService) { self.service = service }
-
     // MARK: – Public API
     func send() async {
         // 1. append the user’s message
@@ -29,7 +25,7 @@ final class ChatViewModel: ObservableObject {
 
         // 2. ask OpenAI for a reply
         do {
-            let reply = try await service.send(userMsg.content)
+            let reply = try await "assistant reply" // placeholder for OpenAI reply
             let assistantMsg = ChatMessage(id: UUID(), role: .assistant, content: reply)
             messages.append(assistantMsg)
         } catch {

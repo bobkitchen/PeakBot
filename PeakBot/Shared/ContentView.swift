@@ -1,29 +1,60 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
-    @ObservedObject var stravaService: StravaService
     @Binding var showSettingsSheet: Bool
     @EnvironmentObject var dashboardVM: DashboardViewModel
     @EnvironmentObject var workoutListVM: WorkoutListViewModel
+    @EnvironmentObject var trainingPeaksService: TrainingPeaksService
+    @State private var showLoginView = false
 
     var body: some View {
-        RootTabView()
-            .sheet(isPresented: $showSettingsSheet) {
-                SettingsView(stravaService: stravaService)
-            }
-            .onAppear {
-                // Wire up StravaService to WorkoutListViewModel
-                workoutListVM.stravaService = stravaService
-                // Trigger batch download on startup
-                Task {
-                    await workoutListVM.refreshDetailed()
+        VStack {
+            RootTabView()
+                .sheet(isPresented: $showSettingsSheet) {
+                    SettingsView()
                 }
+                .onAppear {
+                    workoutListVM.refreshEnabled = true
+                    // Call refresh only if it exists and is appropriate
+                    Task {
+                        await workoutListVM.refresh()
+                    }
+                }
+            Divider()
+            // TrainingPeaks Auth & Sync Controls
+            if !trainingPeaksService.isAuthenticated {
+                Button("Login to TrainingPeaks") {
+                    if let url = URL(string: "https://home.trainingpeaks.com/login") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+            } else {
+                HStack(spacing: 16) {
+                    Button(trainingPeaksService.isSyncing ? "Syncing..." : "Sync Now") {
+                        trainingPeaksService.syncAll { _ in }
+                    }
+                    .disabled(trainingPeaksService.isSyncing)
+                    if let lastSync = trainingPeaksService.lastSyncDate {
+                        Text("Last sync: \(lastSync.formatted(.dateTime.hour().minute()))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    if let error = trainingPeaksService.errorMessage {
+                        Text("⚠️ \(error)")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                }
+                .padding(.vertical, 8)
             }
+        }
     }
 }
 
 #Preview {
-    ContentView(stravaService: StravaService(), showSettingsSheet: .constant(false))
+    ContentView(showSettingsSheet: .constant(false))
         .environmentObject(DashboardViewModel())
         .environmentObject(WorkoutListViewModel())
+        .environmentObject(TrainingPeaksService())
 }

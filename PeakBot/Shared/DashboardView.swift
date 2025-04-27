@@ -38,7 +38,6 @@ struct DashboardView: View {
                 Divider()
                 Text("Chatbot")
                     .font(.headline)
-                ChatView() // Embeds the chatbot window directly on the dashboard
                 if let dashboardError = dashboardError {
                     Text("⚠️ Dashboard error: \(dashboardError)")
                         .foregroundColor(.red)
@@ -49,7 +48,7 @@ struct DashboardView: View {
         .onAppear {
             print("[DashboardView] onAppear. dashboardVM: \(dashboardVM)")
             Task {
-                await dashboardVM.refresh()
+                dashboardVM.refreshEnabled = true
                 dashboardError = dashboardVM.errorMessage
             }
         }
@@ -57,7 +56,7 @@ struct DashboardView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: {
                     Task {
-                        await dashboardVM.refresh()
+                        dashboardVM.refreshEnabled = true
                     }
                 }) {
                     Label("Refresh Fitness", systemImage: "arrow.clockwise")

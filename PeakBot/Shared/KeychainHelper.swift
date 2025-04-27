@@ -22,54 +22,50 @@ private let kc = Keychain(service: "PeakBot.Keys")
 enum KeychainHelper {
     // MARK: – Stored keys
     private enum K {
-        static let apiKey   = "tp_api"
-        static let athlete  = "tp_id"
-        static let stravaAccessToken = "strava_access_token"
-        static let stravaRefreshToken = "strava_refresh_token"
-        static let stravaExpiresAt = "strava_expires_at"
+        // Removed Strava and Intervals keys for TrainingPeaks transition
+        // static let apiKey   = "tp_api"
+        // static let athlete  = "tp_id"
+        // static let stravaAccessToken = "strava_access_token"
+        // static let stravaRefreshToken = "strava_refresh_token"
+        // static let stravaExpiresAt = "strava_expires_at"
     }
 
     // MARK: – Typed accessors
-    static var intervalsApiKey: String? {
-        get { try? kc.get(K.apiKey) }
-        set { kc[K.apiKey] = newValue }
-    }
+    // Removed Intervals and Strava accessors for TrainingPeaks transition
+    // static var intervalsApiKey: String? { ... }
+    // static var athleteID: String? { ... }
+    // static var stravaAccessToken: String? { ... }
+    // static var stravaRefreshToken: String? { ... }
+    // static var stravaExpiresAt: TimeInterval? { ... }
 
-    static var athleteID: String? {
-        get { try? kc.get(K.athlete) }
-        set { kc[K.athlete] = newValue }
-    }
+    // Removed clearStravaTokens for TrainingPeaks transition
+    // static func clearStravaTokens() { ... }
 
-    static var stravaAccessToken: String? {
-        get { try? kc.get(K.stravaAccessToken) }
-        set { kc[K.stravaAccessToken] = newValue }
-    }
+    // Removed hasAllKeys for TrainingPeaks transition
+    // static var hasAllKeys: Bool { intervalsApiKey != nil && athleteID != nil }
 
-    static var stravaRefreshToken: String? {
-        get { try? kc.get(K.stravaRefreshToken) }
-        set { kc[K.stravaRefreshToken] = newValue }
-    }
-
-    static var stravaExpiresAt: TimeInterval? {
+    // MARK: – TrainingPeaks Session Cookies
+    static var tpSessionCookies: [HTTPCookie]? {
         get {
-            guard let value = try? kc.get(K.stravaExpiresAt), let doubleVal = Double(value) else { return nil }
-            return doubleVal
+            guard let data = try? kc.getData("tp_cookies") else { return nil }
+            do {
+                let cookies = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, HTTPCookie.self], from: data) as? [HTTPCookie]
+                return cookies
+            } catch {
+                return nil
+            }
         }
         set {
-            if let val = newValue {
-                kc[K.stravaExpiresAt] = String(val)
-            } else {
-                kc[K.stravaExpiresAt] = nil
+            guard let cookies = newValue else {
+                try? kc.remove("tp_cookies")
+                return
+            }
+            do {
+                let data = try NSKeyedArchiver.archivedData(withRootObject: cookies, requiringSecureCoding: false)
+                try kc.set(data, key: "tp_cookies")
+            } catch {
+                // Ignore error
             }
         }
     }
-
-    static func clearStravaTokens() {
-        kc[K.stravaAccessToken] = nil
-        kc[K.stravaRefreshToken] = nil
-        kc[K.stravaExpiresAt] = nil
-    }
-
-    /// `true` only when both credentials are present.
-    static var hasAllKeys: Bool { intervalsApiKey != nil && athleteID != nil }
 }

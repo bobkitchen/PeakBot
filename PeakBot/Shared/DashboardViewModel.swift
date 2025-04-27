@@ -25,20 +25,14 @@ final class DashboardViewModel: ObservableObject {
         }
     }
     @Published var errorMessage: String? = nil
+    @Published var refreshEnabled: Bool = false
 
     // MARK: – Dependencies
-    // IntervalsAPIService is now fully disabled and removed
 
     // MARK: – Initializer
     init() {}
 
     // MARK: – Public API
-    // Intervals API refresh is now disabled. Implement Strava-based fitness refresh here if needed.
-    func refresh(days: Int = 90) async {
-        // No-op: Intervals API integration removed
-        fitness = []
-    }
-
     func updateWorkouts(_ newWorkouts: [Workout]) {
         self.workouts = newWorkouts
     }

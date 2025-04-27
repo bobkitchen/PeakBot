@@ -1,6 +1,7 @@
 import Foundation
 
-/// Activity model matching Intervals.icu /activities JSON response.
+/// Activity model matching /activities JSON response.
+// Removed Intervals.icu reference for TrainingPeaks transition
 struct Workout: Identifiable, Hashable, Codable {
     let id: String
     let name: String
