@@ -25,14 +25,34 @@ struct ContentView: View {
             // TrainingPeaks Auth & Sync Controls
             if !trainingPeaksService.isAuthenticated {
                 Button("Login to TrainingPeaks") {
-                    if let url = URL(string: "https://home.trainingpeaks.com/login") {
-                        NSWorkspace.shared.open(url)
-                    }
+                    showLoginView = true
                 }
-            } else {
+            }
+            if showLoginView {
+                TrainingPeaksWebExporter { zipURL in
+                    if let url = zipURL {
+                        trainingPeaksService.ingestExportedData(from: url) { success in
+                            if success {
+                                trainingPeaksService.isAuthenticated = true
+                            } else {
+                                trainingPeaksService.errorMessage = "Failed to import exported data."
+                            }
+                        }
+                    } else {
+                        trainingPeaksService.errorMessage = "Export failed or cancelled."
+                    }
+                    showLoginView = false
+                }
+                .frame(width: 640, height: 600)
+            }
+            if trainingPeaksService.isAuthenticated {
                 HStack(spacing: 16) {
-                    Button(trainingPeaksService.isSyncing ? "Syncing..." : "Sync Now") {
-                        trainingPeaksService.syncAll { _ in }
+                    Button(trainingPeaksService.isSyncing ? "Syncing…" : "Sync last day") {
+                        trainingPeaksService.isSyncing = true
+                        Task {
+                            await TrainingPeaksExportService.shared.sync(range: .days(1), trainingPeaksService: trainingPeaksService)
+                            trainingPeaksService.isSyncing = false
+                        }
                     }
                     .disabled(trainingPeaksService.isSyncing)
                     if let lastSync = trainingPeaksService.lastSyncDate {
