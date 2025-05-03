@@ -10,20 +10,69 @@ import AppKit
 
 struct TrainingPeaksWebExporter: NSViewRepresentable {
     let onExportComplete: (URL?) -> Void
+    
+    init(onExportComplete: @escaping (URL?) -> Void) {
+        print("[PeakBot DEBUG] TrainingPeaksWebExporter INIT")
+        self.onExportComplete = onExportComplete
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onExportComplete: onExportComplete)
     }
 
     func makeNSView(context: Context) -> WKWebView {
+        print("[PeakBot DEBUG] makeNSView CALLED!")
         let cfg = WKWebViewConfiguration()
         cfg.applicationNameForUserAgent =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
         cfg.userContentController.add(context.coordinator, name: "zip")
+        // Use a fresh process pool to avoid script caching issues
+        cfg.processPool = WKProcessPool()
+        // Explicitly enable JavaScript
+        let prefs = WKPreferences()
+        prefs.javaScriptEnabled = true
+        // Enable the Web Inspector for debugging
+        prefs.setValue(true, forKey: "developerExtrasEnabled")
+        cfg.preferences = prefs
+
+        // --- BEGIN: Robust JS injection with WKUserScript ---
+        let js = """
+(function peakbotInit() {
+    if (window.peakbotReady) return;
+    window.peakbotReady = true;
+    console.log('PeakBot JS injected!');
+    function insertButton() {
+        var btn = document.createElement('button');
+        btn.innerText = 'PeakBot Export';
+        btn.style.position = 'fixed';
+        btn.style.top = '20px';
+        btn.style.right = '20px';
+        btn.style.zIndex = 9999;
+        btn.style.padding = '10px 20px';
+        btn.style.background = '#4CAF50';
+        btn.style.color = 'white';
+        btn.style.fontSize = '16px';
+        btn.style.border = 'none';
+        btn.style.borderRadius = '6px';
+        btn.style.cursor = 'pointer';
+        btn.onclick = function() { console.log('PeakBot Export button clicked!'); };
+        document.body.appendChild(btn);
+    }
+    if (document.body) {
+        insertButton();
+    } else {
+        document.addEventListener('DOMContentLoaded', insertButton);
+    }
+})();
+"""
+        let script = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+        cfg.userContentController.addUserScript(script)
+        print("[PeakBot DEBUG] Added user script. Creating WKWebView...")
+        // --- END: Robust JS injection ---
 
         let webView = WKWebView(frame: .zero, configuration: cfg)
         webView.navigationDelegate = context.coordinator
-        if let url = URL(string: "https://home.trainingpeaks.com/login") {
+        if let url = URL(string: "https://example.com") {
             webView.load(URLRequest(url: url))
         }
         return webView
@@ -80,100 +129,22 @@ struct TrainingPeaksWebExporter: NSViewRepresentable {
             guard !didInjectExportButton else { return }
             // Only inject after login (dashboard loaded)
             if let url = webView.url, url.host?.contains("trainingpeaks.com") == true {
+                print("[PeakBot DEBUG] WKWebView didFinish navigation. Injecting JS via evaluateJavaScript...")
+                let js = "alert('PeakBot JS injected via didFinish!')"
+                webView.evaluateJavaScript(js) { result, error in
+                    if let error = error {
+                        print("[PeakBot DEBUG] JS injection error: \(error)")
+                    } else {
+                        print("[PeakBot DEBUG] JS injected via evaluateJavaScript")
+                    }
+                }
                 injectExportButton(into: webView)
                 didInjectExportButton = true
             }
         }
 
         private func injectExportButton(into webView: WKWebView) {
-            let peakbotJS = """
-(function peakbotInit() {
-  if (window.peakbotReady) return;
-  window.peakbotReady = true;
-
-  function log(m){ console.log('[PeakBot]', m); }
-
-  // 1. Floating helper
-  const helper = document.createElement('button');
-  helper.textContent = 'Export ▶︎ PeakBot';
-  helper.style = 'position:fixed;top:8px;right:8px;z-index:1e5;padding:6px';
-  document.body.appendChild(helper);
-
-  // 2. Wait-for util
-  const wait = (sel,max=100)=>new Promise((ok,fail)=>{
-     const i=setInterval(()=>{const e=document.querySelector(sel);
-        if(e){clearInterval(i);ok(e);}
-        else if(--max===0){clearInterval(i);fail();}
-     },100);});
-
-  // 3. Click handler
-  helper.onclick = async ()=>{
-    try{
-      // a) fill date boxes (workout-files row, two <input>)
-      const row = await wait('td:contains(\"Workout Files\")');
-      const ins = row.closest('tr').querySelectorAll('input[type=text]');
-      const d = new Date().toISOString().slice(0,10);
-      ins[0].value = d;  ins[1].value = d;
-
-      // b) click first Export link
-      row.closest('tr').querySelector('a,button').click();
-      log('clicked Export link; waiting for modal');
-
-      // c) wait for modal anchor & fetch ZIP
-      const a = await wait('.tpDialog a[href$=\".zip\"]');
-      const buf = await fetch(a.href).then(r=>r.arrayBuffer());
-      window.webkit.messageHandlers.zip.postMessage([...new Uint8Array(buf)]);
-      log('ZIP bytes sent to Swift');
-    }catch(e){
-      alert('PeakBot failed: '+e);
-    }
-  };
-})();
-"""
-            let debugJS = """
-(function peakbotDebug() {
-  if (window.peakbotReady) return;
-  window.peakbotReady = true;
-  function waitModal(sel, max=100) {
-    return new Promise((ok,fail)=>{
-      const i=setInterval(()=>{
-        const e=document.querySelector(sel);
-        if(e){clearInterval(i);ok(e);}
-        else if(--max===0){clearInterval(i);fail('Modal not found');}
-      },100);
-    });
-  }
-  waitModal('.tpDialog').then(modal => {
-    const helper = document.createElement('button');
-    helper.textContent = 'Export ▶︎ PeakBot (Debug)';
-    helper.style = `
-      width: 90%;
-      margin: 24px 5%;
-      padding: 24px 0;
-      background: #ffe000 !important;
-      color: #222 !important;
-      font-size: 28px !important;
-      font-weight: bold !important;
-      border: 6px solid #d00 !important;
-      border-radius: 18px !important;
-      box-shadow: 4px 4px 16px #000, 0 0 0 8px #fff !important;
-      opacity: 1 !important;
-      outline: 8px solid #222 !important;
-      pointer-events: auto !important;
-      display: block !important;
-      z-index: 999999999 !important;
-    `;
-    modal.appendChild(helper);
-    helper.onclick = () => {
-      var tds = Array.from(document.querySelectorAll('td'));
-      var log = tds.map((td,i) => `#${i}: "${td.innerText.trim()}"`).join('\n');
-      window.webkit.messageHandlers.zip.postMessage('TD_LOG:' + log);
-    };
-  }).catch(()=>{});
-})();
-"""
-            webView.evaluateJavaScript(peakbotJS, completionHandler: nil)
-            webView.evaluateJavaScript(debugJS, completionHandler: nil)
+            // No-op: now handled by WKUserScript above
         }
 
         private func downloadBlob(from blobURL: URL) {

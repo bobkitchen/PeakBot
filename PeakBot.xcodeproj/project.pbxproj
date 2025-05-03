@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A19E3A72DC61C0000B8C210 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 7A19E3A62DC61C0000B8C210 /* SwiftSoup */; };
 		7A1DFE102DB67E200087330B /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 7A1DFE0F2DB67E200087330B /* Swifter */; };
 		7A1DFE122DB67E200087330B /* Example in Frameworks */ = {isa = PBXBuildFile; productRef = 7A1DFE112DB67E200087330B /* Example */; };
 		7A41FD3C2DB43C68001D48F4 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 7A41FD3B2DB43C68001D48F4 /* KeychainAccess */; };
@@ -95,6 +96,7 @@
 				7A54CB692DB5675A00BCA894 /* SwiftCSV in Frameworks */,
 				7A1DFE122DB67E200087330B /* Example in Frameworks */,
 				7A81880E2DBE72FD0090B5E7 /* ZIPFoundation in Frameworks */,
+				7A19E3A72DC61C0000B8C210 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +186,7 @@
 				7A1DFE0F2DB67E200087330B /* Swifter */,
 				7A1DFE112DB67E200087330B /* Example */,
 				7A81880D2DBE72FD0090B5E7 /* ZIPFoundation */,
+				7A19E3A62DC61C0000B8C210 /* SwiftSoup */,
 			);
 			productName = PeakBot;
 			productReference = 7A41FC842DB42FC8001D48F4 /* PeakBot.app */;
@@ -342,6 +345,7 @@
 				7A54CB672DB5675A00BCA894 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
 				7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */,
 				7A81880C2DBE72FD0090B5E7 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				7A19E3A52DC61C0000B8C210 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7A41FC852DB42FC8001D48F4 /* Products */;
@@ -959,6 +963,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7A19E3A52DC61C0000B8C210 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.7;
+			};
+		};
 		7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/httpswift/swifter.git";
@@ -994,6 +1006,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7A19E3A62DC61C0000B8C210 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A19E3A52DC61C0000B8C210 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
 		7A1DFE0F2DB67E200087330B /* Swifter */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */;

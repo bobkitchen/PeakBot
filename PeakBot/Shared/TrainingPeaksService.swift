@@ -21,14 +21,24 @@ final class TrainingPeaksService: ObservableObject {
     // MARK: - Private State
     private var cookies: [HTTPCookie] = []
     
+    // MARK: - Initialization
+    init() {
+        // Load cookies at startup so authentication checks use restored cookies
+        _ = CookieVault.restore()
+    }
+    
     // MARK: - Authentication
     func authenticate(completion: @escaping (Bool) -> Void) {
         // Check for valid cookies in Keychain
-        if let cookies = KeychainHelper.tpSessionCookies,
-           cookies.contains(where: { $0.name == "ASP.NET_SessionId" }) {
-            isAuthenticated = true
-            completion(true)
-            return
+        if let cookies = KeychainHelper.tpSessionCookies {
+            let hasSession = cookies.contains { $0.name == "ASP.NET_SessionId" }
+            let hasTPAuth = cookies.contains { $0.name == "TPAuth" || $0.name == "Production_tpAuth" }
+            print("[Auth Debug] Cookies in Keychain:", cookies.map { $0.name })
+            if hasSession || hasTPAuth {
+                isAuthenticated = true
+                completion(true)
+                return
+            }
         }
         isAuthenticated = false
         completion(false)
@@ -183,5 +193,19 @@ final class TrainingPeaksService: ObservableObject {
                 }
             }
         }
+    }
+    
+    // MARK: - Sync using v1 API (FIT files)
+    func syncLatestWorkouts() async {
+        isSyncing = true
+        errorMessage = nil
+        do {
+            try await TPConnector.shared.syncLatest()
+            lastSyncDate = Date()
+            errorMessage = nil
+        } catch {
+            errorMessage = "Sync failed: \(error.localizedDescription)"
+        }
+        isSyncing = false
     }
 }

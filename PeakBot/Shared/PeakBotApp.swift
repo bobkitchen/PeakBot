@@ -29,6 +29,8 @@ struct PeakBotApp: App {
         let tps = TrainingPeaksService()
         _trainingPeaksService = StateObject(wrappedValue: tps)
         _workoutListVM = StateObject(wrappedValue: WorkoutListViewModel(trainingPeaksService: tps))
+        // Sync TrainingPeaks workouts at app launch (macOS)
+        syncTrainingPeaksNow()
     }
 
     var body: some Scene {

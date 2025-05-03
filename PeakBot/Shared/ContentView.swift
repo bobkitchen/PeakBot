@@ -7,12 +7,13 @@ struct ContentView: View {
     @EnvironmentObject var workoutListVM: WorkoutListViewModel
     @EnvironmentObject var trainingPeaksService: TrainingPeaksService
     @State private var showLoginView = false
+    @State private var showTPLoginSheet = false
 
     var body: some View {
         VStack {
             RootTabView()
                 .sheet(isPresented: $showSettingsSheet) {
-                    SettingsView()
+                    SettingsView(trainingPeaksService: trainingPeaksService)
                 }
                 .onAppear {
                     workoutListVM.refreshEnabled = true
@@ -20,38 +21,18 @@ struct ContentView: View {
                     Task {
                         await workoutListVM.refresh()
                     }
+                    print("[PeakBot DEBUG] ContentView appeared. showLoginView = \(showLoginView)")
                 }
             Divider()
             // TrainingPeaks Auth & Sync Controls
-            if !trainingPeaksService.isAuthenticated {
-                Button("Login to TrainingPeaks") {
-                    showLoginView = true
-                }
-            }
-            if showLoginView {
-                TrainingPeaksWebExporter { zipURL in
-                    if let url = zipURL {
-                        trainingPeaksService.ingestExportedData(from: url) { success in
-                            if success {
-                                trainingPeaksService.isAuthenticated = true
-                            } else {
-                                trainingPeaksService.errorMessage = "Failed to import exported data."
-                            }
-                        }
-                    } else {
-                        trainingPeaksService.errorMessage = "Export failed or cancelled."
-                    }
-                    showLoginView = false
-                }
-                .frame(width: 640, height: 600)
-            }
+            // [LOGIN MOVED TO SETTINGS VIEW]
             if trainingPeaksService.isAuthenticated {
                 HStack(spacing: 16) {
                     Button(trainingPeaksService.isSyncing ? "Syncing…" : "Sync last day") {
                         trainingPeaksService.isSyncing = true
+                        trainingPeaksService.errorMessage = nil
                         Task {
                             await TrainingPeaksExportService.shared.sync(range: .days(1), trainingPeaksService: trainingPeaksService)
-                            trainingPeaksService.isSyncing = false
                         }
                     }
                     .disabled(trainingPeaksService.isSyncing)
