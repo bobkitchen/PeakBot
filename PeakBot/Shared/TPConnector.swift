@@ -9,7 +9,11 @@ enum TPError: Error { case loginFailed, csrfMissing, badStatus(Int), athleteMiss
 enum CookieVault {
     private static let key = "tpCookies"
     static func save(_ cookies:[HTTPCookie]) {
-        let wantedNames = ["ASP.NET_SessionId", "TPAuth"]
+        let wantedNames = [
+            "tpauth",                   // Production_/Sandbox_
+            "asp.net_sessionid",
+            "__requestverificationtoken" // ← NEW (case-insensitive)
+        ]
         let wanted = cookies.filter { c in
             wantedNames.contains(where: { c.name.lowercased().hasSuffix($0.lowercased()) })
         }.compactMap(\.properties)
@@ -79,19 +83,24 @@ final class TPConnector {
         }
     }
 
+    /// fetch athleteId once from TP front-end context
     private func fetchAthleteID() async throws {
-        var r = URLRequest(url: URL(string:"https://api.trainingpeaks.com/v1/user")!)
-        r.addCookies(cookies)
-        let (data, resp) = try await session.data(for:r)
-        guard let code = (resp as? HTTPURLResponse)?.statusCode else {
-            throw TPError.badStatus(-1)
+        var r = URLRequest(url: URL(string:
+            "https://app.trainingpeaks.com/atlas/v1/user/context")!)
+        r.httpMethod = "GET"
+        r.addCookies(cookies)                                // keep tpAuth + ASP cookie
+        if let anti = cookies.first(where: { $0.name.lowercased().contains("requestverificationtoken") }) {
+            r.setValue(anti.value, forHTTPHeaderField: "__RequestVerificationToken")
         }
-        print("[TPConnector] /v1/user status:", code)
-        guard code == 200 else {
-            throw TPError.badStatus(code)
+        r.setValue("application/json, text/plain, */*", forHTTPHeaderField: "Accept")
+        r.setValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
+        let (data, resp) = try await session.data(for: r)
+        print("[TPConnector] /atlas context status:", (resp as? HTTPURLResponse)?.statusCode ?? -1)
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? -1)
         }
-        struct U:Decodable{let athleteId:Int}
-        athleteID = try JSONDecoder().decode(U.self, from:data).athleteId
+        struct Ctx: Decodable { let athleteId: Int }
+        athleteID = try JSONDecoder().decode(Ctx.self, from: data).athleteId
         print("[TPConnector] athleteId =", athleteID ?? -1)
     }
 

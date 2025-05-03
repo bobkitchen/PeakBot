@@ -43,7 +43,10 @@ final class WorkoutListViewModel: ObservableObject {
     /// Pull the latest workouts from the specified date.
     func refresh(daysBack: Int = 30) async {
         print("[WorkoutListViewModel] refresh() called (TrainingPeaks)")
-        // No-op: TrainingPeaksService automatically updates workouts
+        Task {
+            do { try await TPConnector.shared.syncLatest(limit: 20) }
+            catch { print("TP sync failed →", error) }
+        }
     }
 }
 
