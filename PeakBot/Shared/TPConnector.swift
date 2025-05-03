@@ -45,8 +45,7 @@ final class TPConnector {
     // public entry
     func syncLatest(limit:Int=20) async throws {
         try await ensureLogin()
-        try await ensureAthleteID()
-        let ids = try await recentIDs(limit:limit)
+        guard let ids = try? await recentIDs(limit:limit) else { throw TPError.athleteMissing }
         print("[TPConnector] got ids:", ids.prefix(5))
         // … downloadFIT(id:) & ingest here …
     }
@@ -57,8 +56,20 @@ final class TPConnector {
 
     // MARK: – internals
     private var cookies:[HTTPCookie] { HTTPCookieStorage.shared.cookies ?? [] }
-    private var athleteID:Int? {
-        get { UserDefaults.standard.integer(forKey:"tpAthleteID").nilIfZero }
+    private var athleteID: Int? {
+        get {
+            if let cached = UserDefaults.standard.integer(forKey: "tpAthleteID").nilIfZero {
+                return cached
+            }
+            // NEW — derive from cookie the first time
+            let jar = HTTPCookieStorage.shared.cookies ?? []
+            if let ajs = jar.first(where: { $0.name == "ajs_user_id" }),
+               let id  = Int(ajs.value) {
+                UserDefaults.standard.set(id, forKey: "tpAthleteID")
+                return id
+            }
+            return nil
+        }
         set { UserDefaults.standard.set(newValue ?? 0, forKey:"tpAthleteID") }
     }
     private let session:URLSession = .init(configuration:.ephemeral)
@@ -74,34 +85,6 @@ final class TPConnector {
     // — login via WebView already handled in UI; no-op here —
     private func interactiveLogin() async throws {
         throw TPError.loginFailed   // UI should present WKWebView sheet
-    }
-
-    private func ensureAthleteID() async throws {
-        guard athleteID != nil else {
-            try await fetchAthleteID()
-            return
-        }
-    }
-
-    /// fetch athleteId once from TP front-end context
-    private func fetchAthleteID() async throws {
-        var r = URLRequest(url: URL(string:
-            "https://app.trainingpeaks.com/atlas/v1/user/context")!)
-        r.httpMethod = "GET"
-        r.addCookies(cookies)                                // keep tpAuth + ASP cookie
-        if let anti = cookies.first(where: { $0.name.lowercased().contains("requestverificationtoken") }) {
-            r.setValue(anti.value, forHTTPHeaderField: "__RequestVerificationToken")
-        }
-        r.setValue("application/json, text/plain, */*", forHTTPHeaderField: "Accept")
-        r.setValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
-        let (data, resp) = try await session.data(for: r)
-        print("[TPConnector] /atlas context status:", (resp as? HTTPURLResponse)?.statusCode ?? -1)
-        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
-            throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? -1)
-        }
-        struct Ctx: Decodable { let athleteId: Int }
-        athleteID = try JSONDecoder().decode(Ctx.self, from: data).athleteId
-        print("[TPConnector] athleteId =", athleteID ?? -1)
     }
 
     private func recentIDs(limit:Int) async throws -> [Int] {

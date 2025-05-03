@@ -12,6 +12,7 @@
 import SwiftUI
 import WebKit
 import AppKit
+import Combine
 
 /// SwiftUI wrapper that drives a hidden WKWebView. Show this once in a sheet; it dismisses
 /// itself via the `onComplete` callback when a valid TP session cookie is observed.
@@ -29,7 +30,6 @@ struct TrainingPeaksLoginController: NSViewRepresentable {
         container.wantsLayer = true
         container.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
         let cfg = WKWebViewConfiguration()
-        // Spoof desktop Safari UA to avoid TP mobile / WKWebView blocks.
         cfg.applicationNameForUserAgent =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
 
@@ -37,7 +37,6 @@ struct TrainingPeaksLoginController: NSViewRepresentable {
         webView.navigationDelegate = context.coordinator
         webView.autoresizingMask = [.width, .height]
         container.addSubview(webView)
-        // Navigate to the preferred home TP login.
         if let url = URL(string: "https://home.trainingpeaks.com/login") {
             print("[PeakBot DEBUG] Loading TP login URL: \(url)")
             webView.load(URLRequest(url: url))
@@ -47,13 +46,19 @@ struct TrainingPeaksLoginController: NSViewRepresentable {
             container.addSubview(label)
         }
 
-        // Add a manual close button
+        // Add a Done button, disabled until all cookies present
         let button = NSButton(frame: NSRect(x: 520, y: 5, width: 110, height: 30))
-        button.title = "Done (manual)"
+        button.title = "Done"
         button.bezelStyle = .rounded
         button.action = #selector(Coordinator.manualCloseButtonTapped(_:))
         button.target = context.coordinator
+        button.isEnabled = false // Initially disabled
         container.addSubview(button)
+
+        // Observe canDismiss to enable/disable the Done button
+        context.coordinator.cancellable = context.coordinator.$canDismiss.receive(on: RunLoop.main).sink { canDismiss in
+            button.isEnabled = canDismiss
+        }
 
         return container
     }
@@ -61,38 +66,41 @@ struct TrainingPeaksLoginController: NSViewRepresentable {
     func updateNSView(_ nsView: NSView, context: Context) {}
 
     // MARK: – Coordinator
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, ObservableObject {
+        @Published var canDismiss = false
+        var cancellable: AnyCancellable?
         private let onComplete: (Bool) -> Void
         init(onComplete: @escaping (Bool) -> Void) { self.onComplete = onComplete }
 
-        // REMOVE auto-close on navigation:
-        // func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        //     // Look for successful redirect to the app sub-domain after login.
-        //     let cookies = HTTPCookieStorage.shared.cookies ?? []
-        //     let hasTPAuth = cookies.contains { $0.name == "TPAuth" || $0.name == "Production_tpAuth" }
-        //     let hasSession = cookies.contains { $0.name == "ASP.NET_SessionId" }
-        //     print("Captured cookies:")
-        //     cookies.forEach { print($0.name, $0.domain, $0.value) }
-        //     if hasTPAuth || hasSession {
-        //         // Persist and finish.
-        //         KeychainHelper.tpSessionCookies = cookies
-        //         DispatchQueue.main.async { self.onComplete(true) }
-        //     }
-        // }
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            decisionHandler(.allow)
+        }
 
-        @objc func manualCloseButtonTapped(_ sender: Any?) {
-            let cookies = HTTPCookieStorage.shared.cookies ?? []
-            print("Captured cookies (manual close):")
-            cookies.forEach { print($0.name, $0.domain, $0.value) }
-            if !cookies.isEmpty {
-                KeychainHelper.tpSessionCookies = cookies
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            let jar = HTTPCookieStorage.shared.cookies ?? []
+            let names = Set(jar.map { $0.name.lowercased() })
+            let haveAJS = jar.contains { $0.name == "ajs_user_id" && Int($0.value) != nil }
+            if haveAJS {
+                if !canDismiss {
+                    print("[TPLogin] ajs_user_id present; athleteId available; enabling Done button.")
+                    CookieVault.save(jar)
+                    canDismiss = true
+                }
+            } else {
+                print("[TPLogin] waiting – cookies now:", names.sorted())
             }
-            DispatchQueue.main.async { self.onComplete(true) }
         }
 
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-            // Edge case: process crashed.
             onComplete(false)
+        }
+
+        @objc func manualCloseButtonTapped(_ sender: Any?) {
+            if canDismiss {
+                onComplete(true)
+            } else {
+                print("[TPLogin] Not all cookies present – cannot dismiss yet.")
+            }
         }
     }
 }
