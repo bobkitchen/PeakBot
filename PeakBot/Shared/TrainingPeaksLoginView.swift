@@ -22,9 +22,10 @@ struct TrainingPeaksLoginView: View {
             Button("Connect TrainingPeaks") {
                 TPConnector.shared.saveCredentials(email: email, password: password)
                 Task {
+                    status = "Starting Atlas sync..."
                     do {
-                        try await TPConnector.shared.syncLatest()
-                        status = "Sync started!"
+                        _ = try await TPConnector.shared.fetchWorkoutsAtlas(start: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), end: Date())
+                        status = "Atlas sync started!"
                         onLoginSuccess()
                     } catch {
                         status = "Error: \(error.localizedDescription)"

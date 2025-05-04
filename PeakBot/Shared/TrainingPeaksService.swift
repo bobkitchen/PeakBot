@@ -195,16 +195,33 @@ final class TrainingPeaksService: ObservableObject {
         }
     }
     
-    // MARK: - Sync using v1 API (FIT files)
-    func syncLatestWorkouts() async {
+    // MARK: - Sync using Atlas API
+    func syncLatestWorkouts(daysBack: Int = 1) async {
         isSyncing = true
         errorMessage = nil
+        let end = Date()
+        let start = Calendar.current.date(byAdding: .day, value: -daysBack, to: end) ?? end
         do {
-            try await TPConnector.shared.syncLatest()
-            lastSyncDate = Date()
-            errorMessage = nil
+            let atlasWorkouts = try await TPConnector.shared.fetchWorkoutsAtlas(start: start, end: end)
+            // Map AtlasWorkout to Workout (minimal fields)
+            let mapped = atlasWorkouts.map { aw in
+                Workout(
+                    id: String(aw.WorkoutId),
+                    name: "Workout",
+                    startDateLocal: aw.startDate,
+                    distance: nil,
+                    movingTime: nil
+                )
+            }
+            await MainActor.run {
+                self.workouts = mapped
+                self.lastSyncDate = Date()
+                self.errorMessage = nil
+            }
         } catch {
-            errorMessage = "Sync failed: \(error.localizedDescription)"
+            await MainActor.run {
+                self.errorMessage = "Atlas sync failed: \(error.localizedDescription)"
+            }
         }
         isSyncing = false
     }

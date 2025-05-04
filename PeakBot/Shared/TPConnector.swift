@@ -3,7 +3,7 @@ import Foundation
 import SwiftSoup
 
 // MARK: – errors
-enum TPError: Error { case loginFailed, csrfMissing, badStatus(Int), athleteMissing }
+enum TPError: Error { case loginFailed, csrfMissing, badStatus(Int), athleteMissing, missingAthleteId }
 
 // MARK: – cookie + credential vault (UserDefaults stub; swap for Keychain)
 enum CookieVault {
@@ -72,23 +72,27 @@ final class TPConnector {
         throw TPError.loginFailed   // UI should present WKWebView sheet
     }
 
-    private func recentIDs(limit:Int) async throws -> [Int] {
-        let aid = try await ensureAthleteID()
-        let cookieId = cookies.first(where: { $0.name == "ajs_user_id" })?.value
-        print("[DEBUG] request id =", aid, "cookie id =", cookieId ?? "nil")
-        print("[TPConnector] using athleteId", aid)
-        let base = URL(string: "https://api.trainingpeaks.com/v1/")!
-        let url = base.appendingPathComponent("athlete/\(aid)/workouts?limit=\(limit)&sort=-startDate")
-        var req = URLRequest(url: url)
-        addCookies(to: &req)
-        let (data, resp) = try await session.data(for: req)
-        print("[TPConnector] status:", (resp as? HTTPURLResponse)?.statusCode ?? -1)
-        guard let code = (resp as? HTTPURLResponse)?.statusCode, code==200 else {
-            print("[DEBUG] server body:", String(data: data, encoding: .utf8) ?? "(non-UTF8)")
-            throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? -1)
+    // MARK: Atlas workout list
+    func fetchWorkoutsAtlas(start: Date, end: Date, fields: String = "basic") async throws -> [AtlasWorkout] {
+        guard let athlete = KeychainHelper.athleteId else {
+            throw TPError.missingAthleteId
         }
-        struct Head:Decodable{ let workoutId:Int }
-        return try JSONDecoder().decode([Head].self, from:data).map(\Head.workoutId)
+        var c = URLComponents(string: "https://home.trainingpeaks.com/atlas/v1/athlete/\(athlete)/workouts")!
+        let tz = 0 // required by Atlas: timezone offset in minutes, can be fixed at 0
+        c.queryItems = [
+            .init(name: "startDate", value: start.tpDate),
+            .init(name: "endDate", value: end.tpDate),
+            .init(name: "fields", value: fields),
+            .init(name: "tz", value: String(tz))
+        ]
+        var req = URLRequest(url: c.url!)
+        req.setValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        let (data, resp) = try await session.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? 0)
+        }
+        return try JSONDecoder().decode([AtlasWorkout].self, from: data)
     }
 
     // MARK: - athlete-id resolver
@@ -148,6 +152,25 @@ final class TPConnector {
     private func addCookies(to req: inout URLRequest) {
         let cookieHeader = HTTPCookie.requestHeaderFields(with: cookies)
         req.allHTTPHeaderFields = (req.allHTTPHeaderFields ?? [:]).merging(cookieHeader) { $1 }
+    }
+}
+
+// AtlasWorkout minimal model
+struct AtlasWorkout: Decodable, Identifiable {
+    let WorkoutId: Int
+    let StartTimeLocal: String
+    let WorkoutType: Int
+    var id: Int { WorkoutId }
+    var startDate: Date {
+        ISO8601DateFormatter().date(from: StartTimeLocal) ?? Date.distantPast
+    }
+}
+
+extension Date {
+    var tpDate: String {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withFullDate]
+        return f.string(from: self)
     }
 }
 

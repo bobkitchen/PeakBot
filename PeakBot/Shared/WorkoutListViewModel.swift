@@ -43,9 +43,24 @@ final class WorkoutListViewModel: ObservableObject {
     /// Pull the latest workouts from the specified date.
     func refresh(daysBack: Int = 30) async {
         print("[WorkoutListViewModel] refresh() called (TrainingPeaks)")
-        Task {
-            do { try await TPConnector.shared.syncLatest(limit: 20) }
-            catch { print("TP sync failed →", error) }
+        let end = Date()
+        let start = Calendar.current.date(byAdding: .day, value: -daysBack, to: end) ?? end
+        do {
+            let atlasWorkouts = try await TPConnector.shared.fetchWorkoutsAtlas(start: start, end: end)
+            // Map AtlasWorkout to Workout (minimal fields)
+            let mapped = atlasWorkouts.map { aw in
+                Workout(
+                    id: String(aw.WorkoutId),
+                    name: "Workout",
+                    startDateLocal: aw.startDate,
+                    distance: nil,
+                    movingTime: nil
+                )
+            }
+            await MainActor.run { self.workouts = mapped }
+        } catch {
+            print("TP Atlas fetch failed →", error)
+            await MainActor.run { self.errorMessage = "Atlas sync failed: \(error.localizedDescription)" }
         }
     }
 }

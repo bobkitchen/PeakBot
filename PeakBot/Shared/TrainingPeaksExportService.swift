@@ -27,13 +27,9 @@ final class TrainingPeaksExportService {
         // NEW: Use TPConnector for FIT sync, not legacy export POST
         trainingPeaksService.isSyncing = true
         trainingPeaksService.errorMessage = nil
-        do {
-            try await TPConnector.shared.syncLatest()
-            trainingPeaksService.lastSyncDate = Date()
-            trainingPeaksService.errorMessage = nil
-        } catch {
-            trainingPeaksService.errorMessage = "Sync failed: \(error.localizedDescription)"
-        }
+        await trainingPeaksService.syncLatestWorkouts(daysBack: range.daysBack)
+        trainingPeaksService.lastSyncDate = Date()
+        trainingPeaksService.errorMessage = nil
         trainingPeaksService.isSyncing = false
     }
 }
