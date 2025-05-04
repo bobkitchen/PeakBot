@@ -27,12 +27,9 @@ struct PeakBotApp: App {
     // IntervalsAPIService is now fully removed. All metrics should be Strava-based.
     init() {
         // Hydrate cookies and athleteId at process start
-        KeychainHelper.restoreTPCookies()
         let tps = TrainingPeaksService()
-        // Hydrate athleteId if available in Keychain
-        if let id = KeychainHelper.athleteId, let intId = Int(id) {
-            print("[PeakBotApp] Hydrated athleteId from Keychain: \(intId)")
-        }
+        // Restore cookies & athleteId directly into the service instance
+        KeychainHelper.restoreTPCookies(into: tps)
         _trainingPeaksService = StateObject(wrappedValue: tps)
         _workoutListVM = StateObject(wrappedValue: WorkoutListViewModel(trainingPeaksService: tps))
         // Sync TrainingPeaks workouts at app launch (macOS)

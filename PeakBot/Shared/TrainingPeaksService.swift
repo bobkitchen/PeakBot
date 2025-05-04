@@ -17,6 +17,8 @@ final class TrainingPeaksService: ObservableObject {
     @Published var lastSyncDate: Date?
     @Published var errorMessage: String?
     @Published var workouts: [Workout] = []
+    // Expose restored athlete IDs for observers (optional but useful)
+    @Published var athleteIds: [Int] = []
     
     // MARK: - Private State
     private var cookies: [HTTPCookie] = []

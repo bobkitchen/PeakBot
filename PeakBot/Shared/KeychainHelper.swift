@@ -82,9 +82,18 @@ enum KeychainHelper {
         }
     }
 
-    @MainActor static func restoreTPCookies() {
-        // …existing cookie injection …
-        _ = KeychainHelper.tpSessionCookies // ensure cookies restored
+    @MainActor static func restoreTPCookies(into service: TrainingPeaksService? = nil) {
+        // Inject stored cookies back into the shared storage so subsequent URLRequests send them
+        if let stored = KeychainHelper.tpSessionCookies {
+            stored.forEach { HTTPCookieStorage.shared.setCookie($0) }
+            
+            // Update auth flag on injected service
+            if let svc = service {
+                let authNames = ["TPAuth", "Production_tpAuth", "tpauth"]
+                let hasAuth = stored.contains { authNames.contains($0.name) }
+                svc.isAuthenticated = hasAuth
+            }
+        }
 
         // Hydrate athleteId directly from Keychain
         if let id = athleteId {
@@ -94,6 +103,8 @@ enum KeychainHelper {
                 // Store in UserDefaults so TPConnector.athleteId computed property can read it
                 UserDefaults.standard.set(intId, forKey: "tpAthleteID")
                 TPConnector.shared.athleteId = intId  // cache in runtime instance as well
+                // Push into provided service instance if available
+                service?.athleteIds = [intId]
             }
         } else {
             print("[KeychainHelper] 🔑 athleteId not found in Keychain")

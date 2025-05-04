@@ -75,15 +75,56 @@ final class TPConnector {
         throw TPError.loginFailed   // UI should present WKWebView sheet
     }
 
-    // Fetch recent workout IDs (stub implementation)
+    // Fetch recent workout IDs – simple Atlas-based implementation
     func recentIDs(limit: Int = 20) async throws -> [Int] {
-        // TODO: Replace this stub with real API call to fetch recent workout IDs
-        // For now, just return an empty array or mock data
-        return []
+        // Ensure we have athleteId resolved
+        _ = try await ensureAthleteID()
+
+        // Prefer REST workouts API (more stable than Atlas)
+        let end = Date()
+        let start = Calendar.current.date(byAdding: .day, value: -30, to: end) ?? end
+
+        guard let aid = try? await ensureAthleteID() else { return [] }
+
+        let df = DateFormatter()
+        df.locale = Locale(identifier: "en_US_POSIX")
+        df.dateFormat = "yyyy-MM-dd"
+        var comps = URLComponents(string: "https://api.trainingpeaks.com/v1/athlete/\(aid)/workouts")!
+        comps.queryItems = [
+            .init(name: "startDate", value: df.string(from: start)),
+            .init(name: "endDate",   value: df.string(from: end)),
+            .init(name: "fields",    value: "workoutId,startDate"),
+            .init(name: "limit",     value: String(limit)),
+            .init(name: "page",      value: "0")
+        ]
+
+        var req = URLRequest(url: comps.url!)
+        addCookies(to: &req)
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        let (data, resp) = try await session.data(for: req)
+        let status = (resp as? HTTPURLResponse)?.statusCode ?? 0
+        guard status == 200 else {
+            print("[TPConnector] workouts API status", status)
+            if status == 404 {
+                // fallback to Atlas list
+                let atlas = try await fetchWorkoutsAtlas(start: start, end: end, fields: "id,startDate")
+                let sortedA = atlas.sorted { $0.startDate > $1.startDate }
+                return sortedA.map { $0.WorkoutId }
+            }
+            return []
+        }
+
+        struct W: Decodable { let workoutId: Int; let startDate: Date }
+        let workouts = try JSONDecoder().decode([W].self, from: data)
+        let sorted = workouts.sorted { $0.startDate > $1.startDate }
+        return sorted.map { $0.workoutId }
     }
 
     // MARK: Atlas workout list
     func fetchWorkoutsAtlas(start: Date, end: Date, fields: String = "basic") async throws -> [AtlasWorkout] {
+        // Ensure Atlas-specific cookies exist first
+        try await warmUpAtlasCookies()
+
         guard let athlete = self.athleteId else {
             throw TPError.missingAthleteId
         }
@@ -103,6 +144,14 @@ final class TPConnector {
             throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? 0)
         }
         return try JSONDecoder().decode([AtlasWorkout].self, from: data)
+    }
+
+    // Warm-up call that seeds Atlas-required cookies (mirrors tapiriik)
+    private func warmUpAtlasCookies() async throws {
+        guard let aid = self.athleteId else { throw TPError.missingAthleteId }
+        var req = URLRequest(url: URL(string: "https://api.trainingpeaks.com/v1/athletes/\(aid)")!)
+        addCookies(to: &req)
+        _ = try await session.data(for: req) // we don't care about the response body
     }
 
     // MARK: - athlete-id resolver
