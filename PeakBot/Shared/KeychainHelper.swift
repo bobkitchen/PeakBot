@@ -74,15 +74,29 @@ enum KeychainHelper {
         set  { write("athleteId", newValue) }
     }
 
-    static func restoreTPCookies() {
+    static func persistTPCookies(cookies: [HTTPCookie]) {
+        tpSessionCookies = cookies
+        // Persist athleteId directly if present in cookies
+        if let id = cookies.first(where: { $0.name == "ajs_user_id" })?.value {
+            athleteId = id
+        }
+    }
+
+    @MainActor static func restoreTPCookies() {
         // …existing cookie injection …
         _ = KeychainHelper.tpSessionCookies // ensure cookies restored
 
-        // NEW – hydrate athleteId once per launch
-        if athleteId == nil,
-           let idCookie = HTTPCookieStorage.shared.cookies?
-                 .first(where: { $0.name == "ajs_user_id" }) {
-            athleteId = idCookie.value
+        // Hydrate athleteId directly from Keychain
+        if let id = athleteId {
+            print("[KeychainHelper] 🔑 restored athleteId = \(id)")
+            // Persist athleteId for TPConnector so it can be used immediately without additional network calls.
+            if let intId = Int(id) {
+                // Store in UserDefaults so TPConnector.athleteId computed property can read it
+                UserDefaults.standard.set(intId, forKey: "tpAthleteID")
+                TPConnector.shared.athleteId = intId  // cache in runtime instance as well
+            }
+        } else {
+            print("[KeychainHelper] 🔑 athleteId not found in Keychain")
         }
     }
 
