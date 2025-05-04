@@ -179,20 +179,26 @@ final class StravaService: ObservableObject {
             request.predicate = NSPredicate(format: "workoutId == %lld", activity.id)
             let existing = try? context.fetch(request)
             let w = existing?.first ?? CoreDataModel.makeWorkout(context: context)
-            w.workoutId = Int64(activity.id)
+            // Assign Int64 value to NSNumber? property
+            w.workoutId = NSNumber(value: activity.id)
             w.name = activity.name ?? ""
             w.sport = "cycling" // TODO: map from Strava
             w.startDate = activity.startDateLocal ?? Date()
-            w.distance = activity.distance ?? 0
-            w.movingTime = Int32(activity.movingTime ?? 0)
-            w.avgPower = activity.averageWatts as NSNumber?
-            w.avgHR = activity.averageHeartrate as NSNumber?
+            // Assign Double value to NSNumber? property
+            w.distance = NSNumber(value: activity.distance ?? 0)
+            // Assign Int32 value to NSNumber? property
+            w.movingTime = NSNumber(value: activity.movingTime ?? 0)
+            // Assign Double value to NSNumber? property
+            w.avgPower = NSNumber(value: activity.averageWatts ?? 0)
+            // Assign Double value to NSNumber? property
+            w.avgHR = NSNumber(value: activity.averageHeartrate ?? 0)
             // --- Fetch streams ---
             let streams = try? await fetchStreams(for: activity.id)
             if let streams = streams {
                 for (type, values) in streams {
                     let stream = Stream(context: context)
-                    stream.workoutID = Int64(activity.id)
+                    // Assign Int64 value to NSNumber? property
+                    stream.workoutID = NSNumber(value: activity.id)
                     stream.type = type
                     stream.values = try JSONEncoder().encode(values)
                 }
@@ -203,10 +209,18 @@ final class StravaService: ObservableObject {
                 let np = MetricsEngine.normalizedPower(from: power)
                 let ifv = MetricsEngine.intensityFactor(np: np, ftp: ftp)
                 let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(activity.movingTime ?? 0), ftp: ftp)
-                w.np = np as NSNumber?
-                w.intensityFactor = ifv as NSNumber?
-                w.tss = tss as NSNumber?
-                print("[StravaService] Saved metrics for activity \(activity.id): np=\(np), if=\(ifv), tss=\(tss)")
+                // Assign Double value to NSNumber? property
+                w.np = NSNumber(value: np)
+                // Assign Double value to NSNumber? property
+                w.intensityFactor = NSNumber(value: ifv)
+                // Assign Double value to NSNumber? property
+                w.tss = NSNumber(value: tss)
+                let avgPower = w.avgPower?.doubleValue ?? 0
+                let avgHR = w.avgHR?.doubleValue ?? 0
+                let npValue = w.np?.doubleValue ?? 0
+                let intensity = w.intensityFactor?.doubleValue ?? 0
+                let tssValue = w.tss?.doubleValue ?? 0
+                print("[StravaService] Saved metrics for activity \(activity.id): np=\(npValue), if=\(intensity), tss=\(tssValue)")
             }
         }
         try context.save()
@@ -270,4 +284,15 @@ final class StravaService: ObservableObject {
         }
         return result
     }
+}
+
+// MARK: - Example usage
+func exampleUsage() {
+    let w = Workout()
+    let avgPower = w.avgPower?.doubleValue ?? 0
+    let avgHR = w.avgHR?.doubleValue ?? 0
+    let np = w.np?.doubleValue ?? 0
+    let intensity = w.intensityFactor?.doubleValue ?? 0
+    let tss = w.tss?.doubleValue ?? 0
+    print("Avg Power: \(avgPower), HR: \(avgHR), NP: \(np), IF: \(intensity), TSS: \(tss)")
 }

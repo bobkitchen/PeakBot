@@ -33,7 +33,7 @@ struct WorkoutRowView: View {
                 .font(.headline)
             Text(workout.startDate != nil ? "\(workout.startDate!, formatter: dateFormatter)" : "N/A")
                 .font(.subheadline)
-            Text("Distance: \(workout.distance, specifier: "%.2f") km")
+            Text("Distance: \(workout.distance?.doubleValue ?? 0, specifier: "%.2f") km")
                 .font(.caption)
             Text("Moving Time: \(formatSeconds(Int(workout.movingTime)))")
                 .font(.caption2)
@@ -46,7 +46,20 @@ struct WorkoutListView: View {
     
     var body: some View {
         List(viewModel.workouts, id: \.workoutId) { workout in
-            WorkoutRowView(workout: workout)
+            VStack(alignment: .leading) {
+                Text(workout.name ?? "Unnamed Workout")
+                    .font(.headline)
+                Text(workout.startDate != nil ? "\(workout.startDate!, formatter: dateFormatter)" : "N/A")
+                    .font(.subheadline)
+                Text("Distance: \(workout.distance?.doubleValue ?? 0, specifier: "%.2f") km")
+                    .font(.caption)
+                Text("Moving Time: \(formatSeconds(Int(workout.movingTime)))")
+                    .font(.caption2)
+                Text("Avg Power: \(workout.avgPower?.doubleValue ?? 0, specifier: "%.0f")")
+                    .font(.caption)
+                Text("TSS: \(workout.tss?.doubleValue ?? 0, specifier: "%.1f")")
+                    .font(.caption)
+            }
         }
     }
 }
