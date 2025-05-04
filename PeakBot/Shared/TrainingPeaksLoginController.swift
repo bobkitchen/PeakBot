@@ -30,6 +30,7 @@ struct TrainingPeaksLoginController: NSViewRepresentable {
         container.wantsLayer = true
         container.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
         let cfg = WKWebViewConfiguration()
+        cfg.websiteDataStore = .default() // Use persistent store for cookies
         cfg.applicationNameForUserAgent =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
 
@@ -95,8 +96,22 @@ struct TrainingPeaksLoginController: NSViewRepresentable {
             onComplete(false)
         }
 
+        func persistTPCookies(webView: WKWebView) {
+            let store = webView.configuration.websiteDataStore.httpCookieStore
+            store.getAllCookies { cookies in
+                // keep only what the REST client actually needs
+                let keep = ["Production_tpAuth", "ajs_user_id"]
+                let filtered = cookies.filter { keep.contains($0.name) }
+                KeychainHelper.tpSessionCookies = filtered
+                print("[TPLogin] Persisted TP cookies:", filtered.map { $0.name })
+            }
+        }
+
         @objc func manualCloseButtonTapped(_ sender: Any?) {
             if canDismiss {
+                if let webView = (sender as? NSButton)?.superview?.subviews.compactMap({ $0 as? WKWebView }).first {
+                    persistTPCookies(webView: webView)
+                }
                 onComplete(true)
             } else {
                 print("[TPLogin] Not all cookies present – cannot dismiss yet.")

@@ -24,7 +24,7 @@ final class TrainingPeaksService: ObservableObject {
     // MARK: - Initialization
     init() {
         // Load cookies at startup so authentication checks use restored cookies
-        _ = CookieVault.restore()
+        KeychainHelper.restoreTPCookies()
     }
     
     // MARK: - Authentication

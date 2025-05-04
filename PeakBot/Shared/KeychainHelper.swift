@@ -68,4 +68,34 @@ enum KeychainHelper {
             }
         }
     }
+
+    static var athleteId: String? {
+        get  { read("athleteId") }
+        set  { write("athleteId", newValue) }
+    }
+
+    static func restoreTPCookies() {
+        // …existing cookie injection …
+        _ = KeychainHelper.tpSessionCookies // ensure cookies restored
+
+        // NEW – hydrate athleteId once per launch
+        if athleteId == nil,
+           let idCookie = HTTPCookieStorage.shared.cookies?
+                 .first(where: { $0.name == "ajs_user_id" }) {
+            athleteId = idCookie.value
+        }
+    }
+
+    // MARK: - Private helpers
+    private static func read(_ key: String) -> String? {
+        return try? kc.getString(key)
+    }
+
+    private static func write(_ key: String, _ value: String?) {
+        if let value = value {
+            try? kc.set(value, key: key)
+        } else {
+            try? kc.remove(key)
+        }
+    }
 }

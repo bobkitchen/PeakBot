@@ -26,6 +26,8 @@ struct PeakBotApp: App {
     // @StateObject private var stravaService = StravaService()
     // IntervalsAPIService is now fully removed. All metrics should be Strava-based.
     init() {
+        // Hydrate cookies and athleteId at process start
+        KeychainHelper.restoreTPCookies()
         let tps = TrainingPeaksService()
         _trainingPeaksService = StateObject(wrappedValue: tps)
         _workoutListVM = StateObject(wrappedValue: WorkoutListViewModel(trainingPeaksService: tps))

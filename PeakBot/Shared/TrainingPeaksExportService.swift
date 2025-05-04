@@ -20,6 +20,15 @@ final class TrainingPeaksExportService {
     enum Range {
         case days(Int)          // N days back from today
         case custom(Date, Date) // explicit UTC range
+
+        var daysBack: Int {
+            switch self {
+            case .days(let n): return n
+            case .custom(let start, let end):
+                let diff = Calendar.current.dateComponents([.day], from: start, to: end).day ?? 1
+                return max(1, diff)
+            }
+        }
     }
 
     /// Sync wrapper used by the UI.

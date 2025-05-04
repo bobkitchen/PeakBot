@@ -45,7 +45,10 @@ final class TPConnector {
     // public entry
     func syncLatest(limit:Int=20) async throws {
         try await ensureLogin()
-        guard let ids = try? await recentIDs(limit:limit) else { return }
+        guard let ids = try? await recentIDs(limit:limit), !ids.isEmpty else {
+            print("[TPConnector] No athleteId – aborting sync")
+            return
+        }
         print("[TPConnector] got ids:", ids.prefix(5))
         // … downloadFIT(id:) & ingest here …
     }
@@ -72,9 +75,16 @@ final class TPConnector {
         throw TPError.loginFailed   // UI should present WKWebView sheet
     }
 
+    // Fetch recent workout IDs (stub implementation)
+    func recentIDs(limit: Int = 20) async throws -> [Int] {
+        // TODO: Replace this stub with real API call to fetch recent workout IDs
+        // For now, just return an empty array or mock data
+        return []
+    }
+
     // MARK: Atlas workout list
     func fetchWorkoutsAtlas(start: Date, end: Date, fields: String = "basic") async throws -> [AtlasWorkout] {
-        guard let athlete = KeychainHelper.athleteId else {
+        guard let athlete = self.athleteId else {
             throw TPError.missingAthleteId
         }
         var c = URLComponents(string: "https://home.trainingpeaks.com/atlas/v1/athlete/\(athlete)/workouts")!
@@ -144,7 +154,7 @@ final class TPConnector {
         return athleteId
     }
 
-    private var athleteId: Int? {
+    var athleteId: Int? {
         get { UserDefaults.standard.integer(forKey: "tpAthleteID").nilIfZero }
         set { UserDefaults.standard.set(newValue ?? 0, forKey: "tpAthleteID") }
     }
