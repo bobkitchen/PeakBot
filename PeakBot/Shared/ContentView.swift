@@ -19,7 +19,7 @@ struct ContentView: View {
                     workoutListVM.refreshEnabled = true
                     // Call refresh only if it exists and is appropriate
                     Task {
-                        await workoutListVM.refresh()
+                        workoutListVM.refresh()
                     }
                     print("[PeakBot DEBUG] ContentView appeared. showLoginView = \(showLoginView)")
                 }

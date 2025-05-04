@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import os
 
 @MainActor
 final class WorkoutListViewModel: ObservableObject {
@@ -41,26 +42,23 @@ final class WorkoutListViewModel: ObservableObject {
     // MARK: – Public API ------------------------------------------------------
 
     /// Pull the latest workouts from the specified date.
-    func refresh(daysBack: Int = 30) async {
-        print("[WorkoutListViewModel] refresh() called (TrainingPeaks)")
-        let end = Date()
-        let start = Calendar.current.date(byAdding: .day, value: -daysBack, to: end) ?? end
-        do {
-            let atlasWorkouts = try await TPConnector.shared.fetchWorkoutsAtlas(start: start, end: end)
-            // Map AtlasWorkout to Workout (minimal fields)
-            let mapped = atlasWorkouts.map { aw in
-                Workout(
-                    id: String(aw.WorkoutId),
-                    name: "Workout",
-                    startDateLocal: aw.startDate,
-                    distance: nil,
-                    movingTime: nil
-                )
+    func refresh() {
+        let logger = Logger(subsystem: "PeakBot", category: "WorkoutListVM")
+        Task {
+            do {
+                let now  = Date()
+                let from = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+                
+                guard let tp = trainingPeaksService else {
+                    logger.error("TrainingPeaksService not injected – aborting refresh")
+                    return
+                }
+                
+                try await tp.syncAtlas(start: from, end: now)
+                logger.debug("Atlas refresh done")
+            } catch {
+                logger.error("Atlas refresh failed: \(error.localizedDescription, privacy: .public)")
             }
-            await MainActor.run { self.workouts = mapped }
-        } catch {
-            print("TP Atlas fetch failed →", error)
-            await MainActor.run { self.errorMessage = "Atlas sync failed: \(error.localizedDescription)" }
         }
     }
 }

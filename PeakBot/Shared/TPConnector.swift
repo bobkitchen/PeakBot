@@ -40,7 +40,13 @@ enum SecureStore {
 @MainActor
 final class TPConnector {
     static let shared = TPConnector()
-    private init() { _ = CookieVault.restore() }
+    private init() {
+        _ = CookieVault.restore()
+        // Seed AtlasContext at launch if cookies exist
+        if hasAuthCookies && !hasAtlasContext {
+            Task { try? await self.warmUpAtlasCookies() }
+        }
+    }
 
     // public entry
     func syncLatest(limit:Int=20) async throws {
@@ -80,44 +86,13 @@ final class TPConnector {
         // Ensure we have athleteId resolved
         _ = try await ensureAthleteID()
 
-        // Prefer REST workouts API (more stable than Atlas)
+        // Use Atlas list directly (public REST not available for most users)
         let end = Date()
         let start = Calendar.current.date(byAdding: .day, value: -30, to: end) ?? end
 
-        guard let aid = try? await ensureAthleteID() else { return [] }
-
-        let df = DateFormatter()
-        df.locale = Locale(identifier: "en_US_POSIX")
-        df.dateFormat = "yyyy-MM-dd"
-        var comps = URLComponents(string: "https://api.trainingpeaks.com/v1/athlete/\(aid)/workouts")!
-        comps.queryItems = [
-            .init(name: "startDate", value: df.string(from: start)),
-            .init(name: "endDate",   value: df.string(from: end)),
-            .init(name: "fields",    value: "workoutId,startDate"),
-            .init(name: "limit",     value: String(limit)),
-            .init(name: "page",      value: "0")
-        ]
-
-        var req = URLRequest(url: comps.url!)
-        addCookies(to: &req)
-        req.setValue("application/json", forHTTPHeaderField: "Accept")
-        let (data, resp) = try await session.data(for: req)
-        let status = (resp as? HTTPURLResponse)?.statusCode ?? 0
-        guard status == 200 else {
-            print("[TPConnector] workouts API status", status)
-            if status == 404 {
-                // fallback to Atlas list
-                let atlas = try await fetchWorkoutsAtlas(start: start, end: end, fields: "id,startDate")
-                let sortedA = atlas.sorted { $0.startDate > $1.startDate }
-                return sortedA.map { $0.WorkoutId }
-            }
-            return []
-        }
-
-        struct W: Decodable { let workoutId: Int; let startDate: Date }
-        let workouts = try JSONDecoder().decode([W].self, from: data)
-        let sorted = workouts.sorted { $0.startDate > $1.startDate }
-        return sorted.map { $0.workoutId }
+        let atlas = try await fetchWorkoutsAtlas(start: start, end: end, fields: "id,startDate")
+        let sorted = atlas.sorted { $0.startDate > $1.startDate }
+        return Array(sorted.prefix(limit).map { $0.WorkoutId })
     }
 
     // MARK: Atlas workout list
@@ -139,7 +114,18 @@ final class TPConnector {
         var req = URLRequest(url: c.url!)
         req.setValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
         req.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        // DEBUG prints
+        print("[Atlas] URL =", req.url?.absoluteString ?? "nil")
+        print("[Atlas] Cookies:", HTTPCookieStorage.shared.cookies?.map { $0.name } ?? [])
+        print("[Atlas] Headers:", req.allHTTPHeaderFields ?? [:])
+
         let (data, resp) = try await session.data(for: req)
+        if let http = resp as? HTTPURLResponse {
+            print("[Atlas] status", http.statusCode)
+        }
+        print(String(data: data, encoding: .utf8) ?? "<non-utf8>")
+
         guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
             throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? 0)
         }
@@ -149,9 +135,9 @@ final class TPConnector {
     // Warm-up call that seeds Atlas-required cookies (mirrors tapiriik)
     private func warmUpAtlasCookies() async throws {
         guard let aid = self.athleteId else { throw TPError.missingAthleteId }
-        var req = URLRequest(url: URL(string: "https://api.trainingpeaks.com/v1/athletes/\(aid)")!)
+        var req = URLRequest(url: URL(string: "https://home.trainingpeaks.com/atlas/v1/athlete/\(aid)")!)
         addCookies(to: &req)
-        _ = try await session.data(for: req) // we don't care about the response body
+        _ = try? await session.data(for: req) // ignore status; purpose is to seed cookies
     }
 
     // MARK: - athlete-id resolver
@@ -211,6 +197,14 @@ final class TPConnector {
     private func addCookies(to req: inout URLRequest) {
         let cookieHeader = HTTPCookie.requestHeaderFields(with: cookies)
         req.allHTTPHeaderFields = (req.allHTTPHeaderFields ?? [:]).merging(cookieHeader) { $1 }
+    }
+
+    // MARK: - Cookie helpers
+    private var hasAuthCookies: Bool {
+        cookies.contains { $0.name.lowercased().hasSuffix("tpauth") }
+    }
+    private var hasAtlasContext: Bool {
+        cookies.contains { $0.name == "AtlasContext" }
     }
 }
 

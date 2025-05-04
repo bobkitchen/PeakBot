@@ -197,15 +197,19 @@ final class TrainingPeaksService: ObservableObject {
         }
     }
     
-    // MARK: - Sync using Atlas API
+    /// Legacy v1 sync – disabled
     func syncLatestWorkouts(daysBack: Int = 1) async {
+        print("[TrainingPeaksService] syncLatestWorkouts() no-op (v1 API removed)")
+        return
+    }
+    
+    // MARK: – Atlas sync (preferred)
+    /// Fetch workouts from the Atlas API for the given date range and update `workouts`.
+    func syncAtlas(start: Date, end: Date) async throws {
         isSyncing = true
         errorMessage = nil
-        let end = Date()
-        let start = Calendar.current.date(byAdding: .day, value: -daysBack, to: end) ?? end
         do {
             let atlasWorkouts = try await TPConnector.shared.fetchWorkoutsAtlas(start: start, end: end)
-            // Map AtlasWorkout to Workout (minimal fields)
             let mapped = atlasWorkouts.map { aw in
                 Workout(
                     id: String(aw.WorkoutId),
@@ -218,12 +222,10 @@ final class TrainingPeaksService: ObservableObject {
             await MainActor.run {
                 self.workouts = mapped
                 self.lastSyncDate = Date()
-                self.errorMessage = nil
             }
         } catch {
-            await MainActor.run {
-                self.errorMessage = "Atlas sync failed: \(error.localizedDescription)"
-            }
+            await MainActor.run { self.errorMessage = error.localizedDescription }
+            throw error
         }
         isSyncing = false
     }
