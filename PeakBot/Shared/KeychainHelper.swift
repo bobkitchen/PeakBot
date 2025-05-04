@@ -5,7 +5,6 @@
 //  Created by Bob Kitchen on 4/20/25.
 //
 
-
 //
 //  KeychainHelper.swift
 //  PeakBot
@@ -22,93 +21,28 @@ private let kc = Keychain(service: "PeakBot.Keys")
 enum KeychainHelper {
     // MARK: – Stored keys
     private enum K {
-        // Removed Strava and Intervals keys for TrainingPeaks transition
-        // static let apiKey   = "tp_api"
-        // static let athlete  = "tp_id"
-        // static let stravaAccessToken = "strava_access_token"
-        // static let stravaRefreshToken = "strava_refresh_token"
-        // static let stravaExpiresAt = "strava_expires_at"
+        static let stravaAccessToken = "strava_access_token"
+        static let stravaRefreshToken = "strava_refresh_token"
+        static let stravaExpiresAt = "strava_expires_at"
     }
 
-    // MARK: – Typed accessors
-    // Removed Intervals and Strava accessors for TrainingPeaks transition
-    // static var intervalsApiKey: String? { ... }
-    // static var athleteID: String? { ... }
-    // static var stravaAccessToken: String? { ... }
-    // static var stravaRefreshToken: String? { ... }
-    // static var stravaExpiresAt: TimeInterval? { ... }
-
-    // Removed clearStravaTokens for TrainingPeaks transition
-    // static func clearStravaTokens() { ... }
-
-    // Removed hasAllKeys for TrainingPeaks transition
-    // static var hasAllKeys: Bool { intervalsApiKey != nil && athleteID != nil }
-
-    // MARK: – TrainingPeaks Session Cookies
-    static var tpSessionCookies: [HTTPCookie]? {
-        get {
-            guard let data = try? kc.getData("tp_cookies") else { return nil }
-            do {
-                let cookies = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, HTTPCookie.self], from: data) as? [HTTPCookie]
-                return cookies
-            } catch {
-                return nil
-            }
-        }
-        set {
-            guard let cookies = newValue else {
-                try? kc.remove("tp_cookies")
-                return
-            }
-            do {
-                let data = try NSKeyedArchiver.archivedData(withRootObject: cookies, requiringSecureCoding: false)
-                try kc.set(data, key: "tp_cookies")
-            } catch {
-                // Ignore error
-            }
-        }
+    // MARK: – Strava accessors
+    static var stravaAccessToken: String? {
+        get { read(K.stravaAccessToken) }
+        set { write(K.stravaAccessToken, newValue) }
     }
-
-    static var athleteId: String? {
-        get  { read("athleteId") }
-        set  { write("athleteId", newValue) }
+    static var stravaRefreshToken: String? {
+        get { read(K.stravaRefreshToken) }
+        set { write(K.stravaRefreshToken, newValue) }
     }
-
-    static func persistTPCookies(cookies: [HTTPCookie]) {
-        tpSessionCookies = cookies
-        // Persist athleteId directly if present in cookies
-        if let id = cookies.first(where: { $0.name == "ajs_user_id" })?.value {
-            athleteId = id
-        }
+    static var stravaExpiresAt: TimeInterval? {
+        get { TimeInterval(read(K.stravaExpiresAt) ?? "") }
+        set { write(K.stravaExpiresAt, String(newValue ?? 0)) }
     }
-
-    @MainActor static func restoreTPCookies(into service: TrainingPeaksService? = nil) {
-        // Inject stored cookies back into the shared storage so subsequent URLRequests send them
-        if let stored = KeychainHelper.tpSessionCookies {
-            stored.forEach { HTTPCookieStorage.shared.setCookie($0) }
-            
-            // Update auth flag on injected service
-            if let svc = service {
-                let authNames = ["TPAuth", "Production_tpAuth", "tpauth"]
-                let hasAuth = stored.contains { authNames.contains($0.name) }
-                svc.isAuthenticated = hasAuth
-            }
-        }
-
-        // Hydrate athleteId directly from Keychain
-        if let id = athleteId {
-            print("[KeychainHelper] 🔑 restored athleteId = \(id)")
-            // Persist athleteId for TPConnector so it can be used immediately without additional network calls.
-            if let intId = Int(id) {
-                // Store in UserDefaults so TPConnector.athleteId computed property can read it
-                UserDefaults.standard.set(intId, forKey: "tpAthleteID")
-                TPConnector.shared.athleteId = intId  // cache in runtime instance as well
-                // Push into provided service instance if available
-                service?.athleteIds = [intId]
-            }
-        } else {
-            print("[KeychainHelper] 🔑 athleteId not found in Keychain")
-        }
+    static func clearStravaTokens() {
+        try? kc.remove(K.stravaAccessToken)
+        try? kc.remove(K.stravaRefreshToken)
+        try? kc.remove(K.stravaExpiresAt)
     }
 
     // MARK: - Private helpers

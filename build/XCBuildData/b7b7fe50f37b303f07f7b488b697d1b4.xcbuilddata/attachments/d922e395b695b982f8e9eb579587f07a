@@ -1,0 +1,15 @@
+{
+  "" : {
+    "const-values" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/KeychainAccess-master.swiftconstvalues",
+    "dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/KeychainAccess-master.d",
+    "diagnostics" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/KeychainAccess-master.dia",
+    "emit-module-dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/KeychainAccess-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/KeychainAccess-master-emit-module.dia",
+    "swift-dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/KeychainAccess-master.swiftdeps"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/Lib/KeychainAccess/Keychain.swift" : {
+    "index-unit-output-path" : "/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/Keychain.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/Keychain.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/KeychainAccess/build/KeychainAccess.build/Release/KeychainAccess.build/Objects-normal/x86_64/Keychain.o"
+  }
+}

@@ -48,15 +48,15 @@ struct DashboardView: View {
         .onAppear {
             print("[DashboardView] onAppear. dashboardVM: \(dashboardVM)")
             Task {
-                dashboardVM.refreshEnabled = true
                 dashboardError = dashboardVM.errorMessage
+                await dashboardVM.refresh()
             }
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: {
                     Task {
-                        dashboardVM.refreshEnabled = true
+                        await dashboardVM.refresh()
                     }
                 }) {
                     Label("Refresh Fitness", systemImage: "arrow.clockwise")

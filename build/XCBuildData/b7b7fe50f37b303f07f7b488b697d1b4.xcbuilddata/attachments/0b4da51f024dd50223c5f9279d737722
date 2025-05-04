@@ -1,0 +1,155 @@
+{
+  "" : {
+    "const-values" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot-master.swiftconstvalues",
+    "dependencies" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot-master.d",
+    "diagnostics" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot-master.dia",
+    "emit-module-dependencies" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot-master-emit-module.dia",
+    "swift-dependencies" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot-master.swiftdeps"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Persistence.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Persistence.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Persistence.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Persistence.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/ActivityDetail.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ActivityDetail.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ActivityDetail.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ActivityDetail.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/ChatMessage.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatMessage.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatMessage.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatMessage.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/ChatView.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatView.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatView.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatView.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/ChatViewModel.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatViewModel.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatViewModel.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ChatViewModel.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/ContentView.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/ContentView.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/CoreDataBridge.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/CoreDataBridge.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/CoreDataBridge.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/CoreDataBridge.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/DashboardView.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/DashboardView.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/DashboardView.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/DashboardView.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/DashboardViewModel.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/DashboardViewModel.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/DashboardViewModel.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/DashboardViewModel.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/FitnessPoint.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/FitnessPoint.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/FitnessPoint.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/FitnessPoint.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/FitnessPointCalculator.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/FitnessPointCalculator.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/FitnessPointCalculator.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/FitnessPointCalculator.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/KeychainHelper.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/KeychainHelper.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/KeychainHelper.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/KeychainHelper.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/NPIFCalculator.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/NPIFCalculator.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/NPIFCalculator.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/NPIFCalculator.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/OAuthCallbackServer.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/OAuthCallbackServer.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/OAuthCallbackServer.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/OAuthCallbackServer.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/OpenAIService.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/OpenAIService.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/OpenAIService.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/OpenAIService.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/PeakBotApp.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBotApp.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBotApp.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBotApp.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/RootTabView.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/RootTabView.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/RootTabView.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/RootTabView.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/SettingsView.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/SettingsView.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/SettingsView.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/SettingsView.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/StravaService.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/StravaService.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/StravaService.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/StravaService.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/StreamSet.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/StreamSet.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/StreamSet.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/StreamSet.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/Workout.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Workout.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Workout.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Workout.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/WorkoutDetailChart.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutDetailChart.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutDetailChart.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutDetailChart.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/WorkoutListView.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutListView.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutListView.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutListView.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/Shared/WorkoutListViewModel.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutListViewModel.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutListViewModel.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/WorkoutListViewModel.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/PeakBot/TPBackgroundSync.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/TPBackgroundSync.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/TPBackgroundSync.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/TPBackgroundSync.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/DerivedSources/CoreDataGenerated/PeakBot/Item+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Item+CoreDataClass.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Item+CoreDataClass.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Item+CoreDataClass.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/DerivedSources/CoreDataGenerated/PeakBot/Item+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Item+CoreDataProperties.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Item+CoreDataProperties.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/Item+CoreDataProperties.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/DerivedSources/CoreDataGenerated/PeakBot/PeakBot+CoreDataModel.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot+CoreDataModel.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot+CoreDataModel.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/PeakBot+CoreDataModel.o"
+  },
+  "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/bobkitchen/Documents/GitHub/PeakBot/PeakBot/build/PeakBot.build/Release/PeakBot.build/Objects-normal/x86_64/GeneratedAssetSymbols.o"
+  }
+}

@@ -1,7 +1,13 @@
+// StreamSet.swift
+// PeakBot
+//
+// Created by Bob Kitchen on 4/20/25.
+//
+// All IntervalsICU and TrainingPeaks references removed for Strava-only version.
+
 import Foundation
 
 /// Parsed activity streams returned by (time, HR, power)
-// Removed IntervalsICU reference for TrainingPeaks transition
 struct StreamSet {
     var time:   [TimeInterval]
     var hr:     [Int]?

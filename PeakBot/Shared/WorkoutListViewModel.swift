@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreData
 import os
 
 @MainActor
@@ -21,56 +22,36 @@ final class WorkoutListViewModel: ObservableObject {
     }
     @Published var errorMessage: String?
     @Published var stravaRateLimitHit: Bool = false
-    @Published var refreshEnabled: Bool = false
+    // Removed refreshEnabled; not needed for this VM
 
     // MARK: – Dependency
     var dashboardVM: DashboardViewModel?
-    private var trainingPeaksService: TrainingPeaksService?
     private var workoutsCancellable: AnyCancellable?
+    private let coreData = CoreDataModel.shared
 
     // Designated initialiser (used by preview / tests too)
-    init(dashboardVM: DashboardViewModel? = nil, trainingPeaksService: TrainingPeaksService? = nil) {
+    init(dashboardVM: DashboardViewModel? = nil) {
         self.dashboardVM = dashboardVM
-        self.trainingPeaksService = trainingPeaksService
-        if let service = trainingPeaksService {
-            workoutsCancellable = service.$workouts.sink { [weak self] newWorkouts in
-                self?.workouts = newWorkouts
-            }
-        }
+        fetchWorkoutsFromCoreData()
     }
 
     // MARK: – Public API ------------------------------------------------------
 
-    /// Pull the latest workouts from the specified date.
-    func refresh() {
-        let logger = Logger(subsystem: "PeakBot", category: "WorkoutListVM")
-        Task {
-            do {
-                let now  = Date()
-                let from = Calendar.current.date(byAdding: .day, value: -7, to: now)!
-                
-                guard let tp = trainingPeaksService else {
-                    logger.error("TrainingPeaksService not injected – aborting refresh")
-                    return
-                }
-                
-                try await tp.syncAtlas(start: from, end: now)
-                logger.debug("Atlas refresh done")
-            } catch {
-                logger.error("Atlas refresh failed: \(error.localizedDescription, privacy: .public)")
-            }
+    /// Pull the latest workouts from Core Data
+    func fetchWorkoutsFromCoreData() {
+        let context = coreData.container.viewContext
+        let request = NSFetchRequest<Workout>(entityName: "Workout")
+        request.sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: false)]
+        request.predicate = NSPredicate(format: "workoutId != nil")
+        do {
+            workouts = try context.fetch(request)
+        } catch {
+            errorMessage = "Failed to fetch workouts: \(error.localizedDescription)"
         }
     }
-}
 
-extension Workout {
-    var allFields: [(String, Any?)] {
-        return [
-            ("id", id),
-            ("name", name),
-            ("startDateLocal", startDateLocal),
-            ("distance", distance),
-            ("movingTime", movingTime)
-        ]
+    /// Call this after sync or Core Data update
+    func refresh() {
+        fetchWorkoutsFromCoreData()
     }
 }

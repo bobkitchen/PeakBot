@@ -1,0 +1,15 @@
+{
+  "" : {
+    "const-values" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/Example-master.swiftconstvalues",
+    "dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/Example-master.d",
+    "diagnostics" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/Example-master.dia",
+    "emit-module-dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/Example-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/Example-master-emit-module.dia",
+    "swift-dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/Example-master.swiftdeps"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/Example/main.swift" : {
+    "index-unit-output-path" : "/Swifter.build/Release/Example.build/Objects-normal/arm64/main.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/main.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/swifter/build/Swifter.build/Release/Example.build/Objects-normal/arm64/main.o"
+  }
+}

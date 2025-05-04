@@ -29,13 +29,13 @@ struct WorkoutRowView: View {
     let workout: Workout
     var body: some View {
         VStack(alignment: .leading) {
-            Text(workout.name)
+            Text(workout.name ?? "Unnamed Workout")
                 .font(.headline)
-            Text("\(workout.startDateLocal, formatter: dateFormatter)")
+            Text(workout.startDate != nil ? "\(workout.startDate!, formatter: dateFormatter)" : "N/A")
                 .font(.subheadline)
-            Text("Distance: \(workout.distance ?? 0.0, specifier: "%.2f") km")
+            Text("Distance: \(workout.distance, specifier: "%.2f") km")
                 .font(.caption)
-            Text("Moving Time: \(formatSeconds(workout.movingTime ?? 0))")
+            Text("Moving Time: \(formatSeconds(Int(workout.movingTime)))")
                 .font(.caption2)
         }
     }
@@ -45,7 +45,7 @@ struct WorkoutListView: View {
     @ObservedObject var viewModel: WorkoutListViewModel
     
     var body: some View {
-        List(viewModel.workouts) { workout in
+        List(viewModel.workouts, id: \.workoutId) { workout in
             WorkoutRowView(workout: workout)
         }
     }

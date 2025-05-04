@@ -17,23 +17,17 @@ import SwiftUI
 @MainActor
 final class DashboardViewModel: ObservableObject {
 
-    // MARK: – Published state
-    @Published var fitness: [FitnessPoint] = []
-    @Published var workouts: [Workout] = [] {
-        didSet {
-            // Optionally update fitness if you want to recalc from workouts, but we now fetch from API
-        }
+    // Published state
+    @Published var fitness:  [FitnessPoint] = []
+    @Published var workouts: [Workout]      = [] {
+        didSet { /* recalc here if you want */ }
     }
-    @Published var errorMessage: String? = nil
-    @Published var refreshEnabled: Bool = false
+    @Published var errorMessage: String?
 
-    // MARK: – Dependencies
-
-    // MARK: – Initializer
-    init() {}
-
-    // MARK: – Public API
-    func updateWorkouts(_ newWorkouts: [Workout]) {
-        self.workouts = newWorkouts
+    // MARK: Public API
+    func refresh(days: Int = 90) async {
+        // Strava fetch will go here once StravaService is wired in
     }
+
+    func updateWorkouts(_ w: [Workout]) { workouts = w }
 }

@@ -1,0 +1,310 @@
+{
+  "" : {
+    "const-values" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup-master.swiftconstvalues",
+    "dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup-master.d",
+    "diagnostics" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup-master.dia",
+    "emit-module-dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup-master-emit-module.dia",
+    "swift-dependencies" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup-master.swiftdeps"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/ArrayExt.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ArrayExt.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ArrayExt.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ArrayExt.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Attribute.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Attribute.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Attribute.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Attribute.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Attributes.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Attributes.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Attributes.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Attributes.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/BinarySearch.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/BinarySearch.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/BinarySearch.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/BinarySearch.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/BooleanAttribute.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/BooleanAttribute.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/BooleanAttribute.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/BooleanAttribute.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/CharacterExt.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CharacterExt.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CharacterExt.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CharacterExt.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/CharacterReader.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CharacterReader.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CharacterReader.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CharacterReader.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Cleaner.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Cleaner.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Cleaner.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Cleaner.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Collector.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Collector.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Collector.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Collector.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/CombiningEvaluator.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CombiningEvaluator.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CombiningEvaluator.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CombiningEvaluator.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Comment.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Comment.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Comment.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Comment.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Connection.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Connection.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Connection.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Connection.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/CssSelector.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CssSelector.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CssSelector.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/CssSelector.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/DataNode.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DataNode.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DataNode.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DataNode.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/DataUtil.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DataUtil.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DataUtil.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DataUtil.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Document.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Document.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Document.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Document.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/DocumentType.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DocumentType.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DocumentType.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/DocumentType.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Element.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Element.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Element.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Element.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Elements.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Elements.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Elements.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Elements.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Entities.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Entities.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Entities.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Entities.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Evaluator.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Evaluator.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Evaluator.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Evaluator.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Exception.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Exception.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Exception.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Exception.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/FormElement.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/FormElement.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/FormElement.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/FormElement.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/HtmlTreeBuilder.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HtmlTreeBuilder.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HtmlTreeBuilder.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HtmlTreeBuilder.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/HtmlTreeBuilderState.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HtmlTreeBuilderState.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HtmlTreeBuilderState.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HtmlTreeBuilderState.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/HttpStatusException.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HttpStatusException.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HttpStatusException.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/HttpStatusException.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Mutex.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Mutex.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Mutex.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Mutex.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Node.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Node.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Node.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Node.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/NodeTraversor.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/NodeTraversor.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/NodeTraversor.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/NodeTraversor.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/NodeVisitor.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/NodeVisitor.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/NodeVisitor.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/NodeVisitor.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/OrderedSet.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/OrderedSet.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/OrderedSet.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/OrderedSet.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/ParseError.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseError.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseError.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseError.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/ParseErrorList.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseErrorList.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseErrorList.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseErrorList.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/ParseSettings.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseSettings.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseSettings.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParseSettings.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Parser.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Parser.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Parser.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Parser.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/ParsingStrings.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParsingStrings.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParsingStrings.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/ParsingStrings.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Pattern.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Pattern.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Pattern.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Pattern.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/QueryParser.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/QueryParser.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/QueryParser.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/QueryParser.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/SerializationException.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SerializationException.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SerializationException.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SerializationException.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/SimpleDictionary.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SimpleDictionary.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SimpleDictionary.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SimpleDictionary.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/StreamReader.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StreamReader.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StreamReader.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StreamReader.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/String.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/String.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/String.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/String.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/StringBuilder.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StringBuilder.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StringBuilder.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StringBuilder.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/StringUtil.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StringUtil.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StringUtil.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StringUtil.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/StructuralEvaluator.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StructuralEvaluator.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StructuralEvaluator.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/StructuralEvaluator.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/SwiftSoup.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/SwiftSoup.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Tag.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Tag.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Tag.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Tag.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/TextNode.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TextNode.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TextNode.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TextNode.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Token.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Token.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Token.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Token.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/TokenQueue.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TokenQueue.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TokenQueue.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TokenQueue.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Tokeniser.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Tokeniser.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Tokeniser.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Tokeniser.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/TokeniserState.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TokeniserState.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TokeniserState.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TokeniserState.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/TreeBuilder.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TreeBuilder.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TreeBuilder.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/TreeBuilder.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/UTF8Arrays.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UTF8Arrays.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UTF8Arrays.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UTF8Arrays.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/UnfairLock.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UnfairLock.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UnfairLock.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UnfairLock.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/UnicodeScalar.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UnicodeScalar.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UnicodeScalar.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/UnicodeScalar.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Validate.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Validate.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Validate.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Validate.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/Whitelist.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Whitelist.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Whitelist.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/Whitelist.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/XmlDeclaration.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/XmlDeclaration.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/XmlDeclaration.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/XmlDeclaration.o"
+  },
+  "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/Sources/XmlTreeBuilder.swift" : {
+    "index-unit-output-path" : "/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/XmlTreeBuilder.o",
+    "llvm-bc" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/XmlTreeBuilder.bc",
+    "object" : "/Users/bobkitchen/Library/Developer/Xcode/DerivedData/PeakBot-estmsakzyfbriyffduoaojucbgzb/SourcePackages/checkouts/SwiftSoup/build/SwiftSoup.build/Release/SwiftSoup.build/Objects-normal/arm64/XmlTreeBuilder.o"
+  }
+}

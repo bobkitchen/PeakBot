@@ -1,14 +1,8 @@
 // TPBackgroundSync.swift
-// macOS: No BGTaskScheduler; use direct call or Timer
-import Foundation
+// PeakBot
+//
+// Created by Bob Kitchen on 4/20/25.
+//
+// All TrainingPeaks background sync code removed for Strava-only version.
 
-/// Call this at app launch or on a schedule to sync TrainingPeaks workouts.
-func syncTrainingPeaksNow() {
-    Task {
-        do {
-            try await TPConnector.shared.syncLatest()
-        } catch {
-            print("TP sync error:", error)
-        }
-    }
-}
+// This file is now obsolete and can be deleted if no longer needed.

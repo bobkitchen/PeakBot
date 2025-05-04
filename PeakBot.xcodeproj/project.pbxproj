@@ -175,6 +175,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				7A61200B2DC7B83C00BA7E41 /* PBXTargetDependency */,
+				7A6120092DC7B83600BA7E41 /* PBXTargetDependency */,
+				7A6120072DC7B83000BA7E41 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7A41FC862DB42FC8001D48F4 /* PeakBot */,
@@ -472,6 +475,18 @@
 			isa = PBXTargetDependency;
 			target = 7A41FCD62DB43337001D48F4 /* PeakBotMac */;
 			targetProxy = 7A41FCF42DB43337001D48F4 /* PBXContainerItemProxy */;
+		};
+		7A6120072DC7B83000BA7E41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 7A6120062DC7B83000BA7E41 /* SwiftCSV */;
+		};
+		7A6120092DC7B83600BA7E41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 7A6120082DC7B83600BA7E41 /* Swifter */;
+		};
+		7A61200B2DC7B83C00BA7E41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 7A61200A2DC7B83C00BA7E41 /* ZIPFoundation */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1030,6 +1045,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7A54CB672DB5675A00BCA894 /* XCRemoteSwiftPackageReference "SwiftCSV" */;
 			productName = SwiftCSV;
+		};
+		7A6120062DC7B83000BA7E41 /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A54CB672DB5675A00BCA894 /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
+		};
+		7A6120082DC7B83600BA7E41 /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A1DFE0E2DB67E200087330B /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+		7A61200A2DC7B83C00BA7E41 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A81880C2DBE72FD0090B5E7 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
 		};
 		7A81880D2DBE72FD0090B5E7 /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
