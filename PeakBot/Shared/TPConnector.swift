@@ -36,6 +36,18 @@ enum SecureStore {
     }
 }
 
+// MARK: – Atlas Session (shared, with cookies/redirects)
+private let atlasSession: URLSession = {
+    let cfg = URLSessionConfiguration.default
+    cfg.httpCookieStorage = HTTPCookieStorage.shared      // ← IMPORTANT
+    cfg.httpCookieAcceptPolicy = .always
+    cfg.httpShouldSetCookies  = true
+    cfg.requestCachePolicy    = .reloadIgnoringCacheData
+    return URLSession(configuration: cfg,
+                      delegate: nil,
+                      delegateQueue: nil)
+}()
+
 // MARK: – main connector
 @MainActor
 final class TPConnector {
@@ -96,31 +108,36 @@ final class TPConnector {
     }
 
     // MARK: Atlas workout list
-    func fetchWorkoutsAtlas(start: Date, end: Date, fields: String = "basic") async throws -> [AtlasWorkout] {
-        // Ensure Atlas-specific cookies exist first
-        try await warmUpAtlasCookies()
+    public func fetchWorkoutsAtlas(start: Date,
+                                   end:   Date,
+                                   fields: String = "basic") async throws
+           -> [AtlasWorkout] {
+        try await ensureAtlasContext()
 
         guard let athlete = self.athleteId else {
             throw TPError.missingAthleteId
         }
-        var c = URLComponents(string: "https://home.trainingpeaks.com/atlas/v1/athlete/\(athlete)/workouts")!
-        let tz = 0 // required by Atlas: timezone offset in minutes, can be fixed at 0
-        c.queryItems = [
-            .init(name: "startDate", value: start.tpDate),
-            .init(name: "endDate", value: end.tpDate),
-            .init(name: "fields", value: fields),
-            .init(name: "tz", value: String(tz))
-        ]
-        var req = URLRequest(url: c.url!)
-        req.setValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
-        req.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        // DEBUG prints
+        let dateFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.locale = Locale(identifier: "en_US_POSIX")
+            df.dateFormat = "yyyy-MM-dd"
+            return df
+        }()
+        let req = try makeAtlasRequest(
+            path: "/athletes/\(athlete)/workouts",
+            query: [
+                .init(name: "startDate", value: dateFormatter.string(from: start)),
+                .init(name: "endDate", value: dateFormatter.string(from: end)),
+                .init(name: "fields", value: fields),
+                .init(name: "tz", value: "0")
+            ]
+        )
         print("[Atlas] URL =", req.url?.absoluteString ?? "nil")
         print("[Atlas] Cookies:", HTTPCookieStorage.shared.cookies?.map { $0.name } ?? [])
         print("[Atlas] Headers:", req.allHTTPHeaderFields ?? [:])
 
-        let (data, resp) = try await session.data(for: req)
+        let (data, resp) = try await atlasSession.data(for: req)
+        KeychainHelper.persistTPCookies(cookies: HTTPCookieStorage.shared.cookies ?? [])
         if let http = resp as? HTTPURLResponse {
             print("[Atlas] status", http.statusCode)
         }
@@ -130,6 +147,27 @@ final class TPConnector {
             throw TPError.badStatus((resp as? HTTPURLResponse)?.statusCode ?? 0)
         }
         return try JSONDecoder().decode([AtlasWorkout].self, from: data)
+    }
+
+    /// Ensure AtlasContext cookie is present by hitting the context endpoint once per launch.
+    private func ensureAtlasContext() async throws {
+        print("[Atlas] ensuring context")
+        if HTTPCookieStorage.shared.cookies?.contains(where: { $0.name == "AtlasContext" }) == true {
+            print("[Atlas] AtlasContext cookie already present, skipping context call.")
+            return
+        }
+
+        let req = try makeAtlasRequest(path: "/context", query: [])
+        print("[Atlas] GET", req.url?.absoluteString ?? "nil")
+
+        let (data, resp) = try await atlasSession.data(for: req)
+        if let http = resp as? HTTPURLResponse {
+            print("[Atlas] context status", http.statusCode)
+            print("[Atlas] context headers", http.allHeaderFields)
+        }
+        KeychainHelper.persistTPCookies(cookies: HTTPCookieStorage.shared.cookies ?? [])
+        print("[Atlas] cookies after context:", HTTPCookieStorage.shared.cookies?.map { $0.name } ?? [])
+        print("[Atlas] context body", String(data: data, encoding: .utf8) ?? "<non-utf8>")
     }
 
     // Warm-up call that seeds Atlas-required cookies (mirrors tapiriik)
@@ -205,6 +243,34 @@ final class TPConnector {
     }
     private var hasAtlasContext: Bool {
         cookies.contains { $0.name == "AtlasContext" }
+    }
+
+    // Extract JWT from Production_tpAuth cookie
+    private var jwt: String? {
+        HTTPCookieStorage.shared.cookies?.first(where: { $0.name == "Production_tpAuth" })?.value
+    }
+
+    // Build Atlas API requests with Authorization header
+    private func makeAtlasRequest(path: String, query: [URLQueryItem]) throws -> URLRequest {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host   = "app.trainingpeaks.com"
+        components.path   = "/atlas/v1" + path
+        components.queryItems = query
+
+        guard let url = components.url else { throw TPError.badStatus(-1) }
+
+        var req = URLRequest(url: url)
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("XMLHttpRequest",  forHTTPHeaderField: "X-Requested-With")
+
+        if let token = jwt {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ no JWT – you must login first")
+            throw TPError.loginFailed
+        }
+        return req
     }
 }
 
