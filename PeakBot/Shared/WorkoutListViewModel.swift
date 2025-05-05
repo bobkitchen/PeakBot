@@ -45,6 +45,10 @@ final class WorkoutListViewModel: ObservableObject {
         request.predicate = NSPredicate(format: "workoutId != nil")
         do {
             workouts = try context.fetch(request)
+            print("[DEBUG] Core Data fetch returned \(workouts.count) workouts")
+            for w in workouts {
+                print("[DEBUG] Workout: id=\(String(describing: w.workoutId)), name=\(w.name ?? "nil")")
+            }
         } catch {
             errorMessage = "Failed to fetch workouts: \(error.localizedDescription)"
         }

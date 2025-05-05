@@ -1,31 +1,31 @@
 Target dependency graph (14 targets)
 Target 'PeakBot' in project 'PeakBot'
 ➜ Explicit dependency on target 'Example' in project 'Swifter'
-➜ Explicit dependency on target 'Swifter' in project 'Swifter'
-➜ Explicit dependency on target 'KeychainAccess' in project 'KeychainAccess'
-➜ Explicit dependency on target 'SwiftCSV' in project 'SwiftCSV'
 ➜ Explicit dependency on target 'ZIPFoundation' in project 'ZIPFoundation'
+➜ Explicit dependency on target 'Swifter' in project 'Swifter'
+➜ Explicit dependency on target 'SwiftCSV' in project 'SwiftCSV'
+➜ Explicit dependency on target 'KeychainAccess' in project 'KeychainAccess'
 ➜ Explicit dependency on target 'SwiftSoup' in project 'SwiftSoup'
 Target 'SwiftSoup' in project 'SwiftSoup'
 ➜ Explicit dependency on target 'SwiftSoup' in project 'SwiftSoup'
 Target 'SwiftSoup' in project 'SwiftSoup' (no dependencies)
-Target 'ZIPFoundation' in project 'ZIPFoundation'
-➜ Explicit dependency on target 'ZIPFoundation' in project 'ZIPFoundation'
-➜ Explicit dependency on target 'ZIPFoundation_ZIPFoundation' in project 'ZIPFoundation'
-Target 'ZIPFoundation' in project 'ZIPFoundation'
-➜ Explicit dependency on target 'ZIPFoundation_ZIPFoundation' in project 'ZIPFoundation'
-Target 'ZIPFoundation_ZIPFoundation' in project 'ZIPFoundation' (no dependencies)
+Target 'KeychainAccess' in project 'KeychainAccess'
+➜ Explicit dependency on target 'KeychainAccess' in project 'KeychainAccess'
+Target 'KeychainAccess' in project 'KeychainAccess' (no dependencies)
 Target 'SwiftCSV' in project 'SwiftCSV'
 ➜ Explicit dependency on target 'SwiftCSV' in project 'SwiftCSV'
 ➜ Explicit dependency on target 'SwiftCSV_SwiftCSV' in project 'SwiftCSV'
 Target 'SwiftCSV' in project 'SwiftCSV'
 ➜ Explicit dependency on target 'SwiftCSV_SwiftCSV' in project 'SwiftCSV'
 Target 'SwiftCSV_SwiftCSV' in project 'SwiftCSV' (no dependencies)
-Target 'KeychainAccess' in project 'KeychainAccess'
-➜ Explicit dependency on target 'KeychainAccess' in project 'KeychainAccess'
-Target 'KeychainAccess' in project 'KeychainAccess' (no dependencies)
 Target 'Swifter' in project 'Swifter'
 ➜ Explicit dependency on target 'Swifter' in project 'Swifter'
+Target 'ZIPFoundation' in project 'ZIPFoundation'
+➜ Explicit dependency on target 'ZIPFoundation' in project 'ZIPFoundation'
+➜ Explicit dependency on target 'ZIPFoundation_ZIPFoundation' in project 'ZIPFoundation'
+Target 'ZIPFoundation' in project 'ZIPFoundation'
+➜ Explicit dependency on target 'ZIPFoundation_ZIPFoundation' in project 'ZIPFoundation'
+Target 'ZIPFoundation_ZIPFoundation' in project 'ZIPFoundation' (no dependencies)
 Target 'Example' in project 'Swifter'
 ➜ Explicit dependency on target 'Swifter' in project 'Swifter'
 Target 'Swifter' in project 'Swifter' (no dependencies)

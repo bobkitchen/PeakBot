@@ -13,6 +13,6 @@ public class Stream: NSManagedObject, Identifiable {
     @NSManaged public var id: UUID
     @NSManaged public var type: String?
     @NSManaged public var values: Data?
-    @NSManaged public var workoutID: NSNumber?
+    @NSManaged public var workoutId: NSNumber?
     @NSManaged public var workout: Workout
 }

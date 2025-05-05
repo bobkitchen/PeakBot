@@ -35,7 +35,7 @@ struct WorkoutRowView: View {
                 .font(.subheadline)
             Text("Distance: \(workout.distance?.doubleValue ?? 0, specifier: "%.2f") km")
                 .font(.caption)
-            Text("Moving Time: \(formatSeconds(Int(workout.movingTime)))")
+            Text("Moving Time: \(formatSeconds(Int(workout.movingTime ?? 0)))")
                 .font(.caption2)
         }
     }
@@ -53,7 +53,7 @@ struct WorkoutListView: View {
                     .font(.subheadline)
                 Text("Distance: \(workout.distance?.doubleValue ?? 0, specifier: "%.2f") km")
                     .font(.caption)
-                Text("Moving Time: \(formatSeconds(Int(workout.movingTime)))")
+                Text("Moving Time: \(formatSeconds(Int(workout.movingTime ?? 0)))")
                     .font(.caption2)
                 Text("Avg Power: \(workout.avgPower?.doubleValue ?? 0, specifier: "%.0f")")
                     .font(.caption)

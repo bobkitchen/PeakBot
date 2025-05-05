@@ -58,6 +58,7 @@ public enum PeakBotModel {
             makeUUID("id", indexed: true),
             makeString("type"),
             makeBinary("values"),
+            makeInt64("workoutId"),
             streamWorkoutRel
         ]
 

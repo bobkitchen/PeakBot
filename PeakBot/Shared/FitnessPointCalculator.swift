@@ -5,11 +5,10 @@ struct FitnessPointCalculator {
 
     static func trend(from workouts: [Workout], days: Int) -> [FitnessPoint] {
         guard !workouts.isEmpty else { return [] }
-
         let sorted = workouts.filter { $0.startDate != nil && $0.tss != nil }
             .sorted { $0.startDate! < $1.startDate! }
         guard let end = sorted.last?.startDate else { return [] }
-        let start  = Calendar.current.date(byAdding: .day, value: -days + 1, to: end) ?? end
+        let start = Calendar.current.date(byAdding: .day, value: -days + 1, to: end) ?? end
         let recent = sorted.filter { $0.startDate! >= start }
 
         var dailyTSS: [Date: Double] = [:]
@@ -20,18 +19,16 @@ struct FitnessPointCalculator {
             dailyTSS[d, default: 0.0] += tssValue
         }
 
-        let τc = 42.0, τa = 7.0
+        // Calculation
         var ctl = 0.0, atl = 0.0
         var pts: [FitnessPoint] = []
-
-        guard let day = start else { return [] }
+        var day = start
         while day <= end {
             let tss = dailyTSS[day] ?? 0
-            ctl += (tss - ctl) / τc
-            atl += (tss - atl) / τa
+            ctl += (tss - ctl) / 42.0
+            atl += (tss - atl) / 7.0
             pts.append(.init(id: UUID(), date: day, ctl: ctl, atl: atl, tsb: ctl - atl))
-            guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: day) else { break }
-            day = nextDay
+            day = Calendar.current.date(byAdding: .day, value: 1, to: day)!
         }
         return pts
     }

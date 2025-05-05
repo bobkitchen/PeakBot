@@ -88,6 +88,15 @@ final class StravaService: ObservableObject {
     @Published var ftp: Double = 250.0 // default, can be loaded from Core Data or UserDefaults
 
     // MARK: - OAuth Flow
+    init() {
+        // Load tokens from Keychain if available
+        if let access = KeychainHelper.stravaAccessToken,
+           let refresh = KeychainHelper.stravaRefreshToken,
+           let expires = KeychainHelper.stravaExpiresAt {
+            self.tokens = StravaOAuthTokens(accessToken: access, refreshToken: refresh, expiresAt: expires)
+        }
+    }
+
     func startOAuth(completion: @escaping (Bool) -> Void) {
         let server = HttpServer()
         server["/callback"] = { [weak self] req in
@@ -198,7 +207,7 @@ final class StravaService: ObservableObject {
                 for (type, values) in streams {
                     let stream = Stream(context: context)
                     // Assign Int64 value to NSNumber? property
-                    stream.workoutID = NSNumber(value: activity.id)
+                    stream.workoutId = NSNumber(value: activity.id)
                     stream.type = type
                     stream.values = try JSONEncoder().encode(values)
                 }
@@ -206,14 +215,12 @@ final class StravaService: ObservableObject {
                 let ftp = self.ftp
                 let power: [Double]? = streams["watts"]
                 let hr: [Double]? = streams["heartrate"]
-                let np = MetricsEngine.normalizedPower(from: power)
-                let ifv = MetricsEngine.intensityFactor(np: np, ftp: ftp)
-                let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(activity.movingTime ?? 0), ftp: ftp)
+                let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
+                let ifv = MetricsEngine.intensityFactor(np: np, ftp: ftp) ?? 0.0
+                let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(activity.movingTime ?? 0), ftp: ftp) ?? 0.0
                 // Assign Double value to NSNumber? property
                 w.np = NSNumber(value: np)
-                // Assign Double value to NSNumber? property
                 w.intensityFactor = NSNumber(value: ifv)
-                // Assign Double value to NSNumber? property
                 w.tss = NSNumber(value: tss)
                 let avgPower = w.avgPower?.doubleValue ?? 0
                 let avgHR = w.avgHR?.doubleValue ?? 0
