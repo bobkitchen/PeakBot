@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct RootTabView: View {
-    @StateObject var workoutListVM = WorkoutListViewModel()
+    @EnvironmentObject var workoutListVM: WorkoutListViewModel
 
     var body: some View {
         TabView {
