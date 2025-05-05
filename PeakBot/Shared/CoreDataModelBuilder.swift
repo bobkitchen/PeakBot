@@ -30,6 +30,10 @@ public enum PeakBotModel {
         settings.name = "Settings"
         settings.managedObjectClassName = "Settings"
 
+        let ftpHistory = NSEntityDescription()
+        ftpHistory.name = "FTPHistory"
+        ftpHistory.managedObjectClassName = "FTPHistory"
+
         // Workout attributes
         workout.properties = [
             makeInt64("workoutId", indexed: true),
@@ -79,7 +83,14 @@ public enum PeakBotModel {
             makeDate("lastSync", optional: true)
         ]
 
-        model.entities = [workout, stream, dailyLoad, settings]
+        // FTPHistory attributes
+        ftpHistory.properties = [
+            makeUUID("id", indexed: true),
+            makeDate("date", indexed: true),
+            makeDouble("ftp")
+        ]
+
+        model.entities = [workout, stream, dailyLoad, settings, ftpHistory]
         // model.preservesPendingChanges = true
 
         return model

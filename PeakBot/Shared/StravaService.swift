@@ -168,6 +168,69 @@ final class StravaService: ObservableObject {
         return StravaOAuthTokens(accessToken: r.access_token, refreshToken: r.refresh_token, expiresAt: r.expires_at)
     }
 
+    // MARK: - Token Expiry & Refresh
+    private func isTokenExpired() -> Bool {
+        guard let expiresAt = tokens?.expiresAt else { return true }
+        return Date() >= Date(timeIntervalSince1970: expiresAt)
+    }
+
+    private func refreshAccessTokenIfNeeded(completion: @escaping (Bool) -> Void) {
+        if !isTokenExpired() {
+            completion(true)
+            return
+        }
+        guard let refreshToken = tokens?.refreshToken else {
+            print("[StravaService] No refresh token available"); completion(false); return
+        }
+        let url = URL(string: "https://www.strava.com/oauth/token")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let params = [
+            "client_id": clientID,
+            "client_secret": clientSecret,
+            "grant_type": "refresh_token",
+            "refresh_token": refreshToken
+        ]
+        request.httpBody = params.map { "\($0)=\($1)" }.joined(separator: "&").data(using: .utf8)
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else { completion(false); return }
+            if let error = error { print("[StravaService] Token refresh error: \(error)"); completion(false); return }
+            guard let data = data,
+                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                let accessToken = json["access_token"] as? String,
+                let refreshToken = json["refresh_token"] as? String,
+                let expiresAt = json["expires_at"] as? TimeInterval else {
+                print("[StravaService] Token refresh: invalid response"); completion(false); return
+            }
+            DispatchQueue.main.async {
+                self.tokens = StravaOAuthTokens(accessToken: accessToken, refreshToken: refreshToken, expiresAt: expiresAt)
+                print("[StravaService] Token refreshed, expires at \(expiresAt)")
+                completion(true)
+            }
+        }.resume()
+    }
+
+    // Async/await version for use with async closures
+    func withFreshToken<T>(_ block: @escaping () async throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            refreshAccessTokenIfNeeded { success in
+                if success {
+                    Task {
+                        do {
+                            let result = try await block()
+                            continuation.resume(returning: result)
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                } else {
+                    continuation.resume(throwing: NSError(domain: "Strava", code: 401, userInfo: [NSLocalizedDescriptionKey: "Could not refresh token"]))
+                }
+            }
+        }
+    }
+
     // MARK: - Sync Methods (now use Core Data)
     func syncRecentActivities() async throws {
         print("[StravaService] syncRecentActivities() called")
@@ -178,7 +241,9 @@ final class StravaService: ObservableObject {
         let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
         var fetched = 0
         repeat {
-            let activities = try await fetchActivities(after: sevenDaysAgo, perPage: 50, page: page)
+            let activities = try await withFreshToken { [self] in
+                try await fetchActivities(after: sevenDaysAgo, perPage: 50, page: page)
+            }
             for summary in activities {
                 _ = try await upsertActivity(summary, context: context)
             }
@@ -210,7 +275,9 @@ final class StravaService: ObservableObject {
         let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
         var fetched = 0
         repeat {
-            let activities = try await fetchActivities(after: sevenDaysAgo, perPage: 50, page: page)
+            let activities = try await withFreshToken { [self] in
+                try await fetchActivities(after: sevenDaysAgo, perPage: 50, page: page)
+            }
             for summary in activities {
                 _ = try await upsertActivity(summary, context: context)
             }
@@ -242,7 +309,9 @@ final class StravaService: ObservableObject {
         let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: now) ?? now
         var fetched = 0
         repeat {
-            let activities = try await fetchActivities(after: sixMonthsAgo, perPage: 50, page: page)
+            let activities = try await withFreshToken { [self] in
+                try await fetchActivities(after: sixMonthsAgo, perPage: 50, page: page)
+            }
             for summary in activities {
                 _ = try await upsertActivity(summary, context: context)
             }
@@ -352,6 +421,7 @@ final class StravaService: ObservableObject {
         w.np = nil
         w.intensityFactor = nil
         w.tss = nil
+        w.ftpUsed = 0.0
         do {
             if let streams = try? await fetchStreams(for: activity.id) {
                 for (type, values) in streams {
@@ -363,7 +433,7 @@ final class StravaService: ObservableObject {
                     stream.workout = w // FIX: set the relationship if required by Core Data
                 }
                 // Compute metrics
-                let ftp = self.ftp
+                let ftp = FTPHistoryManager.shared.ftp(for: w.startDate ?? Date(), context: context) ?? self.ftp
                 let power: [Double]? = streams["watts"]
                 let hr: [Double]? = streams["heartrate"]
                 let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
@@ -372,7 +442,8 @@ final class StravaService: ObservableObject {
                 w.np = NSNumber(value: np)
                 w.intensityFactor = NSNumber(value: ifv)
                 w.tss = NSNumber(value: tss)
-                print("[StravaService] Saved metrics for activity \(activity.id): np=\(np), if=\(ifv), tss=\(tss)")
+                w.ftpUsed = ftp
+                print("[StravaService] Saved metrics for activity \(activity.id): np=\(np), if=\(ifv), tss=\(tss), ftp=\(ftp)")
             }
         } catch {
             print("[StravaService] Warning: Failed to fetch streams or compute metrics for activity \(activity.id): \(error.localizedDescription)")

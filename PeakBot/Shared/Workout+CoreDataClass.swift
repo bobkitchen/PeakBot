@@ -21,4 +21,5 @@ public class Workout: NSManagedObject, Identifiable {
     @NSManaged public var np: NSNumber?
     @NSManaged public var intensityFactor: NSNumber?
     @NSManaged public var tss: NSNumber?
+    @NSManaged public var ftpUsed: Double
 }

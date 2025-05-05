@@ -132,23 +132,67 @@ struct SettingsView: View {
                         }
                     }
                 }
-                Section(header: Text("FTP Settings")) {
+                Section(header: Text("FTP History")) {
+                    let context = CoreDataModel.shared.container.viewContext
+                    let history = FTPHistoryManager.shared.allHistory(context: context)
+                    if let current = history.first {
+                        Text("Current FTP: \(current.ftp, specifier: "%.0f") W (since \(current.date, style: .date))")
+                            .font(.headline)
+                            .padding(.bottom, 2)
+                    } else {
+                        Text("No FTP history yet.").italic()
+                    }
+                    ForEach(history, id: \.id) { entry in
+                        HStack {
+                            Text("\(entry.ftp, specifier: "%.0f") W")
+                            Spacer()
+                            Text(entry.date, style: .date)
+                        }
+                    }
                     HStack {
-                        TextField("Functional Threshold Power (FTP)", text: $ftp)
+                        TextField("New FTP", text: $ftp)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(minWidth: 360, maxWidth: 400)
-                            .onSubmit {
-                                if let ftpValue = Double(ftp) {
-                                    stravaService.ftp = ftpValue
-                                }
-                            }
-                        Button("Save") {
+                            .frame(minWidth: 100, maxWidth: 120)
+                        Button("Add") {
                             if let ftpValue = Double(ftp) {
+                                FTPHistoryManager.shared.addFTP(ftpValue, effective: Date(), context: context)
                                 stravaService.ftp = ftpValue
+                                ftp = ""
                             }
                         }
                         .buttonStyle(.borderedProminent)
                     }
+                    Button("Apply Current FTP to Last 3 Months") {
+                        let threeMonthsAgo = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
+                        let request = NSFetchRequest<Workout>(entityName: "Workout")
+                        request.predicate = NSPredicate(format: "startDate >= %@", threeMonthsAgo as NSDate)
+                        let context = CoreDataModel.shared.container.viewContext
+                        let history = FTPHistoryManager.shared.allHistory(context: context)
+                        let currentFTP = history.first?.ftp ?? stravaService.ftp
+                        do {
+                            let workouts = try context.fetch(request)
+                            for w in workouts {
+                                // Recalculate metrics
+                                let power = (try? (w.value(forKey: "watts") as? [Double])) ?? nil
+                                let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
+                                let ifv = MetricsEngine.intensityFactor(np: np, ftp: currentFTP) ?? 0.0
+                                let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(w.movingTime ?? 0), ftp: currentFTP) ?? 0.0
+                                w.np = NSNumber(value: np)
+                                w.intensityFactor = NSNumber(value: ifv)
+                                w.tss = NSNumber(value: tss)
+                                w.ftpUsed = currentFTP
+                            }
+                            try context.save()
+                            print("[FTPHistoryManager] Updated \(workouts.count) workouts with FTP=\(currentFTP)")
+                        } catch {
+                            print("[FTPHistoryManager] Error updating workouts: \(error)")
+                        }
+                        // Refresh UI after applying FTP
+                        workoutListVM.refresh()
+                        Task { await dashboardVM.refresh(days: 90) }
+                    }
+                    .buttonStyle(.bordered)
+                    .padding(.top, 8)
                 }
                 Section(header: Text("OpenAI API Key (coming soon)")) {
                     SecureField("OpenAI API Key", text: $openAIApiKey)
