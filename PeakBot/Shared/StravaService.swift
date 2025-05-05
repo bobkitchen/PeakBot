@@ -86,6 +86,7 @@ final class StravaService: ObservableObject {
 
     // MARK: - FTP
     @Published var ftp: Double = 250.0 // default, can be loaded from Core Data or UserDefaults
+    private let ftpKey = "ftp"
 
     // MARK: - OAuth Flow
     init() {
@@ -95,6 +96,7 @@ final class StravaService: ObservableObject {
            let expires = KeychainHelper.stravaExpiresAt {
             self.tokens = StravaOAuthTokens(accessToken: access, refreshToken: refresh, expiresAt: expires)
         }
+        loadFTP() // Load FTP from UserDefaults at startup
     }
 
     func startOAuth(completion: @escaping (Bool) -> Void) {
@@ -172,78 +174,110 @@ final class StravaService: ObservableObject {
         guard let tokens = tokens else { throw NSError(domain: "Strava", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not authenticated"]) }
         let context = coreData.container.viewContext
         var page = 1
-        var allActivities: [StravaActivitySummary] = []
-        let perPage = 50
-        var fetched: [StravaActivitySummary]
+        let now = Date()
+        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
+        var fetched = 0
         repeat {
-            print("[StravaService] Fetching activities page \(page)")
-            fetched = try await fetchActivities(perPage: perPage, page: page)
-            print("[StravaService] Got \(fetched.count) activities on page \(page)")
-            allActivities.append(contentsOf: fetched)
-            page += 1
-        } while !fetched.isEmpty && fetched.count == perPage && page <= 4 // limit to 200 activities for demo
-        print("[StravaService] Total activities fetched: \(allActivities.count)")
-        for activity in allActivities {
-            let request = NSFetchRequest<Workout>(entityName: "Workout")
-            request.predicate = NSPredicate(format: "workoutId == %lld", activity.id)
-            let existing = try? context.fetch(request)
-            let w = existing?.first ?? CoreDataModel.makeWorkout(context: context)
-            // Assign Int64 value to NSNumber? property
-            w.workoutId = NSNumber(value: activity.id)
-            w.name = activity.name ?? ""
-            w.sport = "cycling" // TODO: map from Strava
-            w.startDate = activity.startDateLocal ?? Date()
-            // Assign Double value to NSNumber? property
-            w.distance = NSNumber(value: activity.distance ?? 0)
-            // Assign Int32 value to NSNumber? property
-            w.movingTime = NSNumber(value: activity.movingTime ?? 0)
-            // Assign Double value to NSNumber? property
-            w.avgPower = NSNumber(value: activity.averageWatts ?? 0)
-            // Assign Double value to NSNumber? property
-            w.avgHR = NSNumber(value: activity.averageHeartrate ?? 0)
-            // --- Fetch streams ---
-            let streams = try? await fetchStreams(for: activity.id)
-            if let streams = streams {
-                for (type, values) in streams {
-                    let stream = Stream(context: context)
-                    // Assign Int64 value to NSNumber? property
-                    stream.workoutId = NSNumber(value: activity.id)
-                    stream.type = type
-                    stream.values = try JSONEncoder().encode(values)
-                }
-                // --- Compute metrics ---
-                let ftp = self.ftp
-                let power: [Double]? = streams["watts"]
-                let hr: [Double]? = streams["heartrate"]
-                let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
-                let ifv = MetricsEngine.intensityFactor(np: np, ftp: ftp) ?? 0.0
-                let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(activity.movingTime ?? 0), ftp: ftp) ?? 0.0
-                // Assign Double value to NSNumber? property
-                w.np = NSNumber(value: np)
-                w.intensityFactor = NSNumber(value: ifv)
-                w.tss = NSNumber(value: tss)
-                let avgPower = w.avgPower?.doubleValue ?? 0
-                let avgHR = w.avgHR?.doubleValue ?? 0
-                let npValue = w.np?.doubleValue ?? 0
-                let intensity = w.intensityFactor?.doubleValue ?? 0
-                let tssValue = w.tss?.doubleValue ?? 0
-                print("[StravaService] Saved metrics for activity \(activity.id): np=\(npValue), if=\(intensity), tss=\(tssValue)")
+            let activities = try await fetchActivities(after: sevenDaysAgo, perPage: 50, page: page)
+            for summary in activities {
+                _ = try await upsertActivity(summary, context: context)
             }
+            fetched = activities.count
+            page += 1
+        } while fetched > 0
+        // Pre-save logging
+        let workouts = try? context.fetch(NSFetchRequest<Workout>(entityName: "Workout"))
+        let streams = try? context.fetch(NSFetchRequest<Stream>(entityName: "Stream"))
+        print("[StravaService] About to save. Workouts: \(workouts?.map { $0.workoutId ?? -1 } ?? [])")
+        print("[StravaService] Streams: \(streams?.map { $0.workoutId ?? -1 } ?? [])")
+        do {
+            try context.save()
+        } catch {
+            print("[StravaService] ERROR: Core Data save failed: \(error.localizedDescription)")
+            let nserror = error as NSError
+            print("[StravaService] Core Data error userInfo: \(nserror.userInfo)")
+            throw error
         }
-        try context.save()
-        print("[StravaService] Synced \(allActivities.count) activities from Strava to Core Data (with streams & metrics)")
+        print("[StravaService] syncRecentActivities() finished")
     }
 
     func syncHistory() async throws {
-        // TODO: Implement year-by-year backfill, Core Data storage, metrics calculation
-        print("[StravaService] syncHistory() called (stub)")
+        print("[StravaService] syncHistory() called")
+        guard let tokens = tokens else { throw NSError(domain: "Strava", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not authenticated"]) }
+        let context = coreData.container.viewContext
+        var page = 1
+        let now = Date()
+        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
+        var fetched = 0
+        repeat {
+            let activities = try await fetchActivities(after: sevenDaysAgo, perPage: 50, page: page)
+            for summary in activities {
+                _ = try await upsertActivity(summary, context: context)
+            }
+            fetched = activities.count
+            page += 1
+        } while fetched > 0
+        // Pre-save logging
+        let workouts = try? context.fetch(NSFetchRequest<Workout>(entityName: "Workout"))
+        let streams = try? context.fetch(NSFetchRequest<Stream>(entityName: "Stream"))
+        print("[StravaService] About to save. Workouts: \(workouts?.map { $0.workoutId ?? -1 } ?? [])")
+        print("[StravaService] Streams: \(streams?.map { $0.workoutId ?? -1 } ?? [])")
+        do {
+            try context.save()
+        } catch {
+            print("[StravaService] ERROR: Core Data save failed: \(error.localizedDescription)")
+            let nserror = error as NSError
+            print("[StravaService] Core Data error userInfo: \(nserror.userInfo)")
+            throw error
+        }
+        print("[StravaService] syncHistory() finished")
+    }
+
+    func syncSixMonthsHistory() async throws {
+        print("[StravaService] syncSixMonthsHistory() called")
+        guard let tokens = tokens else { throw NSError(domain: "Strava", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not authenticated"]) }
+        let context = coreData.container.viewContext
+        var page = 1
+        let now = Date()
+        let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: now) ?? now
+        var fetched = 0
+        repeat {
+            let activities = try await fetchActivities(after: sixMonthsAgo, perPage: 50, page: page)
+            for summary in activities {
+                _ = try await upsertActivity(summary, context: context)
+            }
+            fetched = activities.count
+            page += 1
+        } while fetched > 0
+        let workouts = try? context.fetch(NSFetchRequest<Workout>(entityName: "Workout"))
+        let streams = try? context.fetch(NSFetchRequest<Stream>(entityName: "Stream"))
+        print("[StravaService] About to save. Workouts: \(workouts?.map { $0.workoutId ?? -1 } ?? [])")
+        print("[StravaService] Streams: \(streams?.map { $0.workoutId ?? -1 } ?? [])")
+        do {
+            try context.save()
+        } catch {
+            print("[StravaService] ERROR: Core Data save failed: \(error.localizedDescription)")
+            let nserror = error as NSError
+            print("[StravaService] Core Data error userInfo: \(nserror.userInfo)")
+            throw error
+        }
+        print("[StravaService] syncSixMonthsHistory() finished")
     }
 
     // MARK: - FTP
     func saveFTP(_ ftpValue: Double) {
         self.ftp = ftpValue
-        // TODO: Persist FTP to Core Data or UserDefaults
+        UserDefaults.standard.set(ftpValue, forKey: ftpKey)
         print("[StravaService] FTP saved: \(ftpValue)")
+    }
+
+    func loadFTP() {
+        if let value = UserDefaults.standard.value(forKey: ftpKey) as? Double {
+            self.ftp = value
+            print("[StravaService] FTP loaded from UserDefaults: \(value)")
+        } else {
+            print("[StravaService] No FTP found in UserDefaults, using default: \(ftp)")
+        }
     }
 
     // MARK: - Fetch Activities
@@ -260,8 +294,10 @@ final class StravaService: ObservableObject {
         var req = URLRequest(url: c.url!)
         req.setValue("Bearer \(t.accessToken)", forHTTPHeaderField: "Authorization")
         let (d, r) = try await URLSession.shared.data(for: req)
-        guard (r as? HTTPURLResponse)?.statusCode == 200 else {
-            throw NSError(domain: "Strava", code: 2, userInfo: nil)
+        if let httpResp = r as? HTTPURLResponse, httpResp.statusCode != 200 {
+            let body = String(data: d, encoding: .utf8) ?? ""
+            print("[StravaService] HTTP error: \(httpResp.statusCode), body: \(body)")
+            throw NSError(domain: "Strava", code: 2, userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResp.statusCode): \(body)"])
         }
         let dec = JSONDecoder()
         dec.dateDecodingStrategy = .iso8601
@@ -290,6 +326,58 @@ final class StravaService: ObservableObject {
             }
         }
         return result
+    }
+
+    // Upsert (insert or update) a Strava activity into Core Data
+    private func upsertActivity(_ activity: StravaActivitySummary, context: NSManagedObjectContext) async throws -> Workout? {
+        // Defensive: fail fast if id is missing or zero
+        guard activity.id != 0 else {
+            print("[StravaService] Skipping activity with missing or zero id: \(activity)")
+            return nil
+        }
+        let request = NSFetchRequest<Workout>(entityName: "Workout")
+        request.predicate = NSPredicate(format: "workoutId == %lld", activity.id)
+        let existing = try? context.fetch(request)
+        let w = existing?.first ?? CoreDataModel.makeWorkout(context: context)
+        // Defensive: always set required fields with fallback values
+        w.workoutId = NSNumber(value: activity.id)
+        w.name = (activity.name?.isEmpty == false ? activity.name : "Unnamed Workout") ?? "Unnamed Workout"
+        w.sport = "cycling" // TODO: map from Strava, fallback to cycling
+        w.startDate = activity.startDateLocal ?? Date()
+        w.distance = NSNumber(value: activity.distance ?? 0)
+        w.movingTime = NSNumber(value: activity.movingTime ?? 0)
+        w.avgPower = NSNumber(value: activity.averageWatts ?? 0)
+        w.avgHR = NSNumber(value: activity.averageHeartrate ?? 0)
+        // Defensive: clear metrics if not computable
+        w.np = nil
+        w.intensityFactor = nil
+        w.tss = nil
+        do {
+            if let streams = try? await fetchStreams(for: activity.id) {
+                for (type, values) in streams {
+                    let stream = Stream(context: context)
+                    stream.id = UUID() // Set required UUID id for Stream
+                    stream.workoutId = NSNumber(value: activity.id)
+                    stream.type = type
+                    stream.values = try JSONEncoder().encode(values)
+                    stream.workout = w // FIX: set the relationship if required by Core Data
+                }
+                // Compute metrics
+                let ftp = self.ftp
+                let power: [Double]? = streams["watts"]
+                let hr: [Double]? = streams["heartrate"]
+                let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
+                let ifv = MetricsEngine.intensityFactor(np: np, ftp: ftp) ?? 0.0
+                let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(activity.movingTime ?? 0), ftp: ftp) ?? 0.0
+                w.np = NSNumber(value: np)
+                w.intensityFactor = NSNumber(value: ifv)
+                w.tss = NSNumber(value: tss)
+                print("[StravaService] Saved metrics for activity \(activity.id): np=\(np), if=\(ifv), tss=\(tss)")
+            }
+        } catch {
+            print("[StravaService] Warning: Failed to fetch streams or compute metrics for activity \(activity.id): \(error.localizedDescription)")
+        }
+        return w
     }
 }
 

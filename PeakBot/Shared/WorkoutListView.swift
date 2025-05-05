@@ -43,22 +43,68 @@ struct WorkoutRowView: View {
 
 struct WorkoutListView: View {
     @ObservedObject var viewModel: WorkoutListViewModel
-    
+    @EnvironmentObject var stravaService: StravaService
+    @State private var showSyncing = false
+    @State private var syncError: String? = nil
+
     var body: some View {
-        List(viewModel.workouts, id: \.workoutId) { workout in
-            VStack(alignment: .leading) {
-                Text(workout.name ?? "Unnamed Workout")
-                    .font(.headline)
-                Text(workout.startDate != nil ? "\(workout.startDate!, formatter: dateFormatter)" : "N/A")
-                    .font(.subheadline)
-                Text("Distance: \(workout.distance?.doubleValue ?? 0, specifier: "%.2f") km")
-                    .font(.caption)
-                Text("Moving Time: \(formatSeconds(Int(workout.movingTime ?? 0)))")
-                    .font(.caption2)
-                Text("Avg Power: \(workout.avgPower?.doubleValue ?? 0, specifier: "%.0f")")
-                    .font(.caption)
-                Text("TSS: \(workout.tss?.doubleValue ?? 0, specifier: "%.1f")")
-                    .font(.caption)
+        VStack(spacing: 0) {
+            HStack {
+                Text("Workouts")
+                    .font(.largeTitle)
+                    .bold()
+                Spacer()
+                Button(action: {
+                    showSyncing = true
+                    syncError = nil
+                    Task {
+                        do {
+                            try await stravaService.syncRecentActivities()
+                            viewModel.refresh()
+                        } catch {
+                            syncError = error.localizedDescription
+                        }
+                        showSyncing = false
+                    }
+                }) {
+                    Label("Sync", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+                .disabled(showSyncing)
+            }
+            .padding([.top, .horizontal])
+            if showSyncing {
+                ProgressView("Syncing...")
+                    .padding(.horizontal)
+            }
+            if let syncError = syncError {
+                Text(syncError)
+                    .foregroundColor(.red)
+                    .font(.callout)
+                    .padding(.horizontal)
+            }
+            if viewModel.workouts.isEmpty {
+                Text("No workouts available.")
+                    .foregroundColor(.secondary)
+                    .padding()
+            } else {
+                List(viewModel.workouts, id: \.workoutId) { workout in
+                    VStack(alignment: .leading) {
+                        Text(workout.name ?? "Unnamed Workout")
+                            .font(.headline)
+                        Text(workout.startDate != nil ? "\(workout.startDate!, formatter: dateFormatter)" : "N/A")
+                            .font(.subheadline)
+                        Text("Distance: \((workout.distance?.doubleValue ?? 0) / 1000, specifier: "%.2f") km")
+                            .font(.caption)
+                        Text("Moving Time: \(formatSeconds(Int(workout.movingTime ?? 0)))")
+                            .font(.caption2)
+                        Text("Avg Power: \(workout.avgPower?.doubleValue ?? 0, specifier: "%.0f")")
+                            .font(.caption)
+                        Text("TSS: \(workout.tss?.doubleValue ?? 0, specifier: "%.1f")")
+                            .font(.caption)
+                    }
+                }
             }
         }
     }

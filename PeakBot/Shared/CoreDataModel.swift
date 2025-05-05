@@ -47,7 +47,17 @@ extension CoreDataModel {
         w.tss = nil
         return w
     }
-    // Add similar factory methods for Stream, DailyLoad, Settings as needed.
+    // DailyLoad entity
+    static func makeDailyLoad(context: NSManagedObjectContext) -> DailyLoad {
+        let d = DailyLoad(context: context)
+        d.date = Date()
+        d.tss = 0
+        d.atl = 0
+        d.ctl = 0
+        d.tsb = 0
+        return d
+    }
+    // Add similar factory methods for Stream, Settings as needed.
 }
 
 // All NSManagedObject subclass declarations have been removed from this file.
