@@ -52,4 +52,17 @@ class FTPHistoryManager {
             return []
         }
     }
+
+    // Delete all FTP history entries
+    func clearAll(context: NSManagedObjectContext) {
+        let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "FTPHistory")
+        let delete = NSBatchDeleteRequest(fetchRequest: fetch)
+        do {
+            try context.execute(delete)
+            try context.save()
+            print("[FTPHistoryManager] Cleared all FTP history entries")
+        } catch {
+            print("[FTPHistoryManager] Error clearing FTP history: \(error)")
+        }
+    }
 }

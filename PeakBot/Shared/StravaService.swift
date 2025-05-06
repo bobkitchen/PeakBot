@@ -85,7 +85,7 @@ final class StravaService: ObservableObject {
     let coreData = CoreDataModel.shared
 
     // MARK: - FTP
-    @Published var ftp: Double = 250.0 // default, can be loaded from Core Data or UserDefaults
+    @Published var ftp: Double = 218.0 // default, can be loaded from Core Data or UserDefaults
     private let ftpKey = "ftp"
 
     // MARK: - OAuth Flow

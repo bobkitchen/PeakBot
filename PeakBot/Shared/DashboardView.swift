@@ -84,21 +84,55 @@ struct SummaryCard: View {
 @available(macOS 13.0, *)
 struct FitnessTrendChart: View {
     let points: [FitnessPoint]
-    var body: some View {
-        Chart(points) {
-            LineMark(
-                x: .value("Date", $0.date),
-                y: .value("CTL", $0.ctl)
-            ).foregroundStyle(.blue)
-            LineMark(
-                x: .value("Date", $0.date),
-                y: .value("ATL", $0.atl)
-            ).foregroundStyle(.red)
-            LineMark(
-                x: .value("Date", $0.date),
-                y: .value("TSB", $0.tsb)
-            ).foregroundStyle(.orange)
+    
+    // Helper for charting
+    private struct FitnessPlotPoint: Identifiable {
+        let id = UUID()
+        let date: Date
+        let value: Double
+        let metric: String // "CTL", "ATL", "TSB"
+    }
+    
+    // Compute 7-day moving averages for each metric
+    private func movingAverage(_ values: [Double], window: Int) -> [Double] {
+        guard window > 1, values.count >= window else { return values }
+        var result = [Double]()
+        for i in 0..<values.count {
+            let start = max(0, i - window + 1)
+            let windowVals = values[start...i]
+            result.append(windowVals.reduce(0, +) / Double(windowVals.count))
         }
+        return result
+    }
+
+    private var plotPoints: [FitnessPlotPoint] {
+        let now = Date()
+        let startDate = Calendar.current.date(byAdding: .day, value: -90, to: now) ?? now
+        let filteredPoints = points.filter { $0.date >= startDate }
+        let dates = filteredPoints.map { $0.date }
+        let ctlAvg = movingAverage(filteredPoints.map { $0.ctl }, window: 7)
+        let atlAvg = movingAverage(filteredPoints.map { $0.atl }, window: 7)
+        let tsbAvg = movingAverage(filteredPoints.map { $0.tsb }, window: 7)
+        var arr: [FitnessPlotPoint] = []
+        for (i, date) in dates.enumerated() {
+            arr.append(FitnessPlotPoint(date: date, value: ctlAvg[i], metric: "CTL"))
+            arr.append(FitnessPlotPoint(date: date, value: atlAvg[i], metric: "ATL"))
+            arr.append(FitnessPlotPoint(date: date, value: tsbAvg[i], metric: "TSB"))
+        }
+        return arr
+    }
+
+    var body: some View {
+        Chart(plotPoints) {
+            LineMark(
+                x: .value("Date", $0.date),
+                y: .value("Value", $0.value),
+                series: .value("Metric", $0.metric)
+            )
+            .interpolationMethod(.monotone)
+            .foregroundStyle(by: .value("Metric", $0.metric))
+        }
+        .chartLegend(position: .top, alignment: .center)
     }
 }
 

@@ -10,13 +10,22 @@ struct SettingsView: View {
     @State private var isConnecting = false
     @State private var connectionError: String?
     @State private var ftp: String = ""
+    @State private var ftpEffectiveDate: Date = Date()
     @State private var tokenExpiry: Date? = nil
     @State private var showSyncing = false
     @State private var syncError: String? = nil
+    // CTL/ATL override states
+    @State private var overrideDate: Date = Date()
+    @State private var overrideCTL: String = ""
+    @State private var overrideATL: String = ""
+    @State private var overrideTSB: String = ""
 
     var body: some View {
         NavigationStack {
             Form {
+                Button("TEST BUTTON - Should Print") {
+                    print("[DEBUG] TEST BUTTON PRESSED")
+                }
                 Section(header: Text("Strava Integration")) {
                     if stravaService.tokens != nil {
                         HStack(spacing: 12) {
@@ -149,50 +158,137 @@ struct SettingsView: View {
                             Text(entry.date, style: .date)
                         }
                     }
-                    HStack {
-                        TextField("New FTP", text: $ftp)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(minWidth: 100, maxWidth: 120)
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            TextField("New FTP", text: $ftp)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(minWidth: 80, maxWidth: 100)
+                            DatePicker("Effective", selection: $ftpEffectiveDate, displayedComponents: .date)
+                                .labelsHidden()
+                        }
                         Button("Add") {
                             if let ftpValue = Double(ftp) {
-                                FTPHistoryManager.shared.addFTP(ftpValue, effective: Date(), context: context)
-                                stravaService.ftp = ftpValue
+                                FTPHistoryManager.shared.addFTP(ftpValue, effective: ftpEffectiveDate, context: context)
+                                stravaService.ftp = ftpValue // update default
                                 ftp = ""
+                                ftpEffectiveDate = Date()
                             }
                         }
                         .buttonStyle(.borderedProminent)
                     }
-                    Button("Apply Current FTP to Last 3 Months") {
-                        let threeMonthsAgo = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
-                        let request = NSFetchRequest<Workout>(entityName: "Workout")
-                        request.predicate = NSPredicate(format: "startDate >= %@", threeMonthsAgo as NSDate)
+                    Button(role: .destructive) {
                         let context = CoreDataModel.shared.container.viewContext
-                        let history = FTPHistoryManager.shared.allHistory(context: context)
-                        let currentFTP = history.first?.ftp ?? stravaService.ftp
-                        do {
-                            let workouts = try context.fetch(request)
-                            for w in workouts {
-                                // Recalculate metrics
-                                let power = (try? (w.value(forKey: "watts") as? [Double])) ?? nil
-                                let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
-                                let ifv = MetricsEngine.intensityFactor(np: np, ftp: currentFTP) ?? 0.0
-                                let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(w.movingTime ?? 0), ftp: currentFTP) ?? 0.0
-                                w.np = NSNumber(value: np)
-                                w.intensityFactor = NSNumber(value: ifv)
-                                w.tss = NSNumber(value: tss)
-                                w.ftpUsed = currentFTP
-                            }
-                            try context.save()
-                            print("[FTPHistoryManager] Updated \(workouts.count) workouts with FTP=\(currentFTP)")
-                        } catch {
-                            print("[FTPHistoryManager] Error updating workouts: \(error)")
-                        }
-                        // Refresh UI after applying FTP
+                        FTPHistoryManager.shared.clearAll(context: context)
+                        // Reset StravaService default FTP to 250
+                        stravaService.ftp = 250
+                        // Refresh local UI
                         workoutListVM.refresh()
-                        Task { await dashboardVM.refresh(days: 90) }
+                        Task { await dashboardVM.refresh(days: 180) }
+                    } label: {
+                        Label("Clear FTP History", systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.red)
+                    Button("Apply Global FTP Update") {
+                        print("[DEBUG] Apply Global FTP Update button tapped")
+                        Task {
+                            print("[DEBUG] Entered global FTP update handler")
+                            let request = NSFetchRequest<Workout>(entityName: "Workout")
+                            let context = CoreDataModel.shared.container.viewContext
+                            let history = FTPHistoryManager.shared.allHistory(context: context)
+                            print("[DEBUG] FTP history entries: \(history.map{"\($0.ftp)@\($0.date)"})")
+                            do {
+                                let workouts = try context.fetch(request)
+                                print("[DEBUG] Fetched \(workouts.count) workouts for global FTP update.")
+                                if workouts.isEmpty {
+                                    print("[DEBUG] No workouts found for update.")
+                                }
+                                for w in workouts {
+                                    let power: [Double]? = {
+                                        if w.entity.attributesByName.keys.contains("watts"),
+                                           let arr = w.value(forKey: "watts") as? [Double] {
+                                            return arr
+                                        }
+                                        if let avg = w.avgPower?.doubleValue {
+                                            let secs = Int(w.movingTime?.intValue ?? 0)
+                                            return secs > 0 ? Array(repeating: avg, count: secs) : nil
+                                        }
+                                        return nil
+                                    }()
+                                    if power == nil || power?.isEmpty == true {
+                                        print("[WARNING] No power data for workout id=\(String(describing: w.workoutId)), name=\(w.name ?? "nil")")
+                                        continue
+                                    }
+                                    // Determine ftp to use for this workout's date
+                                    let ftpForDate = FTPHistoryManager.shared.ftp(for: w.startDate ?? Date(), context: context) ?? stravaService.ftp
+                                    let np = MetricsEngine.normalizedPower(from: power) ?? 0.0
+                                    let ifv = MetricsEngine.intensityFactor(np: np, ftp: ftpForDate) ?? 0.0
+                                    let tss = MetricsEngine.tss(np: np, ifv: ifv, seconds: Double(w.movingTime ?? 0), ftp: ftpForDate) ?? 0.0
+                                    w.np = NSNumber(value: np)
+                                    w.intensityFactor = NSNumber(value: ifv)
+                                    w.tss = NSNumber(value: tss)
+                                    w.ftpUsed = ftpForDate
+                                    if let date = w.startDate {
+                                        let formatter = DateFormatter()
+                                        formatter.dateFormat = "yyyy-MM-dd"
+                                        let dateString = formatter.string(from: date)
+                                        if dateString == "2025-05-03" || dateString == "2025-05-02" {
+                                            print("[VERIFY] Workout on \(dateString): tss=\(tss), np=\(np), if=\(ifv)")
+                                        }
+                                    }
+                                }
+                                try context.save()
+                                print("[FTPHistoryManager] Updated \(workouts.count) workouts with per-date FTP")
+                            } catch {
+                                print("[FTPHistoryManager] Error updating workouts: \(error)")
+                            }
+                            // Refresh UI after applying FTP
+                            await workoutListVM.refresh()
+                            await dashboardVM.refresh(days: 90)
+                        }
                     }
                     .buttonStyle(.bordered)
                     .padding(.top, 8)
+                }
+                // MARK: CTL/ATL Override
+                Section(header: Text("Override CTL / ATL / TSB")) {
+                    DatePicker("Date", selection: $overrideDate, displayedComponents: .date)
+                    HStack {
+                        TextField("CTL", text: $overrideCTL)
+                            .frame(width: 60)
+                        TextField("ATL", text: $overrideATL)
+                            .frame(width: 60)
+                        TextField("TSB", text: $overrideTSB)
+                            .frame(width: 60)
+                        Button("Apply") {
+                            let context = CoreDataModel.shared.container.viewContext
+                            guard let ctlVal = Double(overrideCTL),
+                                  let atlVal = Double(overrideATL),
+                                  let tsbVal = Double(overrideTSB) else { return }
+                            let day = Calendar.current.startOfDay(for: overrideDate)
+                            let req = NSFetchRequest<DailyLoad>(entityName: "DailyLoad")
+                            req.predicate = NSPredicate(format: "date == %@", day as NSDate)
+                            if let existing = try? context.fetch(req).first {
+                                existing.ctl = ctlVal
+                                existing.atl = atlVal
+                                existing.tsb = tsbVal
+                            } else {
+                                let d = DailyLoad(context: context)
+                                d.date = day
+                                d.ctl = ctlVal
+                                d.atl = atlVal
+                                d.tsb = tsbVal
+                                d.tss = 0
+                            }
+                            try? context.save()
+                            Task { await dashboardVM.reloadDailyLoad(days: 180) }
+                            overrideCTL = ""; overrideATL = ""; overrideTSB = ""
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    Text("You can seed today's values to match TrainingPeaks; subsequent days will update from workouts.")
+                        .font(.footnote)
                 }
                 Section(header: Text("OpenAI API Key (coming soon)")) {
                     SecureField("OpenAI API Key", text: $openAIApiKey)
@@ -204,12 +300,15 @@ struct SettingsView: View {
             .padding(.vertical, 10)
             .navigationTitle("Settings")
             .frame(minWidth: 350, maxWidth: 450)
-            HStack {
+            VStack {
                 Spacer()
-                Button("Close") {
-                    dismiss()
+                HStack {
+                    Spacer()
+                    Button("Close") {
+                        dismiss()
+                    }
+                    .keyboardShortcut(.cancelAction)
                 }
-                .keyboardShortcut(.cancelAction)
             }
         }
     }

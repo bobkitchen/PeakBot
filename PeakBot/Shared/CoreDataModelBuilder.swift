@@ -46,7 +46,8 @@ public enum PeakBotModel {
             makeDouble("avgHR", optional: true),
             makeDouble("np", optional: true),
             makeDouble("intensityFactor", optional: true),
-            makeDouble("tss", optional: true)
+            makeDouble("tss", optional: true),
+            makeDouble("ftpUsed", defaultValue: 0.0)
         ]
 
         // Stream attributes

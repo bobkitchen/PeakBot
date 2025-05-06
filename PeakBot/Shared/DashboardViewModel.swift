@@ -75,5 +75,22 @@ final class DashboardViewModel: ObservableObject {
         }
     }
 
+    /// Reload fitness points from existing DailyLoad entities without recalculation.
+    func reloadDailyLoad(days: Int = 180) async {
+        let context = CoreDataModel.shared.container.viewContext
+        let end = Date()
+        let start = Calendar.current.date(byAdding: .day, value: -days, to: end) ?? end
+        let dlRequest = NSFetchRequest<DailyLoad>(entityName: "DailyLoad")
+        dlRequest.predicate = NSPredicate(format: "date >= %@", start as NSDate)
+        dlRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        do {
+            let loads = try context.fetch(dlRequest)
+            self.fitness = loads.map { FitnessPoint(id: UUID(), date: $0.date, ctl: $0.ctl, atl: $0.atl, tsb: $0.tsb) }
+            print("[DEBUG] reloadDailyLoad loaded \(loads.count) points without recalculation")
+        } catch {
+            print("[DashboardViewModel] reloadDailyLoad failed: \(error)")
+        }
+    }
+
     func updateWorkouts(_ w: [Workout]) { workouts = w }
 }
