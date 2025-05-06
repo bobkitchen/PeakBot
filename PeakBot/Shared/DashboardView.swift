@@ -17,19 +17,26 @@ struct DashboardView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // Summary cards
-                HStack(spacing: 16) {
-                    SummaryCard(title: "Fitness (CTL)", value: dashboardVM.fitness.last?.ctl)
-                    SummaryCard(title: "Fatigue (ATL)", value: dashboardVM.fitness.last?.atl)
-                    SummaryCard(title: "Form (TSB)", value: dashboardVM.fitness.last?.tsb)
+                HStack(spacing: 20) {
+                    SummaryCard(title: "Fitness (CTL)", value: dashboardVM.fitness.last?.ctl, icon: "dumbbell")
+                    SummaryCard(title: "Fatigue (ATL)", value: dashboardVM.fitness.last?.atl, icon: "bolt.fill")
+                    SummaryCard(title: "Form (TSB)", value: dashboardVM.fitness.last?.tsb, icon: "heart.fill")
                 }
                 .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+                .padding(.horizontal, 4)
+
+                Divider()
+                    .padding(.vertical, 6)
 
                 // Trend chart
                 if #available(macOS 13.0, *) {
                     FitnessTrendChart(points: dashboardVM.fitness)
-                        .frame(height: 200)
-                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.windowBackgroundColor)))
-                        .padding(.vertical)
+                        .frame(height: 220)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(14)
+                        .shadow(color: .black.opacity(0.10), radius: 8, x: 0, y: 2)
+                        .padding(.bottom, 8)
                 } else {
                     Text("Chart requires macOS 13+")
                 }
@@ -69,15 +76,25 @@ struct DashboardView: View {
 struct SummaryCard: View {
     let title: String
     let value: Double?
+    let icon: String
     var body: some View {
-        VStack {
-            Text(title).font(.caption)
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundColor(.accentColor)
+                .shadow(radius: 1)
             Text(value.map { String(format: "%.1f", $0) } ?? "–")
-                .font(.title2).bold()
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .foregroundColor(.primary)
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.windowBackgroundColor)))
+        .background(.ultraThinMaterial)
+        .cornerRadius(14)
+        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 2)
     }
 }
 
@@ -122,8 +139,18 @@ struct FitnessTrendChart: View {
         return arr
     }
 
+    @State private var showCTL = true
+    @State private var showATL = true
+    @State private var showTSB = true
+
+    private var filtered: [FitnessPlotPoint] {
+        plotPoints.filter { (pt) in
+            (pt.metric == "CTL" && showCTL) || (pt.metric == "ATL" && showATL) || (pt.metric == "TSB" && showTSB)
+        }
+    }
+
     var body: some View {
-        Chart(plotPoints) {
+        Chart(filtered) {
             LineMark(
                 x: .value("Date", $0.date),
                 y: .value("Value", $0.value),
@@ -131,8 +158,63 @@ struct FitnessTrendChart: View {
             )
             .interpolationMethod(.monotone)
             .foregroundStyle(by: .value("Metric", $0.metric))
+            .symbol(by: .value("Metric", $0.metric))
+            .accessibilityLabel($0.metric)
+            .accessibilityValue(Text("\($0.value, specifier: "%.1f") on \(dateFormatter.string(from: $0.date))"))
+            .annotation(position: .overlay) { pt in
+                if let hovered = pt as? FitnessPlotPoint {
+                    Text("\(hovered.metric): \(hovered.value, specifier: "%.1f")")
+                        .font(.caption2)
+                        .padding(4)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(6)
+                        .shadow(radius: 2)
+                }
+            }
         }
-        .chartLegend(position: .top, alignment: .center)
+        .chartLegend(position: .topTrailing, alignment: .top) {
+            HStack(spacing: 12) {
+                Toggle(isOn: $showCTL) {
+                    Text("CTL")
+                }.toggleStyle(LegendToggleStyle(color: .blue))
+                Toggle(isOn: $showATL) {
+                    Text("ATL")
+                }.toggleStyle(LegendToggleStyle(color: .red))
+                Toggle(isOn: $showTSB) {
+                    Text("TSB")
+                }.toggleStyle(LegendToggleStyle(color: .orange))
+            }
+            .padding(8)
+            .background(.ultraThinMaterial)
+            .cornerRadius(12)
+        }
+    }
+}
+
+// Custom toggle style for legend buttons
+struct LegendToggleStyle: ToggleStyle {
+    let color: Color
+    func makeBody(configuration: Configuration) -> some View {
+        Button(action: { configuration.isOn.toggle() }) {
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(color)
+                    .frame(width: 10, height: 10)
+                configuration.label
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(configuration.isOn ? .white : color)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
+            .background(configuration.isOn ? color : Color.gray.opacity(0.15))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(color, lineWidth: configuration.isOn ? 0 : 2)
+            )
+            .cornerRadius(8)
+            .shadow(color: configuration.isOn ? color.opacity(0.25) : .clear, radius: 2, x: 0, y: 1)
+        }
+        .buttonStyle(.plain)
     }
 }
 
