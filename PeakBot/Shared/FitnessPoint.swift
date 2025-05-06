@@ -7,4 +7,12 @@ struct FitnessPoint: Identifiable, Codable, Hashable {
     let ctl:  Double
     let atl:  Double
     let tsb:  Double
+    
+    init(id: UUID = UUID(), date: Date, ctl: Double, atl: Double, tsb: Double) {
+        self.id = id
+        self.date = date
+        self.ctl = ctl
+        self.atl = atl
+        self.tsb = tsb
+    }
 }

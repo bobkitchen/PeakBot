@@ -4,7 +4,9 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var stravaService: StravaService
     @EnvironmentObject var workoutListVM: WorkoutListViewModel
-    @EnvironmentObject var dashboardVM: DashboardViewModel // Added this line
+    @EnvironmentObject var dashboardVM: DashboardViewModel 
+    @AppStorage("athleteTimeZone") private var athleteTZString = TimeZone.current.identifier
+    @State private var selectedTimeZone: TimeZone = TimeZone.current
     @State private var openAIApiKey: String = ""
     @State private var showOAuthSheet = false
     @State private var isConnecting = false
@@ -25,6 +27,19 @@ struct SettingsView: View {
             Form {
                 Button("TEST BUTTON - Should Print") {
                     print("[DEBUG] TEST BUTTON PRESSED")
+                }
+                Section(header: Text("Account Time Zone")) {
+                    Picker("Time Zone", selection: $selectedTimeZone) {
+                        ForEach(TimeZone.knownTimeZoneIdentifiers, id: \.self) { id in
+                            Text(id).tag(TimeZone(identifier: id)!)
+                        }
+                    }
+                    .onAppear {
+                        selectedTimeZone = TimeZone(identifier: athleteTZString) ?? .current
+                    }
+                    .onChange(of: selectedTimeZone) { newTZ in
+                        athleteTZString = newTZ.identifier
+                    }
                 }
                 Section(header: Text("Strava Integration")) {
                     if stravaService.tokens != nil {

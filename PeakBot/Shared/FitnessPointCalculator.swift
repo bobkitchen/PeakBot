@@ -1,41 +1,71 @@
+//
+//  FitnessPointCalculator.swift
+//  PeakBot
+//
+//  Re-written to mirror TrainingPeaks PMC math exactly.
+//
+
 import Foundation
 
-struct FitnessPointCalculator {
-    enum Weekdays: Int { case sun = 1 }
+enum FitnessPointCalculator {
 
-    static func trend(from workouts: [Workout], days: Int) -> [FitnessPoint] {
-        guard !workouts.isEmpty else { print("[DEBUG] No workouts"); return [] }
-        let sorted = workouts.filter { $0.startDate != nil && $0.tss != nil }
-            .sorted { $0.startDate! < $1.startDate! }
-        guard let first = sorted.first?.startDate, let end = sorted.last?.startDate else {
-            print("[DEBUG] No valid workout dates"); return []
-        }
-        // Use the smaller of (days, range of workouts)
-        let start = Calendar.current.date(byAdding: .day, value: -days + 1, to: end)! > first ? Calendar.current.date(byAdding: .day, value: -days + 1, to: end)! : first
-        print("[DEBUG] FitnessPointCalculator range: \(start) to \(end)")
-        let recent = sorted.filter { $0.startDate! >= start }
+    static func trend(from workouts: [Workout],
+                      athleteTZ: TimeZone,
+                      range days: Int? = nil) -> [FitnessPoint] {
 
-        var dailyTSS: [Date: Double] = [:]
-        for w in recent {
-            guard let startDate = w.startDate else { continue }
-            let d = Calendar.current.startOfDay(for: startDate)
-            let tssValue = w.tss?.doubleValue ?? 0.0
-            dailyTSS[d, default: 0.0] += tssValue
+        guard !workouts.isEmpty else { return [] }
+
+        // ---- 1 Daily TSS buckets in athlete TZ ----------------------------
+        let cal = Calendar(identifier: .gregorian)
+        var daily: [Date: Double] = [:]
+
+        for w in workouts where w.startDate != nil && w.tss != nil {
+            let key = cal.startOfDay(for: w.startDate!, in: athleteTZ)
+            daily[key, default: 0] += w.tss!.doubleValue
         }
 
-        // Calculation
-        var ctl = 0.0, atl = 0.0
+        let sortedDays = daily.keys.sorted()
+        guard let first = sortedDays.first, let last = sortedDays.last else { return [] }
+
+        let start: Date = {
+            guard let d = days else { return first }
+            return cal.date(byAdding: .day, value: -d + 1, to: last, in: athleteTZ)!
+        }()
+
+        // ---- 2 Exponential impulse–response (TP) --------------------------
+        let kATL = 1.0 - exp(-1.0 / 7.0)
+        let kCTL = 1.0 - exp(-1.0 / 42.0)
+
+        var atlPrev = 0.0, ctlPrev = 0.0
         var pts: [FitnessPoint] = []
-        var day = Calendar.current.startOfDay(for: start)
-        let endDay = Calendar.current.startOfDay(for: end)
-        while day <= endDay {
-            let tss = dailyTSS[day] ?? 0
-            ctl += (tss - ctl) / 42.0
-            atl += (tss - atl) / 7.0
-            pts.append(.init(id: UUID(), date: day, ctl: ctl, atl: atl, tsb: ctl - atl))
-            day = Calendar.current.date(byAdding: .day, value: 1, to: day)!
+
+        var cursor = start
+        while cursor <= last {
+            let tss = daily[cursor] ?? 0.0
+            let atl = atlPrev + kATL * (tss - atlPrev)
+            let ctl = ctlPrev + kCTL * (tss - ctlPrev)
+            let tsb = ctlPrev - atlPrev        // yesterday’s balance
+
+            pts.append(.init(date: cursor, ctl: ctl, atl: atl, tsb: tsb))
+
+            atlPrev = atl
+            ctlPrev = ctl
+            cursor  = cal.date(byAdding: .day, value: 1, to: cursor, in: athleteTZ)!
         }
-        print("[DEBUG] FitnessPointCalculator produced \(pts.count) points")
         return pts
+    }
+}
+
+// MARK: - Calendar helpers
+private extension Calendar {
+    func startOfDay(for d: Date, in tz: TimeZone) -> Date {
+        var c = dateComponents(in: tz, from: d)
+        c.hour = 0; c.minute = 0; c.second = 0; c.nanosecond = 0
+        return date(from: c)!
+    }
+    func date(byAdding comp: Component, value: Int, to d: Date, in tz: TimeZone) -> Date? {
+        var c = dateComponents(in: tz, from: d)
+        if comp == .day { c.day! += value }
+        return date(from: c)
     }
 }

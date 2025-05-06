@@ -5,19 +5,16 @@
 //  Created by Bob Kitchen on 4/19/25.
 //
 
-
-//
-//  DashboardViewModel.swift
-//  PeakBot
-//
-
 import Foundation
 import SwiftUI
+import CoreData
 
 @MainActor
 final class DashboardViewModel: ObservableObject {
 
     // Published state
+    @AppStorage("athleteTimeZone") private var athleteTZString = TimeZone.current.identifier
+
     @Published var fitness:  [FitnessPoint] = []
     @Published var workouts: [Workout]      = [] {
         didSet { /* recalc here if you want */ }
@@ -43,7 +40,8 @@ final class DashboardViewModel: ObservableObject {
                 let workouts = try context.fetch(wRequest)
                 print("[DEBUG] Fetched workouts count: \(workouts.count)")
                 self.workouts = workouts
-                let points = FitnessPointCalculator.trend(from: workouts, days: days)
+                let tz = TimeZone(identifier: athleteTZString) ?? .current
+                let points = FitnessPointCalculator.trend(from: workouts, athleteTZ: tz, range: days)
                 self.fitness = points
                 // Remove old DailyLoad entries in range
                 let oldLoads = try context.fetch(dlRequest)
@@ -78,17 +76,38 @@ final class DashboardViewModel: ObservableObject {
     /// Reload fitness points from existing DailyLoad entities without recalculation.
     func reloadDailyLoad(days: Int = 180) async {
         let context = CoreDataModel.shared.container.viewContext
-        let end = Date()
-        let start = Calendar.current.date(byAdding: .day, value: -days, to: end) ?? end
-        let dlRequest = NSFetchRequest<DailyLoad>(entityName: "DailyLoad")
-        dlRequest.predicate = NSPredicate(format: "date >= %@", start as NSDate)
-        dlRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        let calendar = Calendar(identifier: .gregorian)
         do {
-            let loads = try context.fetch(dlRequest)
-            self.fitness = loads.map { FitnessPoint(id: UUID(), date: $0.date, ctl: $0.ctl, atl: $0.atl, tsb: $0.tsb) }
-            print("[DEBUG] reloadDailyLoad loaded \(loads.count) points without recalculation")
+            let wRequest = NSFetchRequest<Workout>(entityName: "Workout")
+            wRequest.predicate = NSPredicate(format: "startDate != nil AND tss != nil")
+            wRequest.sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
+            let workouts = try context.fetch(wRequest)
+            self.workouts = workouts
+
+            let tz = TimeZone(identifier: athleteTZString) ?? .current
+            let points = FitnessPointCalculator.trend(from: workouts, athleteTZ: tz, range: days)
+            self.fitness = points
+
+            // Save new DailyLoad entries, sum TSS for each day
+            let dlRequest = NSFetchRequest<DailyLoad>(entityName: "DailyLoad")
+            let oldLoads = try context.fetch(dlRequest)
+            for o in oldLoads { context.delete(o) }
+            for p in points {
+                let d = DailyLoad(context: context)
+                d.date = p.date
+                d.ctl = p.ctl
+                d.atl = p.atl
+                d.tsb = p.tsb
+                // Sum TSS for the day
+                let tssSum = workouts.filter {
+                    $0.startDate != nil && calendar.isDate($0.startDate!, inSameDayAs: p.date) && $0.tss != nil
+                }.reduce(0.0) { $0 + ($1.tss?.doubleValue ?? 0.0) }
+                d.tss = tssSum
+            }
+            try context.save()
         } catch {
-            print("[DashboardViewModel] reloadDailyLoad failed: \(error)")
+            self.errorMessage = "Failed to fetch fitness data: \(error.localizedDescription)"
+            print("[ERROR] \(self.errorMessage ?? "Unknown error")")
         }
     }
 
